@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.instagramfeedpreview.data.model.response.BoardDTO
 import com.example.instagramfeedpreview.data.model.response.TokenDTO
-import com.example.instagramfeedpreview.data.repository.instagramRepository.InstagramRepository
+import com.example.instagramfeedpreview.data.repository.instagramRepository.InstagramRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InstagramViewModel @Inject constructor(private val instagramRepository: InstagramRepository) : ViewModel() {
+class InstagramViewModel @Inject constructor(private val instagramRepositoryImpl: InstagramRepositoryImpl) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
     val uiState: StateFlow<UiState> = _uiState
 
@@ -29,7 +29,7 @@ class InstagramViewModel @Inject constructor(private val instagramRepository: In
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        instagramRepository.fetchToken(clientId, clientSecret, grantType, redirectUri, code)
+        instagramRepositoryImpl.fetchToken(clientId, clientSecret, grantType, redirectUri, code)
             .catch { e ->
                 _uiState.value = UiState.Error(e as Exception)
             }
@@ -44,7 +44,7 @@ class InstagramViewModel @Inject constructor(private val instagramRepository: In
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        instagramRepository.fetchBoardInformation(accessToken)
+        instagramRepositoryImpl.fetchBoardInformation(accessToken)
             .catch { e ->
                 _uiState.value = UiState.Error(e as Exception)
             }

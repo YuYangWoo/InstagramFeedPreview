@@ -6,5 +6,17 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.instagramfeedpreview.ui.component.main.MainFragment"
-        android:label="MainFragment" />
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_instagramFragment"
+            app:destination="@id/instagramFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/instagramFragment"
+        android:name="com.example.instagramfeedpreview.ui.component.instagram.InstagramFragment"
+        android:label="InstagramFragment" >
+        <action
+            android:id="@+id/action_instagramFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>

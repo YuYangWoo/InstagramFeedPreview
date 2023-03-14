@@ -79,4 +79,5 @@ dependencies {
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
 }

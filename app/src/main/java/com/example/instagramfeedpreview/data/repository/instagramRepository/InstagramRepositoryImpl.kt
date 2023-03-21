@@ -2,6 +2,7 @@ package com.example.instagramfeedpreview.data.repository.instagramRepository
 
 import com.example.instagramfeedpreview.data.api.GraphInstagramApiService
 import com.example.instagramfeedpreview.data.api.InstagramApiService
+import com.example.instagramfeedpreview.data.model.request.LoginDAO
 import com.example.instagramfeedpreview.data.model.response.BoardDTO
 import com.example.instagramfeedpreview.data.model.response.TokenDTO
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +17,8 @@ class InstagramRepositoryImpl @Inject constructor(
     private val instagramApiService: InstagramApiService,
     private val graphInstagramApiService: GraphInstagramApiService
 ) : InstagramRepository {
-    override fun fetchToken(clientId: String,
-                            clientSecret: String,
-                            grantType: String,
-                            redirectUri: String,
-                            code: String): Flow<TokenDTO> = flow {
-        emit(instagramApiService.getAccessToken(clientId, clientSecret, grantType, redirectUri, code))
+    override fun fetchToken(loginDAO: LoginDAO): Flow<TokenDTO> = flow {
+        emit(instagramApiService.getAccessToken(loginDAO.clientId, loginDAO.clientSecret, loginDAO.grantType, loginDAO.redirectUri, loginDAO.code))
     }.flowOn(Dispatchers.IO)
 
 
@@ -34,11 +31,7 @@ class InstagramRepositoryImpl @Inject constructor(
 
 }
 interface InstagramRepository {
-    fun fetchToken(clientId: String,
-                   clientSecret: String,
-                   grantType: String,
-                   redirectUri: String,
-                   code: String): Flow<TokenDTO>
+    fun fetchToken(loginDAO: LoginDAO): Flow<TokenDTO>
 
     fun fetchBoardInformation(
         accessToken: String

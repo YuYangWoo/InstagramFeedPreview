@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.instagramfeedpreview.R
 import com.example.instagramfeedpreview.databinding.FragmentBoardBinding
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board){
     private val instagramViewModel by activityViewModels<InstagramViewModel>()
     private var backKeyPressedTime: Long = 0
+    private val args: BoardFragmentArgs by navArgs()
 
     @Inject
     lateinit var feedAdapter: FeedAdapter
@@ -28,6 +30,16 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         super.init()
         initRecyclerView()
         initObserver()
+        initSwipeRefreshLayout()
+    }
+
+    private fun initSwipeRefreshLayout() {
+        binding.swipeRefreshLayout.apply {
+            setOnRefreshListener {
+                instagramViewModel.requestInstagramFeedItem(args.loginDAO)
+                isRefreshing = false
+            }
+        }
     }
 
     private fun initRecyclerView() {

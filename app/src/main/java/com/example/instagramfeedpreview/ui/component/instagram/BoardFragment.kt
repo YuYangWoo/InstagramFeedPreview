@@ -9,8 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.instagramfeedpreview.R
 import com.example.instagramfeedpreview.databinding.FragmentBoardBinding
-import com.example.instagramfeedpreview.ui.component.main.adapter.FeedAdapter
-import com.example.instagramfeedpreview.ui.component.main.adapter.GridDividerItemDecoration
+import com.example.instagramfeedpreview.ui.component.instagram.adapter.FeedAdapter
+import com.example.instagramfeedpreview.ui.component.instagram.adapter.GridDividerItemDecoration
 import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

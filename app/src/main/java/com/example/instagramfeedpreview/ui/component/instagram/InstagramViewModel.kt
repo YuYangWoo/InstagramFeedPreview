@@ -1,10 +1,10 @@
 package com.example.instagramfeedpreview.ui.component.instagram
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.instagramfeedpreview.data.model.request.LoginDAO
 import com.example.instagramfeedpreview.data.model.response.BoardDTO
-import com.example.instagramfeedpreview.data.model.response.TokenDTO
-import com.example.instagramfeedpreview.data.repository.instagramRepository.InstagramRepositoryImpl
 import com.example.instagramfeedpreview.domain.usecase.InstagramBoardFetchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -20,22 +20,22 @@ class InstagramViewModel @Inject constructor(private val instagramBoardFetchUseC
     val boardDTO: SharedFlow<BoardDTO> = _boardDTO
 
     fun requestInstagramFeedItem(
-        clientId: String,
-        clientSecret: String,
-        grantType: String,
-        redirectUri: String,
-        code: String
+        loginDAO: LoginDAO
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
         try {
-            instagramBoardFetchUseCase.invoke(clientId, clientSecret, grantType, redirectUri, code)?.let { boardDTO ->
+            instagramBoardFetchUseCase.invoke(loginDAO)?.let { boardDTO ->
                 _boardDTO.emit(boardDTO)
                 _uiState.value = UiState.Success
-            }
+            } ?: Log.e(TAG, "문제 발생")
         } catch (e: Exception) {
             _uiState.value = UiState.Error(e)
         }
+    }
+
+    companion object {
+        private const val TAG = "InstagramViewModel"
     }
 }
 

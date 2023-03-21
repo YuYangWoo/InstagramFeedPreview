@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.instagramfeedpreview.R
+import com.example.instagramfeedpreview.data.model.request.LoginDAO
 import com.example.instagramfeedpreview.databinding.FragmentInstagramBinding
 import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,9 +34,10 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
-                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToBoardFragment())
+                                val loginDAO = LoginDAO("520355146868539", "cd3590d3a75b81c5156a67034b1d6280", "authorization_code", "https://yang-droid.tistory.com/", accessToken)
 
-                                instagramViewModel.requestInstagramFeedItem("520355146868539", "cd3590d3a75b81c5156a67034b1d6280", "authorization_code", "https://yang-droid.tistory.com/", accessToken)
+                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToBoardFragment(loginDAO))
+                                instagramViewModel.requestInstagramFeedItem(loginDAO)
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
                             }

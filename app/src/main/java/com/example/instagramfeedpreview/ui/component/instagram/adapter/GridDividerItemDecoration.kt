@@ -1,4 +1,4 @@
-package com.example.instagramfeedpreview.ui.component.main.adapter
+package com.example.instagramfeedpreview.ui.component.instagram.adapter
 
 import android.graphics.Canvas
 import android.graphics.Paint

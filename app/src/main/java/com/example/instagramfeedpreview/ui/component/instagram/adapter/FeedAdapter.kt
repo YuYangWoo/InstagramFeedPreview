@@ -1,12 +1,10 @@
-package com.example.instagramfeedpreview.ui.component.main.adapter
+package com.example.instagramfeedpreview.ui.component.instagram.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.example.instagramfeedpreview.data.model.response.BoardDTO
 import com.example.instagramfeedpreview.data.model.response.BoardInformation
 import com.example.instagramfeedpreview.databinding.HolderFeedItemBinding
 import dagger.hilt.android.scopes.FragmentScoped

@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import java.net.URLDecoder
 
 @AndroidEntryPoint
-class InstagramFragment : BindingFragment<FragmentInstagramBinding>(R.layout.fragment_instagram) {
+class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.layout.fragment_instagram) {
     private val instagramViewModel by activityViewModels<InstagramViewModel>()
 
     override fun init() {
@@ -33,7 +33,7 @@ class InstagramFragment : BindingFragment<FragmentInstagramBinding>(R.layout.fra
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
-                                findNavController().navigate(InstagramFragmentDirections.actionInstagramFragmentToMainFragment())
+                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToBoardFragment())
 
                                 instagramViewModel.requestInstagramFeedItem("520355146868539", "cd3590d3a75b81c5156a67034b1d6280", "authorization_code", "https://yang-droid.tistory.com/", accessToken)
                             } catch (e: Exception) {

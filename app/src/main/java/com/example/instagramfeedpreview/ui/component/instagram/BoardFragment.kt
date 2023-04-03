@@ -6,7 +6,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.instagramfeedpreview.R
 import com.example.instagramfeedpreview.databinding.FragmentBoardBinding
@@ -36,9 +35,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    instagramViewModel.getUserAccessToken()?.let {
-                        instagramViewModel.requestBoardItem(it)
-                    } ?: shortToast(requireContext(), "다시 스와이프해주세요.")
+                    instagramViewModel.getUserAccessToken()
                 }
                 isRefreshing = false
             }
@@ -75,6 +72,12 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                     }
                     is UiState.Empty -> Unit
                 }
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            instagramViewModel.accessToken.collectLatest { accessToken ->
+                instagramViewModel.requestBoardItem(accessToken)
             }
         }
     }

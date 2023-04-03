@@ -6,7 +6,6 @@ import com.example.instagramfeedpreview.domain.repository.InstagramRepository
 import com.example.instagramfeedpreview.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

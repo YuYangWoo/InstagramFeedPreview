@@ -1,6 +1,5 @@
 package com.example.instagramfeedpreview.domain.usecase
 
-import com.example.instagramfeedpreview.data.model.response.TokenDTO
 import com.example.instagramfeedpreview.domain.repository.UserRepository
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject

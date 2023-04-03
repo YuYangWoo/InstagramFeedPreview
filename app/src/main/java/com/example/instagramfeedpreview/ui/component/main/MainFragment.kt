@@ -1,5 +1,6 @@
 package com.example.instagramfeedpreview.ui.component.main
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.activityViewModels
@@ -25,6 +26,17 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         super.init()
         initClickListener()
         checkUserAuth()
+        initObserver()
+    }
+
+    private fun initObserver() {
+        lifecycleScope.launchWhenCreated {
+            instagramViewModel.accessToken.collect { accessToken ->
+                instagramViewModel.requestBoardItem(accessToken)
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToBoardFragment())
+                Log.d(TAG, "이거 다시 부르니? ${accessToken}")
+            }
+        }
     }
 
     private fun initClickListener() {
@@ -35,12 +47,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun checkUserAuth() {
         viewLifecycleOwner.lifecycleScope.launch {
-            instagramViewModel.getUserAccessToken()?.let {
-                instagramViewModel.requestBoardItem(it)
-                findNavController().navigate(
-                    MainFragmentDirections.actionMainFragmentToBoardFragment()
-                )
-            }
+            instagramViewModel.getUserAccessToken()
         }
     }
 

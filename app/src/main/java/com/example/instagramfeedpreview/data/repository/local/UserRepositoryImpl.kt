@@ -1,7 +1,6 @@
 package com.example.instagramfeedpreview.data.repository.local
 
 import com.example.instagramfeedpreview.core.database.UserDataStore
-import com.example.instagramfeedpreview.data.model.response.TokenDTO
 import com.example.instagramfeedpreview.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

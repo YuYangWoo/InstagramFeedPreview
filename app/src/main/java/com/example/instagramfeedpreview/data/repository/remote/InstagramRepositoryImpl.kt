@@ -1,10 +1,11 @@
-package com.example.instagramfeedpreview.data.repository.instagramRepository
+package com.example.instagramfeedpreview.data.repository.remote
 
 import com.example.instagramfeedpreview.data.api.GraphInstagramApiService
 import com.example.instagramfeedpreview.data.api.InstagramApiService
-import com.example.instagramfeedpreview.data.model.request.LoginDAO
+import com.example.instagramfeedpreview.data.model.request.LoginDTO
 import com.example.instagramfeedpreview.data.model.response.BoardDTO
 import com.example.instagramfeedpreview.data.model.response.TokenDTO
+import com.example.instagramfeedpreview.domain.repository.InstagramRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,8 +18,8 @@ class InstagramRepositoryImpl @Inject constructor(
     private val instagramApiService: InstagramApiService,
     private val graphInstagramApiService: GraphInstagramApiService
 ) : InstagramRepository {
-    override fun fetchToken(loginDAO: LoginDAO): Flow<TokenDTO> = flow {
-        emit(instagramApiService.getAccessToken(loginDAO.clientId, loginDAO.clientSecret, loginDAO.grantType, loginDAO.redirectUri, loginDAO.code))
+    override fun fetchToken(loginDTO: LoginDTO): Flow<TokenDTO> = flow {
+        emit(instagramApiService.getAccessToken(loginDTO.clientId, loginDTO.clientSecret, loginDTO.grantType, loginDTO.redirectUri, loginDTO.code))
     }.flowOn(Dispatchers.IO)
 
 
@@ -29,11 +30,4 @@ class InstagramRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-}
-interface InstagramRepository {
-    fun fetchToken(loginDAO: LoginDAO): Flow<TokenDTO>
-
-    fun fetchBoardInformation(
-        accessToken: String
-    ): Flow<BoardDTO>
 }

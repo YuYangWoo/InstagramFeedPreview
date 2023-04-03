@@ -6,7 +6,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.instagramfeedpreview.R
 import com.example.instagramfeedpreview.databinding.FragmentBoardBinding
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board){
     private val instagramViewModel by activityViewModels<InstagramViewModel>()
     private var backKeyPressedTime: Long = 0
-    private val args: BoardFragmentArgs by navArgs()
 
     @Inject
     lateinit var feedAdapter: FeedAdapter
@@ -36,7 +34,9 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initSwipeRefreshLayout() {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                instagramViewModel.requestInstagramFeedItem(args.loginDAO)
+                lifecycleScope.launchWhenCreated {
+                    instagramViewModel.getUserAccessToken()
+                }
                 isRefreshing = false
             }
         }
@@ -74,6 +74,12 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 }
             }
         }
+
+        lifecycleScope.launchWhenCreated {
+            instagramViewModel.accessToken.collectLatest { accessToken ->
+                instagramViewModel.requestBoardItem(accessToken)
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -96,5 +102,6 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     companion object {
         private const val LIMIT_TIME = 2000
+        private const val TAG = "BoardFragment"
     }
 }

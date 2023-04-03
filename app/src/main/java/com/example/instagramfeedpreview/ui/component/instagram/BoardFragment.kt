@@ -21,7 +21,6 @@ import javax.inject.Inject
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board){
     private val instagramViewModel by activityViewModels<InstagramViewModel>()
     private var backKeyPressedTime: Long = 0
-    private val args: BoardFragmentArgs by navArgs()
 
     @Inject
     lateinit var feedAdapter: FeedAdapter
@@ -36,7 +35,11 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initSwipeRefreshLayout() {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                instagramViewModel.requestAccessToken(args.loginDTO)
+                lifecycleScope.launchWhenCreated {
+                    instagramViewModel.getUserAccessToken()?.let {
+                        instagramViewModel.requestBoardItem(it)
+                    } ?: shortToast(requireContext(), "다시 스와이프해주세요.")
+                }
                 isRefreshing = false
             }
         }

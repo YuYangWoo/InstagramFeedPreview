@@ -42,7 +42,7 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                                 val loginDTO = LoginDTO("520355146868539", "cd3590d3a75b81c5156a67034b1d6280", "authorization_code", "https://yang-droid.tistory.com/", accessToken)
                                 Log.d(TAG, "accessToken is $accessToken")
                                 instagramViewModel.requestAccessToken(loginDTO)
-                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToBoardFragment(loginDTO))
+                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToBoardFragment())
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
                             }

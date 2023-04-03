@@ -6,7 +6,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.instagramfeedpreview.R
-import com.example.instagramfeedpreview.data.model.request.LoginDTO
 import com.example.instagramfeedpreview.databinding.FragmentMainBinding
 import com.example.instagramfeedpreview.ui.component.instagram.InstagramViewModel
 import com.example.library.binding.BindingFragment
@@ -39,9 +38,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             instagramViewModel.getUserAccessToken()?.let {
                 instagramViewModel.requestBoardItem(it)
                 findNavController().navigate(
-                    MainFragmentDirections.actionMainFragmentToBoardFragment(
-                        LoginDTO("", "", "", "", "")
-                    )
+                    MainFragmentDirections.actionMainFragmentToBoardFragment()
                 )
             }
         }

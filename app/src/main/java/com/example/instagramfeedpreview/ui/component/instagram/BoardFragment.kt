@@ -36,7 +36,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initSwipeRefreshLayout() {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                instagramViewModel.requestInstagramFeedItem(args.loginDAO)
+                instagramViewModel.requestAccessToken(args.loginDTO)
                 isRefreshing = false
             }
         }
@@ -96,5 +96,6 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     companion object {
         private const val LIMIT_TIME = 2000
+        private const val TAG = "BoardFragment"
     }
 }

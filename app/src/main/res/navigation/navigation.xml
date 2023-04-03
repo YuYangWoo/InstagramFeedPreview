@@ -10,6 +10,9 @@
         <action
             android:id="@+id/action_mainFragment_to_instagramFragment"
             app:destination="@id/instagramFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_boardFragment"
+            app:destination="@id/boardFragment" />
     </fragment>
     <fragment
         android:id="@+id/instagramFragment"
@@ -25,7 +28,7 @@
         android:name="com.example.instagramfeedpreview.ui.component.instagram.BoardFragment"
         android:label="BoardFragment" >
         <argument
-            android:name="loginDAO"
-            app:argType="com.example.instagramfeedpreview.data.model.request.LoginDAO" />
+            android:name="loginDTO"
+            app:argType="com.example.instagramfeedpreview.data.model.request.LoginDTO" />
     </fragment>
 </navigation>

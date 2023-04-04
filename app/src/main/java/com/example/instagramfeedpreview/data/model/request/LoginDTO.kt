@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class LoginDAO(
+data class LoginDTO(
     val clientId: String,
     val clientSecret: String,
     val grantType: String,

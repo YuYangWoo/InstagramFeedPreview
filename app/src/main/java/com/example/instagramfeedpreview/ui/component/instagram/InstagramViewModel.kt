@@ -1,34 +1,77 @@
 package com.example.instagramfeedpreview.ui.component.instagram
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.instagramfeedpreview.data.model.request.LoginDAO
+import com.example.instagramfeedpreview.data.model.request.LoginDTO
 import com.example.instagramfeedpreview.data.model.response.BoardDTO
-import com.example.instagramfeedpreview.domain.usecase.InstagramBoardFetchUseCase
+import com.example.instagramfeedpreview.data.model.response.TokenDTO
+import com.example.instagramfeedpreview.domain.usecase.FetchInstagramBoardUseCase
+import com.example.instagramfeedpreview.domain.usecase.FetchInstagramTokenUseCase
+import com.example.instagramfeedpreview.domain.usecase.HandleUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InstagramViewModel @Inject constructor(private val instagramBoardFetchUseCase: InstagramBoardFetchUseCase) : ViewModel() {
+class InstagramViewModel @Inject constructor(
+    private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
+    private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
+    private val handleUserInformationUseCase: HandleUserInformationUseCase
+) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
     val uiState: StateFlow<UiState> = _uiState
 
     private val _boardDTO = MutableSharedFlow<BoardDTO>()
     val boardDTO: SharedFlow<BoardDTO> = _boardDTO
 
-    fun requestInstagramFeedItem(
-        loginDAO: LoginDAO
+    private val _tokenDTO = MutableSharedFlow<TokenDTO>()
+    val tokenDTO: SharedFlow<TokenDTO> = _tokenDTO
+
+    private val _accessToken = MutableStateFlow("")
+    val accessToken: StateFlow<String> = _accessToken
+
+    fun requestAccessToken(
+        loginDTO: LoginDTO
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
         try {
-            instagramBoardFetchUseCase.invoke(loginDAO)?.let { boardDTO ->
-                _boardDTO.emit(boardDTO)
+            fetchInstagramTokenUseCase.invoke(loginDTO)?.let { tokenDTO ->
                 _uiState.value = UiState.Success
-            } ?: Log.e(TAG, "문제 발생")
+                _tokenDTO.emit(tokenDTO)
+            }
+        } catch (e: Exception) {
+            _uiState.value = UiState.Error(e)
+        }
+    }
+
+    fun requestBoardItem(
+        accessToken: String
+    ) = viewModelScope.launch {
+        _uiState.value = UiState.Loading
+
+        try {
+            fetchInstagramBoardUseCase.invoke(accessToken)?.let { boardDTO ->
+                _uiState.value = UiState.Success
+                _boardDTO.emit(boardDTO)
+            }
+        } catch (e: Exception) {
+            _uiState.value = UiState.Error(e)
+        }
+    }
+
+    fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
+        handleUserInformationUseCase.save(accessToken)
+    }
+
+    fun getUserAccessToken() = viewModelScope.launch {
+        _uiState.value = UiState.Loading
+        try {
+            handleUserInformationUseCase.get()?.let { accessToken ->
+                _uiState.value = UiState.Success
+                _accessToken.emit(accessToken)
+            }
         } catch (e: Exception) {
             _uiState.value = UiState.Error(e)
         }

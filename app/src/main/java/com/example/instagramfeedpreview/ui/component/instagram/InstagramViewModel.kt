@@ -28,8 +28,8 @@ class InstagramViewModel @Inject constructor(
     private val _tokenDTO = MutableSharedFlow<TokenDTO>()
     val tokenDTO: SharedFlow<TokenDTO> = _tokenDTO
 
-    private val _accessToken = MutableSharedFlow<String>()
-    val accessToken: SharedFlow<String> = _accessToken
+    private val _accessToken = MutableStateFlow("")
+    val accessToken: StateFlow<String> = _accessToken
 
     fun requestAccessToken(
         loginDTO: LoginDTO

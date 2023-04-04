@@ -11,6 +11,7 @@ import com.example.instagramfeedpreview.databinding.FragmentMainBinding
 import com.example.instagramfeedpreview.ui.component.instagram.InstagramViewModel
 import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,10 +32,11 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun initObserver() {
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.accessToken.collect { accessToken ->
-                instagramViewModel.requestBoardItem(accessToken)
-                findNavController().navigate(MainFragmentDirections.actionMainFragmentToBoardFragment())
-                Log.d(TAG, "이거 다시 부르니? ${accessToken}")
+            instagramViewModel.accessToken.collectLatest { accessToken ->
+                if (accessToken.isNotBlank()) {
+                    instagramViewModel.requestBoardItem(accessToken)
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToBoardFragment())
+                }
             }
         }
     }

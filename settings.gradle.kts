@@ -6,12 +6,12 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+//    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io'}
+        maven { url = uri("https://jitpack.io") }
     }
 }
 rootProject.name = "InstagramFeedPreview"
-include ':app'
+include (":app")

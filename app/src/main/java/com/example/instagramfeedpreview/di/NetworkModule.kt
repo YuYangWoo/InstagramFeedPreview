@@ -6,8 +6,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -19,16 +17,12 @@ class NetworkModule {
         private const val graphInstagramBaseUrl = "https://graph.instagram.com"
     }
 
-    val clientBuilder = OkHttpClient.Builder()
-    val loggingInterceptor = HttpLoggingInterceptor()
     @Provides
     fun provideApiService(): InstagramApiService =
         Retrofit.Builder().baseUrl(instagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(InstagramApiService::class.java)
 
     @Provides
     fun provideGraphApiService(): GraphInstagramApiService {
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        clientBuilder.addInterceptor(loggingInterceptor)
-        return Retrofit.Builder().baseUrl(graphInstagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).client(clientBuilder.build()).build().create(GraphInstagramApiService::class.java)
+        return Retrofit.Builder().baseUrl(graphInstagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(GraphInstagramApiService::class.java)
     }
 }

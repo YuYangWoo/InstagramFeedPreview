@@ -141,6 +141,7 @@ android-material = {group = "com.google.android.material", name = "material", ve
 androidx-constraintLayout = {group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout"}
 androidx-navigation-fragment = {group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidxNavigation"}
 androidx-navigation-ktx = {group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidxNavigation"}
+androidx-navigation = {group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "androidxNavigation"}
 android-junit = {group = "androidx.test.ext", name = "junit", version.ref = "junit"}
 yyw-android-library = {group = "com.github.YuYangWoo", name = "AndroidLibrary", version.ref = "yuyangwooAndroidLibrary"}
 glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}

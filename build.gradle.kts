@@ -1,17 +1,16 @@
 buildscript {
-    val kotlin_version by extra("1.8.20")
     repositories {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.4.2")
-        classpath ("androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath(libs.android.gradlePlugin)
+        classpath(libs.androidx.navigation)
+        classpath(libs.kotlin.gradlePlugin)
     }
 }
-
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.jvm) apply false

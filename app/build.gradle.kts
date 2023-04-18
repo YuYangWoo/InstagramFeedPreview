@@ -60,16 +60,13 @@ dependencies {
     implementation(libs.glide)
 
     // Coroutine
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.test)
+    implementation(libs.bundles.coroutine)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewModel.ktx)
 
     // Retrofit
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.gson)
+    implementation(libs.bundles.retrofit)
 
     // Room
     implementation(libs.room.runtime)

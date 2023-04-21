@@ -11,7 +11,7 @@ android {
     compileSdk = 33
     defaultConfig {
         applicationId = "com.example.instagramfeedpreview"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -66,7 +66,6 @@ dependencies {
 
     // Retrofit
     implementation(libs.bundles.retrofit)
-
     // Room
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
@@ -81,4 +80,5 @@ dependencies {
 
     // DataStore
     implementation(libs.androidx.dataStore.preferences)
+    implementation(project(":core:datastore"))
 }

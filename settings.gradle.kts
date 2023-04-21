@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "InstagramFeedPreview"
 include (":app")
+include(":core:datastore")

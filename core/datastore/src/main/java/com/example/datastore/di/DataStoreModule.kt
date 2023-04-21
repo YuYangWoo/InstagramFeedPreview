@@ -1,4 +1,4 @@
-package com.example.instagramfeedpreview.di
+package com.example.datastore.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore

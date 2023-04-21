@@ -1,4 +1,4 @@
-package com.example.instagramfeedpreview.core.database
+package com.example.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

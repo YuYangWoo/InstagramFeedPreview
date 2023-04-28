@@ -5,6 +5,7 @@ plugins {
     id ("androidx.navigation.safeargs.kotlin")
     id ("com.google.dagger.hilt.android")
     id ("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -69,8 +70,7 @@ dependencies {
     // Room
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
-    kapt(libs.room.compiler)
-
+    ksp(libs.room.compiler)
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

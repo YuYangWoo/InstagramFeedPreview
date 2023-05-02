@@ -16,3 +16,9 @@ dependencyResolutionManagement {
 rootProject.name = "InstagramFeedPreview"
 include (":app")
 include(":core:datastore")
+include(":data")
+include(":core:network")
+include(":data:repository_impl")
+include(":domain")
+include(":domain:usecase")
+include(":domain:repository")

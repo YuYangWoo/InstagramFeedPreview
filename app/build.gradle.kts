@@ -81,4 +81,6 @@ dependencies {
     // DataStore
     implementation(libs.androidx.dataStore.preferences)
     implementation(project(":core:datastore"))
+    implementation(project(":core:network"))
+    implementation(project(":domain:usecase"))
 }

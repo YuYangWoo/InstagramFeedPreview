@@ -5,7 +5,7 @@
     <data>
         <variable
             name="boardInformation"
-            type="com.example.instagramfeedpreview.data.model.response.BoardInformation" />
+            type="com.example.network.model.response.BoardInformation" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

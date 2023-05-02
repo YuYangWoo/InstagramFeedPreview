@@ -2,12 +2,9 @@ package com.example.instagramfeedpreview.ui.component.instagram
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.instagramfeedpreview.data.model.request.LoginDTO
-import com.example.instagramfeedpreview.data.model.response.BoardDTO
-import com.example.instagramfeedpreview.data.model.response.TokenDTO
-import com.example.instagramfeedpreview.domain.usecase.FetchInstagramBoardUseCase
-import com.example.instagramfeedpreview.domain.usecase.FetchInstagramTokenUseCase
-import com.example.instagramfeedpreview.domain.usecase.HandleUserInformationUseCase
+import com.example.usecase.FetchInstagramBoardUseCase
+import com.example.usecase.FetchInstagramTokenUseCase
+import com.example.usecase.HandleUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,24 +12,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InstagramViewModel @Inject constructor(
-    private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
-    private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val handleUserInformationUseCase: HandleUserInformationUseCase
+    private val fetchInstagramBoardUseCase: com.example.usecase.FetchInstagramBoardUseCase,
+    private val fetchInstagramTokenUseCase: com.example.usecase.FetchInstagramTokenUseCase,
+    private val handleUserInformationUseCase: com.example.usecase.HandleUserInformationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
     val uiState: StateFlow<UiState> = _uiState
 
-    private val _boardDTO = MutableSharedFlow<BoardDTO>()
-    val boardDTO: SharedFlow<BoardDTO> = _boardDTO
+    private val _boardDTO = MutableSharedFlow<com.example.network.model.response.BoardDTO>()
+    val boardDTO: SharedFlow<com.example.network.model.response.BoardDTO> = _boardDTO
 
-    private val _tokenDTO = MutableSharedFlow<TokenDTO>()
-    val tokenDTO: SharedFlow<TokenDTO> = _tokenDTO
+    private val _tokenDTO = MutableSharedFlow<com.example.network.model.response.TokenDTO>()
+    val tokenDTO: SharedFlow<com.example.network.model.response.TokenDTO> = _tokenDTO
 
     private val _accessToken = MutableStateFlow("")
     val accessToken: StateFlow<String> = _accessToken
 
     fun requestAccessToken(
-        loginDTO: LoginDTO
+        loginDTO: com.example.network.model.request.LoginDTO
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 

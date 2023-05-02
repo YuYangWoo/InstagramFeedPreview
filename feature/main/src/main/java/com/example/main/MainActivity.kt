@@ -1,8 +1,7 @@
-package com.example.instagramfeedpreview.ui.component
+package com.example.main
 
-import com.example.instagramfeedpreview.R
-import com.example.instagramfeedpreview.databinding.ActivityMainBinding
 import com.example.library.navigation.NavigationActivity
+import com.example.main.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

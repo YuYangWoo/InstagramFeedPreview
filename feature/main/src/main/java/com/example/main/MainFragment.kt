@@ -1,25 +1,16 @@
-package com.example.instagramfeedpreview.ui.component.main
+package com.example.main
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.instagramfeedpreview.R
-import com.example.instagramfeedpreview.databinding.FragmentMainBinding
-import com.example.instagramfeedpreview.ui.component.instagram.InstagramViewModel
 import com.example.library.binding.BindingFragment
+import com.example.main.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
-
-    @Inject
-    lateinit var dataStore: DataStore<Preferences>
-
     private val instagramViewModel: InstagramViewModel by activityViewModels()
 
     override fun init() {

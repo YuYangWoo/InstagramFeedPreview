@@ -85,4 +85,5 @@ dependencies {
     implementation(project(":domain:usecase"))
     implementation(project(":data:repository"))
     implementation(project(":domain:repository"))
+    implementation(project(":feature:main"))
 }

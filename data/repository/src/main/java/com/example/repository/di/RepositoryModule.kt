@@ -1,4 +1,4 @@
-package com.example.usecase.di
+package com.example.repository.di
 
 import com.example.repository.local.UserRepositoryImpl
 import com.example.repository.remote.InstagramRepositoryImpl

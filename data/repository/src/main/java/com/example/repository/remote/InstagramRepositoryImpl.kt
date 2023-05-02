@@ -1,6 +1,7 @@
 package com.example.repository.remote
 
 import com.example.network.model.request.LoginDTO
+import com.example.network.model.response.BoardDTO
 import com.example.network.model.response.TokenDTO
 import com.example.network.service.GraphInstagramApiService
 import com.example.network.service.InstagramApiService
@@ -24,7 +25,7 @@ class InstagramRepositoryImpl @Inject constructor(
 
     override fun fetchBoardInformation(
         accessToken: String
-    ): Flow<com.example.network.model.response.BoardDTO> = flow {
+    ): Flow<BoardDTO> = flow {
         emit(graphInstagramApiService.getBoardInformation(accessToken))
     }.flowOn(Dispatchers.IO)
 

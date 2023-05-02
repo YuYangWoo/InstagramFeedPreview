@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.instagramfeedpreview.R
 import com.example.instagramfeedpreview.databinding.FragmentInstagramBinding
 import com.example.library.binding.BindingFragment
+import com.example.network.model.request.LoginDTO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import java.net.URLDecoder
@@ -38,7 +39,7 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
-                                val loginDTO = com.example.network.model.request.LoginDTO(
+                                val loginDTO = LoginDTO(
                                     "520355146868539",
                                     "cd3590d3a75b81c5156a67034b1d6280",
                                     "authorization_code",

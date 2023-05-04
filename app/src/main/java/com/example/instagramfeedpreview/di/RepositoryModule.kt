@@ -1,9 +1,9 @@
 package com.example.instagramfeedpreview.di
 
-import com.example.instagramfeedpreview.data.repository.remote.InstagramRepositoryImpl
-import com.example.instagramfeedpreview.data.repository.local.UserRepositoryImpl
-import com.example.instagramfeedpreview.domain.repository.InstagramRepository
-import com.example.instagramfeedpreview.domain.repository.UserRepository
+import com.example.repository.InstagramRepository
+import com.example.repository.UserRepository
+import com.example.repository.local.UserRepositoryImpl
+import com.example.repository.remote.InstagramRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

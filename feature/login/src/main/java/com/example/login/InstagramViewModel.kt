@@ -65,18 +65,6 @@ class InstagramViewModel @Inject constructor(
         handleUserInformationUseCase.save(accessToken)
     }
 
-    fun getUserAccessToken() = viewModelScope.launch {
-        _uiState.value = UiState.Loading
-        try {
-            handleUserInformationUseCase.get()?.let { accessToken ->
-                _uiState.value = UiState.Success
-                _accessToken.emit(accessToken)
-            }
-        } catch (e: Exception) {
-            _uiState.value = UiState.Error(e)
-        }
-    }
-
     companion object {
         private const val TAG = "InstagramViewModel"
     }

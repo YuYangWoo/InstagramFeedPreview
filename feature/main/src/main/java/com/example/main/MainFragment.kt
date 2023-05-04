@@ -3,8 +3,8 @@ package com.example.main
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.board.BoardViewModel
 import com.example.library.binding.BindingFragment
-import com.example.login.InstagramViewModel
 import com.example.main.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
-    private val instagramViewModel: InstagramViewModel by activityViewModels()
+    private val boardViewModel: BoardViewModel by activityViewModels()
 
     override fun init() {
         super.init()
@@ -23,10 +23,10 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun initObserver() {
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.accessToken.collectLatest { accessToken ->
+            boardViewModel.accessToken.collectLatest { accessToken ->
                 if (accessToken.isNotBlank()) {
-                    instagramViewModel.requestBoardItem(accessToken)
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureLoginNavigation())
+                    boardViewModel.requestBoardItem(accessToken)
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureBoardNavigation())
                 }
             }
         }
@@ -40,7 +40,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun checkUserAuth() {
         viewLifecycleOwner.lifecycleScope.launch {
-            instagramViewModel.getUserAccessToken()
+            boardViewModel.getUserAccessToken()
         }
     }
 

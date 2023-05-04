@@ -2,8 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/feature_main_navigation"
-    app:startDestination="@id/feature_main_navigation">
+    app:startDestination="@id/mainFragment">
     <include app:graph="@navigation/feature_login_navigation"/>
+    <include app:graph="@navigation/feature_board_navigation"/>
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.main.MainFragment"
@@ -11,5 +12,9 @@
         <action
             android:id="@+id/action_mainFragment_to_feature_login_navigation"
             app:destination="@id/feature_login_navigation" />
+        <action
+            android:id="@+id/action_mainFragment_to_feature_board_navigation"
+            app:destination="@id/feature_board_navigation" />
+
     </fragment>
 </navigation>

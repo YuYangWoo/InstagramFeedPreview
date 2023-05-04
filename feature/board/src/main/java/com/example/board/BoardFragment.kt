@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board){
-    private val instagramViewModel by activityViewModels<InstagramViewModel>()
+    private val boardViewModel: BoardViewModel by activityViewModels()
     private var backKeyPressedTime: Long = 0
 
     @Inject
@@ -32,7 +32,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    instagramViewModel.getUserAccessToken()
+                    boardViewModel.getUserAccessToken()
                 }
                 isRefreshing = false
             }
@@ -49,32 +49,32 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     private fun initObserver() {
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.boardDTO.collectLatest { boardDTO ->
+            boardViewModel.boardDTO.collectLatest { boardDTO ->
                 feedAdapter.submitList(boardDTO.data)
             }
         }
 
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.uiState.collectLatest {
+            boardViewModel.uiState.collectLatest {
                 when (it) {
-                    is UiState.Success -> {
+                    is UIState.Success -> {
                         binding.progressBar.visibility = View.GONE
                     }
-                    is UiState.Loading -> {
+                    is UIState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                     }
-                    is UiState.Error -> {
+                    is UIState.Error -> {
                         binding.progressBar.visibility = View.GONE
                         Log.d(TAG, it.e.message.toString())
                     }
-                    is UiState.Empty -> Unit
+                    is UIState.Empty -> Unit
                 }
             }
         }
 
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.accessToken.collectLatest { accessToken ->
-                instagramViewModel.requestBoardItem(accessToken)
+            boardViewModel.accessToken.collectLatest { accessToken ->
+                boardViewModel.requestBoardItem(accessToken)
             }
         }
     }

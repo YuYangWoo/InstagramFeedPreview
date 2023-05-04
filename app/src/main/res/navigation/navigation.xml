@@ -2,30 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation"
-    app:startDestination="@id/mainFragment">
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.example.main.MainFragment"
-        android:label="MainFragment" >
-        <action
-            android:id="@+id/action_mainFragment_to_instagramFragment"
-            app:destination="@id/instagramFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_boardFragment"
-            app:destination="@id/boardFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/instagramFragment"
-        android:name="com.example.instagramfeedpreview.ui.component.instagram.InstagramWebViewFragment"
-        android:label="InstagramFragment" >
-        <action
-            android:id="@+id/action_instagramFragment_to_boardFragment"
-            app:destination="@id/boardFragment" />
+    app:startDestination="@id/navigation">
 
-    </fragment>
-    <fragment
-        android:id="@+id/boardFragment"
-        android:name="com.example.instagramfeedpreview.ui.component.instagram.BoardFragment"
-        android:label="BoardFragment" >
-    </fragment>
+    <include app:graph="@navigation/feature_main_navigation"/>
+    <include app:graph="@navigation/feature_login_navigation"/>
 </navigation>

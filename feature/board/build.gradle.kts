@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.main"
+    namespace = "com.example.board"
     compileSdk = 33
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -32,11 +32,9 @@ dependencies {
     androidTestImplementation (libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     implementation(libs.yyw.android.library)
-
+    implementation(libs.glide)
+    implementation(libs.swipeRefreshLayout)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(project(":core:network"))
-    implementation(project(":domain:usecase"))
-    implementation(project(":feature:login"))
-    implementation(project(":feature:board"))
 }

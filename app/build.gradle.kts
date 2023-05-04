@@ -86,4 +86,5 @@ dependencies {
     implementation(project(":data:repository"))
     implementation(project(":domain:repository"))
     implementation(project(":feature:main"))
+    implementation(project(":feature:login"))
 }

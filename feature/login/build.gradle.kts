@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.main"
+    namespace = "com.example.login"
     compileSdk = 33
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -15,6 +15,7 @@ android {
             jvmTarget = "1.8"
         }
     }
+
     buildFeatures {
         viewBinding = true
         dataBinding = true
@@ -33,10 +34,11 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
     implementation(libs.yyw.android.library)
 
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(project(":core:network"))
     implementation(project(":domain:usecase"))
-    implementation(project(":feature:login"))
+
     implementation(project(":feature:board"))
 }

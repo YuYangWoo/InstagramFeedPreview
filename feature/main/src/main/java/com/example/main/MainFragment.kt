@@ -4,6 +4,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.library.binding.BindingFragment
+import com.example.login.InstagramViewModel
 import com.example.main.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -25,7 +26,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
             instagramViewModel.accessToken.collectLatest { accessToken ->
                 if (accessToken.isNotBlank()) {
                     instagramViewModel.requestBoardItem(accessToken)
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToBoardFragment())
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureLoginNavigation())
                 }
             }
         }
@@ -33,7 +34,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun initClickListener() {
         binding.loginButton.setOnClickListener {
-            findNavController().navigate(MainFragmentDirections.actionMainFragmentToInstagramFragment())
+            findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureLoginNavigation())
         }
     }
 

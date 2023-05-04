@@ -43,43 +43,10 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.android.material)
-    implementation(libs.androidx.constraintLayout)
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ktx)
-    testImplementation(libs.junit4)
-    androidTestImplementation (libs.android.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-
-    // NavigationActivity & BaseView
-    implementation(libs.yyw.android.library)
-
-    // Glide
-    implementation(libs.glide)
-
-    // Coroutine
-    implementation(libs.bundles.coroutine)
-
-    // ViewModel
-    implementation(libs.androidx.lifecycle.viewModel.ktx)
-
-    // Retrofit
-    implementation(libs.bundles.retrofit)
-    // Room
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-    ksp(libs.room.compiler)
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    // SwipeRefreshLayout
-    implementation(libs.swipeRefreshLayout)
-
-    // DataStore
-    implementation(libs.androidx.dataStore.preferences)
     implementation(project(":core:datastore"))
     implementation(project(":core:network"))
     implementation(project(":domain:usecase"))

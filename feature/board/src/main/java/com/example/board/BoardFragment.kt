@@ -50,7 +50,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initObserver() {
         lifecycleScope.launchWhenCreated {
             boardViewModel.boardDTO.collectLatest { boardDTO ->
-                feedAdapter.submitList(boardDTO.data)
+                feedAdapter.submitList(boardDTO.boardInformations)
             }
         }
 

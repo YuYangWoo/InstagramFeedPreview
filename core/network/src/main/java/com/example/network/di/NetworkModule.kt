@@ -1,7 +1,7 @@
 package com.example.network.di
 
 import com.example.network.service.GraphInstagramApiService
-import com.example.network.service.InstagramApiService
+import com.example.network.service.InstagramLoginDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,9 +18,9 @@ class NetworkModule {
     }
 
     @Provides
-    fun provideApiService(): InstagramApiService =
+    fun provideApiService(): InstagramLoginDataSourceImpl =
         Retrofit.Builder().baseUrl(instagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(
-            InstagramApiService::class.java)
+            InstagramLoginDataSourceImpl::class.java)
 
     @Provides
     fun provideGraphApiService(): GraphInstagramApiService {

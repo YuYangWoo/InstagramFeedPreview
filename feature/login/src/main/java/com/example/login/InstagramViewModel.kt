@@ -2,9 +2,9 @@ package com.example.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.network.model.request.LoginDTO
-import com.example.network.model.response.BoardDTO
-import com.example.network.model.response.TokenDTO
+import com.example.model.Board
+import com.example.model.Login
+import com.example.model.Token
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.HandleUserInformationUseCase
@@ -22,24 +22,24 @@ class InstagramViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
     val uiState: StateFlow<UiState> = _uiState
 
-    private val _boardDTO = MutableSharedFlow<BoardDTO>()
-    val boardDTO: SharedFlow<BoardDTO> = _boardDTO
+    private val _boardDTO = MutableSharedFlow<Board>()
+    val boardDTO: SharedFlow<Board> = _boardDTO
 
-    private val _tokenDTO = MutableSharedFlow<TokenDTO>()
-    val tokenDTO: SharedFlow<TokenDTO> = _tokenDTO
+    private val _token = MutableSharedFlow<Token>()
+    val token: SharedFlow<Token> = _token
 
     private val _accessToken = MutableStateFlow("")
     val accessToken: StateFlow<String> = _accessToken
 
     fun requestAccessToken(
-        loginDTO: LoginDTO
+        login: Login
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
         try {
-            fetchInstagramTokenUseCase.invoke(loginDTO)?.let { tokenDTO ->
+            fetchInstagramTokenUseCase.invoke(login)?.let { token ->
                 _uiState.value = UiState.Success
-                _tokenDTO.emit(tokenDTO)
+                _token.emit(token)
             }
         } catch (e: Exception) {
             _uiState.value = UiState.Error(e)

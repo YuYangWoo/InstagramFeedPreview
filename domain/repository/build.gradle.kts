@@ -16,8 +16,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:network"))
     implementation(libs.bundles.coroutine)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(project(":domain:model"))
 }

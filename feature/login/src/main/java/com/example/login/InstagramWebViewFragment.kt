@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.library.binding.BindingFragment
 import com.example.login.databinding.FragmentInstagramBinding
-import com.example.network.model.request.LoginDTO
+import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import java.net.URLDecoder
@@ -31,7 +31,7 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
-                                val loginDTO = LoginDTO(
+                                val loginDTO = Login(
                                     "520355146868539",
                                     "cd3590d3a75b81c5156a67034b1d6280",
                                     "authorization_code",
@@ -57,9 +57,9 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
 
     private fun initObserver() {
         lifecycleScope.launchWhenCreated {
-            instagramViewModel.tokenDTO.collectLatest { tokenDTO ->
+            instagramViewModel.token.collectLatest { tokenDTO ->
                 instagramViewModel.saveUserAccessToken(tokenDTO.accessToken)
-                instagramViewModel.requestBoardItem(tokenDTO.accessToken)
+//                instagramViewModel.requestBoardItem(tokenDTO.accessToken)
             }
         }
     }

@@ -19,4 +19,9 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.bundles.retrofit)
+    testImplementation(libs.junit4)
+    androidTestImplementation(libs.android.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    implementation(project(":data:dto"))
+    implementation(project(":data:datasource"))
 }

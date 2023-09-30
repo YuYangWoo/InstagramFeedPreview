@@ -18,19 +18,19 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
         super.init()
         initClickListener()
         checkUserAuth()
-        initObserver()
+//        initObserver()
     }
 
-    private fun initObserver() {
-        lifecycleScope.launchWhenCreated {
-            boardViewModel.accessToken.collectLatest { accessToken ->
-                if (accessToken.isNotBlank()) {
-                    boardViewModel.requestBoardItem(accessToken)
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureBoardNavigation())
-                }
-            }
-        }
-    }
+//    private fun initObserver() {
+//        lifecycleScope.launchWhenCreated {
+//            boardViewModel.accessToken.collectLatest { accessToken ->
+//                if (accessToken.isNotBlank()) {
+//                    boardViewModel.requestBoardItem(accessToken)
+//                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureBoardNavigation())
+//                }
+//            }
+//        }
+//    }
 
     private fun initClickListener() {
         binding.loginButton.setOnClickListener {

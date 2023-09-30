@@ -18,7 +18,6 @@ android {
 dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-    implementation(project(":core:network"))
     implementation(project(":domain:repository"))
-    implementation(project(":data:repository"))
+    implementation(project(":domain:model"))
 }

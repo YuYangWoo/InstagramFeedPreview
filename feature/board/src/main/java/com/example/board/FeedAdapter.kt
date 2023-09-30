@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.board.databinding.HolderFeedItemBinding
-import com.example.network.model.response.BoardInformation
+import com.example.model.BoardInformation
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 

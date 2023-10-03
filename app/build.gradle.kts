@@ -45,6 +45,8 @@ android {
 dependencies {
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ktx)
     kapt(libs.hilt.compiler)
 
     implementation(project(":core:datastore"))
@@ -54,4 +56,5 @@ dependencies {
     implementation(project(":domain:repository"))
     implementation(project(":feature:main"))
     implementation(project(":feature:login"))
+    implementation(project(":feature:board"))
 }

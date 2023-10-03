@@ -1,7 +1,9 @@
 package com.example.main
 
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.example.board.BoardViewModel
 import com.example.library.binding.BindingFragment
@@ -17,7 +19,7 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
     override fun init() {
         super.init()
         initClickListener()
-        checkUserAuth()
+//        checkUserAuth()
 //        initObserver()
     }
 
@@ -34,15 +36,18 @@ class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main
 
     private fun initClickListener() {
         binding.loginButton.setOnClickListener {
-            findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureLoginNavigation())
+            val request = NavDeepLinkRequest.Builder
+                .fromUri("android-app://example.app/loginFragment".toUri())
+                .build()
+            findNavController().navigate(request)
         }
     }
 
-    private fun checkUserAuth() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            boardViewModel.getUserAccessToken()
-        }
-    }
+//    private fun checkUserAuth() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            boardViewModel.getUserAccessToken()
+//        }
+//    }
 
     companion object {
         private const val TAG = "MainFragment"

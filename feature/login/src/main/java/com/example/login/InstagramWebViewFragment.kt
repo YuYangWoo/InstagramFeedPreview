@@ -4,14 +4,17 @@ import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.library.binding.BindingFragment
 import com.example.login.databinding.FragmentInstagramBinding
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.net.URLDecoder
 
 @AndroidEntryPoint
@@ -31,7 +34,7 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
-                                val loginDTO = Login(
+                                val login = Login(
                                     "520355146868539",
                                     "cd3590d3a75b81c5156a67034b1d6280",
                                     "authorization_code",
@@ -56,10 +59,26 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
     }
 
     private fun initObserver() {
-        lifecycleScope.launchWhenCreated {
-            instagramViewModel.token.collectLatest { tokenDTO ->
-                instagramViewModel.saveUserAccessToken(tokenDTO.accessToken)
-//                instagramViewModel.requestBoardItem(tokenDTO.accessToken)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                instagramViewModel.uiState.collectLatest { state ->
+                    when (state) {
+                        is UiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is UiState.Success -> {
+                            binding.progressBar.isVisible = false
+                            Log.d(TAG, state.data.toString())
+                        }
+                        is UiState.Error -> {
+                            binding.progressBar.isVisible = false
+                            Log.d(TAG, state.message)
+                        }
+                        is UiState.Empty -> {
+
+                        }
+                    }
+                }
             }
         }
     }

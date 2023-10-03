@@ -42,8 +42,8 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                instagramViewModel.requestAccessToken(loginDTO)
-                                findNavController().navigate(InstagramWebViewFragmentDirections.actionInstagramFragmentToFeatureBoardNavigation())
+                                instagramViewModel.requestAccessToken(login)
+                                return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
                             }

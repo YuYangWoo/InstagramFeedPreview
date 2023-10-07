@@ -39,5 +39,4 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(project(":domain:usecase"))
     implementation(project(":domain:model"))
-//    implementation(project(":feature:board"))
 }

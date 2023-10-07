@@ -9,15 +9,20 @@
         android:id="@+id/mainFragment"
         android:name="com.example.main.MainFragment"
         android:label="MainFragment"
-        tools:layout="@layout/fragment_main">
-    </fragment>
+        tools:layout="@layout/fragment_main"></fragment>
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.login.InstagramWebViewFragment"
         android:label="InstagramWebViewFragment">
 
-    <deepLink
-        app:uri="app://example.app/loginFragment"/>
+        <deepLink app:uri="app://example.app/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/boardFragment"
+        android:name="com.example.board.BoardFragment"
+        android:label="게시판">
+        <deepLink app:uri="app://example.app/boardFragment" />
     </fragment>
 </navigation>

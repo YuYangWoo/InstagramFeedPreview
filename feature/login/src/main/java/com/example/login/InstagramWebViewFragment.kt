@@ -4,11 +4,14 @@ import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import com.example.library.binding.BindingFragment
 import com.example.login.databinding.FragmentInstagramBinding
 import com.example.model.Login
@@ -68,6 +71,10 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                         }
                         is UiState.Success -> {
                             binding.progressBar.isVisible = false
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("app://example.app/boardFragment".toUri())
+                                .build()
+                            findNavController().navigate(request)
                             Log.d(TAG, state.data.toString())
                         }
                         is UiState.Error -> {

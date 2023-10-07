@@ -27,7 +27,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     override fun init() {
         super.init()
         initRecyclerView()
-        boardViewModel.requestBoardItem()
+        requestBoardItems()
         initObserver()
         initSwipeRefreshLayout()
     }
@@ -36,11 +36,15 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    boardViewModel.requestBoardItem()
+                    requestBoardItems()
                 }
                 isRefreshing = false
             }
         }
+    }
+
+    private fun requestBoardItems() {
+        boardViewModel.requestBoardItem()
     }
 
     private fun initRecyclerView() {

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Login
 import com.example.model.Token
-import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,21 +13,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InstagramViewModel @Inject constructor(
-    private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Empty)
     val uiState: StateFlow<UiState<Token>> = _uiState.asStateFlow()
-
-//    private val _boardDTO = MutableSharedFlow<Board>()
-//    val boardDTO: SharedFlow<Board> = _boardDTO
-//
-//    private val _token = MutableStateFlow<Token>(null)
-//    val token: SharedFlow<Token> = _token
-//
-//    private val _accessToken = MutableStateFlow("")
-//    val accessToken: StateFlow<String> = _accessToken
 
     fun requestAccessToken(
         login: Login
@@ -46,21 +35,6 @@ class InstagramViewModel @Inject constructor(
                 } ?: UiState.Error("token is Null!!")
             }
     }
-
-//    fun requestBoardItem(
-//        accessToken: String
-//    ) = viewModelScope.launch {
-//        _uiState.value = UiState.Loading
-//
-//        try {
-//            fetchInstagramBoardUseCase.invoke(accessToken)?.let { boardDTO ->
-//                _uiState.value = UiState.Success
-//                _boardDTO.emit(boardDTO)
-//            }
-//        } catch (e: Exception) {
-//            _uiState.value = UiState.Error(e)
-//        }
-//    }
 
     private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
         manageUserInformationUseCase.save(accessToken)

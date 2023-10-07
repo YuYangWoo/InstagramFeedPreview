@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/feature_main_navigation"
     app:startDestination="@id/mainFragment">
 
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.main.MainFragment"
-        android:label="MainFragment"/>
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+    </fragment>
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.login.InstagramWebViewFragment"
-        android:label="InstagraWebViewFragment">
+        android:label="InstagramWebViewFragment">
 
-        <deepLink
-            app:uri="android-app://example.app/loginFragment"/>
+    <deepLink
+        app:uri="app://example.app/loginFragment"/>
     </fragment>
 </navigation>

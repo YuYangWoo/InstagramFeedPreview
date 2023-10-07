@@ -4,7 +4,6 @@
     android:id="@+id/feature_board_navigation"
     app:startDestination="@id/boardFragment">
 
-
     <fragment
         android:id="@+id/boardFragment"
         android:name="com.example.board.BoardFragment"

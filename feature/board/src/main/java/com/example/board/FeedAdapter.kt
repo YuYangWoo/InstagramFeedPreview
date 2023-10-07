@@ -26,7 +26,7 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(boardInformation: BoardInformation) {
-            Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
+            Glide.with(binding.feedImageview).load(boardInformation.media_url).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
         }
     }

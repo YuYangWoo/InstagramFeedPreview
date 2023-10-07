@@ -33,6 +33,8 @@ class InstagramViewModel @Inject constructor(
     fun requestAccessToken(
         login: Login
     ) = viewModelScope.launch {
+        _uiState.value = UiState.Loading
+
         runCatching { fetchInstagramTokenUseCase.invoke(login) }
             .onFailure {
                 _uiState.value = UiState.Error("token fetch Error!!")

@@ -1,14 +1,13 @@
 package com.example.board
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,48 +16,49 @@ import javax.inject.Inject
 class BoardViewModel @Inject constructor(
     private val manageUserInformationUseCase: ManageUserInformationUseCase,
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
-    ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UIState>(UIState.Empty)
-    val uiState: StateFlow<UIState> = _uiState
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<Board>>(UiState.Empty)
+    val uiState: StateFlow<UiState<Board>> = _uiState
 
-    private val _accessToken = MutableStateFlow("")
-    val accessToken: StateFlow<String> = _accessToken
+//    fun getUserAccessToken() = viewModelScope.launch {
+//        _uiState.value = UIState.Loading
+//        try {
+//            manageUserInformationUseCase.get()?.let { accessToken ->
+//                _uiState.value = UIState.Success
+//                _accessToken.emit(accessToken)
+//            }
+//        } catch (e: Exception) {
+//            _uiState.value = UIState.Error(e)
+//        }
+//    }
 
-    private val _boardDTO = MutableSharedFlow<Board>()
-    val boardDTO: SharedFlow<Board> = _boardDTO
-
-    fun getUserAccessToken() = viewModelScope.launch {
-        _uiState.value = UIState.Loading
-        try {
-            manageUserInformationUseCase.get()?.let { accessToken ->
-                _uiState.value = UIState.Success
-                _accessToken.emit(accessToken)
+    fun requestBoardItem() = viewModelScope.launch {
+        manageUserInformationUseCase.get().also { accessToken ->
+            if (!accessToken.isNullOrBlank()) {
+                _uiState.value = UiState.Loading
+                runCatching {
+                    fetchInstagramBoardUseCase.invoke(accessToken)
+                }.onFailure {
+                    _uiState.value = UiState.Error("board fetch Error!!")
+                }
+                .onSuccess { board ->
+                    Log.d(TAG, board.toString())
+                    _uiState.value = board?.let { UiState.Success(it) } ?: UiState.Error("board is Null!!")
+                }
+            } else {
+                _uiState.value = UiState.Error("accessToken is nullOrEmpty")
             }
-        } catch (e: Exception) {
-            _uiState.value = UIState.Error(e)
         }
     }
 
-    fun requestBoardItem(
-        accessToken: String
-    ) = viewModelScope.launch {
-        _uiState.value = UIState.Loading
-
-        try {
-            fetchInstagramBoardUseCase.invoke(accessToken)?.let { boardDTO ->
-                _uiState.value = UIState.Success
-                _boardDTO.emit(boardDTO)
-            }
-        } catch (e: Exception) {
-            _uiState.value = UIState.Error(e)
-        }
+    companion object {
+        private const val TAG = "BoardViewModel"
     }
 }
 
-sealed class UIState {
-    object Success: UIState()
-    object Loading: UIState()
-    data class Error(val e: Exception): UIState()
-    object Empty: UIState()
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val message: String) : UiState<Nothing>()
+    object Empty : UiState<Nothing>()
 }
-

@@ -7,5 +7,5 @@ data class Board(
 data class BoardInformation(
     val id: String,
     val caption: String,
-    val mediaUrl: String
+    val media_url: String
 )

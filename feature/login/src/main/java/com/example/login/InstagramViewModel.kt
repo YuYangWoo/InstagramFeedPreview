@@ -6,7 +6,7 @@ import com.example.model.Login
 import com.example.model.Token
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FetchInstagramTokenUseCase
-import com.example.usecase.HandleUserInformationUseCase
+import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class InstagramViewModel @Inject constructor(
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val handleUserInformationUseCase: HandleUserInformationUseCase
+    private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Empty)
     val uiState: StateFlow<UiState<Token>> = _uiState.asStateFlow()
@@ -38,7 +38,10 @@ class InstagramViewModel @Inject constructor(
                 _uiState.value = UiState.Error("token fetch Error!!")
             }
             .onSuccess { token ->
-                _uiState.value = token?.let { UiState.Success(it) } ?: UiState.Error("token is Null!!")
+                _uiState.value = token?.let {
+                    saveUserAccessToken(it.accessToken)
+                    UiState.Success(it)
+                } ?: UiState.Error("token is Null!!")
             }
     }
 
@@ -57,9 +60,9 @@ class InstagramViewModel @Inject constructor(
 //        }
 //    }
 
-//    fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
-//        handleUserInformationUseCase.save(accessToken)
-//    }
+    private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
+        manageUserInformationUseCase.save(accessToken)
+    }
 
     companion object {
         private const val TAG = "InstagramViewModel"

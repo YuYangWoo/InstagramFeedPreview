@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
 import com.example.usecase.FetchInstagramBoardUseCase
-import com.example.usecase.HandleUserInformationUseCase
+import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BoardViewModel @Inject constructor(
-    private val handleUserInformationUseCase: HandleUserInformationUseCase,
+    private val manageUserInformationUseCase: ManageUserInformationUseCase,
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     ) : ViewModel() {
     private val _uiState = MutableStateFlow<UIState>(UIState.Empty)
@@ -30,7 +30,7 @@ class BoardViewModel @Inject constructor(
     fun getUserAccessToken() = viewModelScope.launch {
         _uiState.value = UIState.Loading
         try {
-            handleUserInformationUseCase.get()?.let { accessToken ->
+            manageUserInformationUseCase.get()?.let { accessToken ->
                 _uiState.value = UIState.Success
                 _accessToken.emit(accessToken)
             }

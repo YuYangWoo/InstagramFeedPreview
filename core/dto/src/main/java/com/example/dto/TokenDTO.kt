@@ -1,5 +1,6 @@
-package com.example.network.model.response
+package com.example.dto
 
+import com.example.model.Token
 import com.google.gson.annotations.SerializedName
 
 data class TokenDTO(
@@ -7,4 +8,8 @@ data class TokenDTO(
     val accessToken: String,
     @SerializedName("user_id")
     val userId: String
-    )
+)
+
+fun TokenDTO.toDomain(): Token {
+    return Token(accessToken, userId)
+}

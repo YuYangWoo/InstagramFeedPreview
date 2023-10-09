@@ -35,8 +35,5 @@ dependencies {
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-    implementation(project(":core:network"))
     implementation(project(":domain:usecase"))
-    implementation(project(":feature:login"))
-    implementation(project(":feature:board"))
 }

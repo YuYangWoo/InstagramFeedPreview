@@ -2,15 +2,18 @@ package com.example.board
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,6 +27,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     override fun init() {
         super.init()
         initRecyclerView()
+        requestBoardItems()
         initObserver()
         initSwipeRefreshLayout()
     }
@@ -32,11 +36,15 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    boardViewModel.getUserAccessToken()
+                    requestBoardItems()
                 }
                 isRefreshing = false
             }
         }
+    }
+
+    private fun requestBoardItems() {
+        boardViewModel.requestBoardItem()
     }
 
     private fun initRecyclerView() {
@@ -48,33 +56,26 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     }
 
     private fun initObserver() {
-        lifecycleScope.launchWhenCreated {
-            boardViewModel.boardDTO.collectLatest { boardDTO ->
-                feedAdapter.submitList(boardDTO.data)
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                boardViewModel.uiState.collectLatest { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            binding.progressBar.isVisible = false
+                            feedAdapter.submitList(state.data.boardInformations)
+                        }
+                        is UiState.Error -> {
+                            binding.progressBar.isVisible = false
+                            Log.d(TAG, state.message)
+                        }
+                        is UiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is UiState.Empty -> {
 
-        lifecycleScope.launchWhenCreated {
-            boardViewModel.uiState.collectLatest {
-                when (it) {
-                    is UIState.Success -> {
-                        binding.progressBar.visibility = View.GONE
+                        }
                     }
-                    is UIState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    is UIState.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        Log.d(TAG, it.e.message.toString())
-                    }
-                    is UIState.Empty -> Unit
                 }
-            }
-        }
-
-        lifecycleScope.launchWhenCreated {
-            boardViewModel.accessToken.collectLatest { accessToken ->
-                boardViewModel.requestBoardItem(accessToken)
             }
         }
     }

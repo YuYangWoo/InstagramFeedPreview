@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.board.databinding.HolderFeedItemBinding
-import com.example.network.model.response.BoardInformation
+import com.example.model.BoardInformation
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
@@ -26,7 +26,7 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(boardInformation: BoardInformation) {
-            Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
+            Glide.with(binding.feedImageview).load(boardInformation.media_url).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
         }
     }

@@ -1,6 +1,6 @@
 package com.example.network.service
 
-import com.example.network.model.response.BoardDTO
+import com.example.dto.BoardDTO
 import retrofit2.http.GET
 import retrofit2.http.Query
 

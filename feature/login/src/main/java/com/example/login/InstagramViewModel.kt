@@ -2,12 +2,10 @@ package com.example.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.network.model.request.LoginDTO
-import com.example.network.model.response.BoardDTO
-import com.example.network.model.response.TokenDTO
-import com.example.usecase.FetchInstagramBoardUseCase
+import com.example.model.Login
+import com.example.model.Token
 import com.example.usecase.FetchInstagramTokenUseCase
-import com.example.usecase.HandleUserInformationUseCase
+import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,54 +13,31 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InstagramViewModel @Inject constructor(
-    private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val handleUserInformationUseCase: HandleUserInformationUseCase
+    private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Empty)
-    val uiState: StateFlow<UiState> = _uiState
-
-    private val _boardDTO = MutableSharedFlow<BoardDTO>()
-    val boardDTO: SharedFlow<BoardDTO> = _boardDTO
-
-    private val _tokenDTO = MutableSharedFlow<TokenDTO>()
-    val tokenDTO: SharedFlow<TokenDTO> = _tokenDTO
-
-    private val _accessToken = MutableStateFlow("")
-    val accessToken: StateFlow<String> = _accessToken
+    private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Empty)
+    val uiState: StateFlow<UiState<Token>> = _uiState.asStateFlow()
 
     fun requestAccessToken(
-        loginDTO: LoginDTO
+        login: Login
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        try {
-            fetchInstagramTokenUseCase.invoke(loginDTO)?.let { tokenDTO ->
-                _uiState.value = UiState.Success
-                _tokenDTO.emit(tokenDTO)
+        runCatching { fetchInstagramTokenUseCase.invoke(login) }
+            .onFailure {
+                _uiState.value = UiState.Error("token fetch Error!!")
             }
-        } catch (e: Exception) {
-            _uiState.value = UiState.Error(e)
-        }
+            .onSuccess { token ->
+                _uiState.value = token?.let {
+                    saveUserAccessToken(it.accessToken)
+                    UiState.Success(it)
+                } ?: UiState.Error("token is Null!!")
+            }
     }
 
-    fun requestBoardItem(
-        accessToken: String
-    ) = viewModelScope.launch {
-        _uiState.value = UiState.Loading
-
-        try {
-            fetchInstagramBoardUseCase.invoke(accessToken)?.let { boardDTO ->
-                _uiState.value = UiState.Success
-                _boardDTO.emit(boardDTO)
-            }
-        } catch (e: Exception) {
-            _uiState.value = UiState.Error(e)
-        }
-    }
-
-    fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
-        handleUserInformationUseCase.save(accessToken)
+    private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
+        manageUserInformationUseCase.save(accessToken)
     }
 
     companion object {
@@ -70,9 +45,9 @@ class InstagramViewModel @Inject constructor(
     }
 }
 
-sealed class UiState {
-    object Success: UiState()
-    object Loading: UiState()
-    data class Error(val e: Exception): UiState()
-    object Empty: UiState()
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val message: String) : UiState<Nothing>()
+    object Empty : UiState<Nothing>()
 }

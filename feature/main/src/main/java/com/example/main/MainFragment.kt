@@ -1,9 +1,13 @@
 package com.example.main
 
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import com.example.board.BoardViewModel
 import com.example.library.binding.BindingFragment
 import com.example.main.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -12,35 +16,51 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainFragment : BindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
-    private val boardViewModel: BoardViewModel by activityViewModels()
-
+    private val mainViewModel: MainViewModel by activityViewModels()
     override fun init() {
         super.init()
         initClickListener()
-        checkUserAuth()
         initObserver()
+        checkUserToken()
     }
 
     private fun initObserver() {
-        lifecycleScope.launchWhenCreated {
-            boardViewModel.accessToken.collectLatest { accessToken ->
-                if (accessToken.isNotBlank()) {
-                    boardViewModel.requestBoardItem(accessToken)
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureBoardNavigation())
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.uiState.collectLatest { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            binding.progressBar.isVisible = false
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("app://example.app/boardFragment".toUri())
+                                .build()
+                            findNavController().navigate(request)
+                        }
+                        is UiState.Error -> {
+                            binding.progressBar.isVisible = false
+                        }
+                        is UiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is UiState.Empty -> {
+
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun initClickListener() {
-        binding.loginButton.setOnClickListener {
-            findNavController().navigate(MainFragmentDirections.actionMainFragmentToFeatureLoginNavigation())
-        }
+    private fun checkUserToken() {
+        mainViewModel.getUserAccessToken()
     }
 
-    private fun checkUserAuth() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            boardViewModel.getUserAccessToken()
+    private fun initClickListener() {
+        binding.loginButton.setOnClickListener {
+            val request = NavDeepLinkRequest.Builder
+                .fromUri("app://example.app/loginFragment".toUri())
+                .build()
+            findNavController().navigate(request)
         }
     }
 

@@ -6,4 +6,5 @@
 
     <include app:graph="@navigation/feature_main_navigation"/>
     <include app:graph="@navigation/feature_login_navigation"/>
+    <include app:graph="@navigation/feature_board_navigation"/>
 </navigation>

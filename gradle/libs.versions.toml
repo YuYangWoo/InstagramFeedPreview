@@ -57,6 +57,7 @@ junit = "1.1.5"
 yuyangwooAndroidLibrary="1.1"
 glide = "4.15.1"
 swipeRefreshLayout = "1.1.0"
+org-jetbrains-kotlin-android = "1.8.0"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -164,6 +165,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
 
 [bundles]
 coroutine = ["kotlinx-coroutines-android", "kotlinx-coroutines-core", "kotlinx-coroutines-test"]

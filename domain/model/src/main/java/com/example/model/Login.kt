@@ -1,6 +1,6 @@
-package com.example.network.model.request
+package com.example.model
 
-data class LoginDTO(
+data class Login(
     val clientId: String,
     val clientSecret: String,
     val grantType: String,

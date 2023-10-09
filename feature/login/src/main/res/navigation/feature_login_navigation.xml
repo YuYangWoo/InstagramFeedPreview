@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/feature_login_navigation"
     app:startDestination="@id/instagramFragment">
-    <include app:graph="@navigation/feature_board_navigation"/>
 
     <fragment
         android:id="@+id/instagramFragment"
         android:name="com.example.login.InstagramWebViewFragment"
-        android:label="InstagramFragment" >
-        <action
-            android:id="@+id/action_instagramFragment_to_feature_board_navigation"
-            app:destination="@id/feature_board_navigation" />
+        android:label="InstagramFragment"
+        tools:layout="@layout/fragment_instagram">
+        <deepLink app:uri="app://login"/>
     </fragment>
 
 </navigation>

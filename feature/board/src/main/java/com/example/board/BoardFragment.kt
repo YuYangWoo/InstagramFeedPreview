@@ -3,11 +3,15 @@ package com.example.board
 import android.content.Context
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.library.binding.BindingFragment
@@ -49,7 +53,14 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
-            adapter = feedAdapter
+            adapter = feedAdapter.apply {
+                setOnItemClickListener {
+                    val request = NavDeepLinkRequest.Builder
+                        .fromUri("app://example.app/boardDetailFragment".toUri())
+                        .build()
+                    findNavController().navigate(request)
+                }
+            }
             layoutManager = GridLayoutManager(context, 3)
             addItemDecoration(GridDividerItemDecoration(4, android.graphics.Color.parseColor("#000000")))
         }

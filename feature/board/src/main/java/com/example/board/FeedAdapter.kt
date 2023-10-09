@@ -17,17 +17,26 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
     DiffFeed
 ) {
 
+    private var onItemClick: ((BoardInformation) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onItemClick)
+    }
+
+    fun setOnItemClickListener(listener: (BoardInformation) -> Unit) {
+        onItemClick = listener
     }
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(boardInformation: BoardInformation) {
+        fun bind(boardInformation: BoardInformation, onItemClick: ((BoardInformation) -> Unit)?) {
             Glide.with(binding.feedImageview).load(boardInformation.media_url).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
+
+            binding.root.setOnClickListener {
+                onItemClick?.let { it -> it(boardInformation) }
+            }
         }
     }
 

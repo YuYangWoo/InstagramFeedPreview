@@ -7,5 +7,13 @@
     <fragment
         android:id="@+id/boardFragment"
         android:name="com.example.board.BoardFragment"
-        android:label="BoardFragment" />
+        android:label="BoardFragment" >
+        <action
+            android:id="@+id/action_boardFragment_to_boardDetailFragment"
+            app:destination="@id/boardDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/boardDetailFragment"
+        android:name="com.example.board.BoardDetailFragment"
+        android:label="BoardDetailFragment" />
 </navigation>

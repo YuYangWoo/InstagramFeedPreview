@@ -22,6 +22,6 @@ dependencies {
     testImplementation(libs.junit4)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
-    implementation(project(":data:dto"))
     implementation(project(":data:datasource"))
+    implementation(project(":core:dto"))
 }

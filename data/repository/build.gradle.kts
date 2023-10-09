@@ -23,5 +23,5 @@ dependencies {
     implementation(project(":domain:model"))
     implementation(project(":core:network"))
     implementation(project(":data:datasource"))
-    implementation(project(":data:dto"))
+    implementation(project(":core:dto"))
 }

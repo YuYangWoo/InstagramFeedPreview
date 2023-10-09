@@ -26,4 +26,5 @@ dependencies {
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     implementation(libs.retrofit.gson)
+    implementation(project(":domain:model"))
 }

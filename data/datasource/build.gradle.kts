@@ -42,5 +42,5 @@ dependencies {
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
 
-    implementation(project(":data:dto"))
+    implementation(project(":core:dto"))
 }

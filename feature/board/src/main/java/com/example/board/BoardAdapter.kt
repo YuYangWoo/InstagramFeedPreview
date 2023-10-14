@@ -13,7 +13,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class FeedAdapter @Inject constructor(): ListAdapter<Board.Item, FeedAdapter.FeedHolder>(
+class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.FeedHolder>(
     DiffFeed
 ) {
 

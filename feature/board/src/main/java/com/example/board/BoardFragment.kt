@@ -25,7 +25,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private var backKeyPressedTime: Long = 0
 
     @Inject
-    lateinit var feedAdapter: FeedAdapter
+    lateinit var boardAdapter: BoardAdapter
 
     override fun init() {
         super.init()
@@ -52,7 +52,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
-            adapter = feedAdapter.apply {
+            adapter = boardAdapter.apply {
                 setOnItemClickListener {
                     boardViewModel.requestBoardChildItems(it.id)
                     val request = NavDeepLinkRequest.Builder
@@ -73,7 +73,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                     when (state) {
                         is BoardUiState.Success -> {
                             binding.progressBar.isVisible = false
-                            feedAdapter.submitList(state.data.items)
+                            boardAdapter.submitList(state.data.items)
                         }
                         is BoardUiState.Error -> {
                             binding.progressBar.isVisible = false

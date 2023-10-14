@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.android.material)
+    implementation(libs.retrofit.gson)
     testImplementation(libs.junit4)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)

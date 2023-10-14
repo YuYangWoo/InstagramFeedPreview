@@ -8,16 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.board.databinding.HolderFeedItemBinding
-import com.example.model.BoardInformation
+import com.example.model.Board
 import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapter.FeedHolder>(
+class FeedAdapter @Inject constructor(): ListAdapter<Board.Item, FeedAdapter.FeedHolder>(
     DiffFeed
 ) {
 
-    private var onItemClick: ((BoardInformation) -> Unit)? = null
+    private var onItemClick: ((Board.Item) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
@@ -25,13 +25,13 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
         holder.bind(getItem(position), onItemClick)
     }
 
-    fun setOnItemClickListener(listener: (BoardInformation) -> Unit) {
+    fun setOnItemClickListener(listener: (Board.Item) -> Unit) {
         onItemClick = listener
     }
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(boardInformation: BoardInformation, onItemClick: ((BoardInformation) -> Unit)?) {
-            Glide.with(binding.feedImageview).load(boardInformation.media_url).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
+        fun bind(boardInformation: Board.Item, onItemClick: ((Board.Item) -> Unit)?) {
+            Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
 
             binding.root.setOnClickListener {
@@ -40,12 +40,12 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
         }
     }
 
-    object DiffFeed : DiffUtil.ItemCallback<BoardInformation>() {
-        override fun areItemsTheSame(oldItem: BoardInformation, newItem: BoardInformation): Boolean {
+    object DiffFeed : DiffUtil.ItemCallback<Board.Item>() {
+        override fun areItemsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: BoardInformation, newItem: BoardInformation): Boolean {
+        override fun areContentsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
             return oldItem.hashCode() == newItem.hashCode()
         }
 

@@ -73,7 +73,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                     when (state) {
                         is BoardUiState.Success -> {
                             binding.progressBar.isVisible = false
-                            feedAdapter.submitList(state.data.boardInformations)
+                            feedAdapter.submitList(state.data.items)
                         }
                         is BoardUiState.Error -> {
                             binding.progressBar.isVisible = false

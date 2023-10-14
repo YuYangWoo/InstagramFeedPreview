@@ -33,7 +33,7 @@ class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout
                     when (state) {
                         is BoardDetailUiState.Success -> {
                             binding.progressBar.isVisible = false
-                            boardDetailAdapter.submitList(state.data.data)
+                            boardDetailAdapter.submitList(state.data.items)
                             Log.d(TAG, state.data.toString())
                         }
                         is BoardDetailUiState.Loading -> {

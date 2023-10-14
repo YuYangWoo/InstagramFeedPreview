@@ -1,11 +1,15 @@
 package com.example.model
 
-data class Board(
-    val boardInformations: ArrayList<BoardInformation>
-)
+import com.google.gson.annotations.SerializedName
 
-data class BoardInformation(
-    val id: String,
-    val caption: String,
-    val media_url: String
-)
+data class Board(
+    val items: ArrayList<Item>
+) {
+    data class Item(
+        val id: String,
+        val caption: String,
+        @SerializedName("media_url")
+        val mediaUrl: String
+    )
+}
+

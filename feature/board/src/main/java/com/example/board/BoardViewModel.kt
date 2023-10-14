@@ -28,6 +28,7 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardItem() = viewModelScope.launch {
         manageUserInformationUseCase.get().also { accessToken ->
+            Log.d(TAG, "accessToken is $accessToken")
             if (!accessToken.isNullOrBlank()) {
                 runCatching {
                     fetchInstagramBoardUseCase.invoke(accessToken)

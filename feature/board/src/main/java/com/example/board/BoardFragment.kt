@@ -1,6 +1,8 @@
 package com.example.board
 
 import android.content.Context
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
@@ -56,7 +58,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             adapter = feedAdapter.apply {
                 setOnItemClickListener {
                     val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment".toUri())
+                        .fromUri("app://example.app/boardDetailFragment/${it.id}".toUri())
                         .build()
                     findNavController().navigate(request)
                 }

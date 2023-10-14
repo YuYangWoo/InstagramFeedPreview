@@ -1,8 +1,6 @@
 package com.example.board
 
 import android.content.Context
-import android.net.Uri
-import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
@@ -13,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.library.binding.BindingFragment
@@ -71,21 +68,18 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.uiState.collectLatest { state ->
+                boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
-                        is UiState.Success -> {
+                        is BoardUiState.Success -> {
                             binding.progressBar.isVisible = false
                             feedAdapter.submitList(state.data.boardInformations)
                         }
-                        is UiState.Error -> {
+                        is BoardUiState.Error -> {
                             binding.progressBar.isVisible = false
                             Log.d(TAG, state.message)
                         }
-                        is UiState.Loading -> {
+                        is BoardUiState.Loading -> {
                             binding.progressBar.isVisible = true
-                        }
-                        is UiState.Empty -> {
-
                         }
                     }
                 }

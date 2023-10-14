@@ -33,22 +33,19 @@ class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout
     private fun initObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardDetailViewModel.uiState.collectLatest { state ->
+                boardDetailViewModel.boardDetailUiState.collectLatest { state ->
                     when (state) {
-                        is UiState.Success -> {
+                        is BoardDetailUiState.Success -> {
                             binding.progressBar.isVisible = false
                             boardDetailAdapter.submitList(state.data.data)
                             Log.d(TAG, state.data.toString())
                         }
-                        is UiState.Loading -> {
+                        is BoardDetailUiState.Loading -> {
                             binding.progressBar.isVisible = true
                         }
-                        is UiState.Error -> {
+                        is BoardDetailUiState.Error -> {
                             binding.progressBar.isVisible = false
                             Log.d(TAG, state.message)
-                        }
-                        is UiState.Empty -> {
-
                         }
                     }
                 }

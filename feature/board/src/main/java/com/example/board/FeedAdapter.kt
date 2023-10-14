@@ -42,11 +42,11 @@ class FeedAdapter @Inject constructor(): ListAdapter<BoardInformation, FeedAdapt
 
     object DiffFeed : DiffUtil.ItemCallback<BoardInformation>() {
         override fun areItemsTheSame(oldItem: BoardInformation, newItem: BoardInformation): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: BoardInformation, newItem: BoardInformation): Boolean {
-            return oldItem == newItem
+            return oldItem.hashCode() == newItem.hashCode()
         }
 
     }

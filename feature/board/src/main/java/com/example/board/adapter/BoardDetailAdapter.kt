@@ -34,11 +34,11 @@ class BoardDetailAdapter @Inject constructor(): ListAdapter<BoardChild.Item, Boa
 
     object DiffBoardDetail : DiffUtil.ItemCallback<BoardChild.Item>() {
         override fun areItemsTheSame(oldItem: BoardChild.Item, newItem: BoardChild.Item): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: BoardChild.Item, newItem: BoardChild.Item): Boolean {
-            return oldItem == newItem
+            return oldItem.hashCode() == newItem.hashCode()
         }
 
     }

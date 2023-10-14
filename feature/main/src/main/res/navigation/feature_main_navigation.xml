@@ -29,12 +29,8 @@
         android:id="@+id/boardDetailFragment"
         android:name="com.example.board.BoardDetailFragment"
         android:label="상세보기">
-        <argument
-            android:name="id"
-            app:argType="string"
-            android:defaultValue="0" />
         <deepLink
-            app:uri="app://example.app/boardDetailFragment/{id}" />
+            app:uri="app://example.app/boardDetailFragment" />
 
     </fragment>
 </navigation>

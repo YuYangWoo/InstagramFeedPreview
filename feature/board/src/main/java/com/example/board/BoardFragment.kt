@@ -54,8 +54,9 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         with (binding.feedRecyclerView) {
             adapter = feedAdapter.apply {
                 setOnItemClickListener {
+                    boardViewModel.requestBoardChildItems(it.id)
                     val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment/${it.id}".toUri())
+                        .fromUri("app://example.app/boardDetailFragment".toUri())
                         .build()
                     findNavController().navigate(request)
                 }

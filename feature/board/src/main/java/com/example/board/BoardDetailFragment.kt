@@ -16,24 +16,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout.fragment_board_detail) {
-    private val boardDetailViewModel: BoardDetailViewModel by activityViewModels()
+    private val boardViewModel: BoardViewModel by activityViewModels()
     @Inject
     lateinit var boardDetailAdapter: BoardDetailAdapter
 
     override fun init() {
         super.init()
-        val mediaId = arguments?.getString("id")
         initObserver()
         binding.viewPager.adapter = boardDetailAdapter
-        viewLifecycleOwner.lifecycleScope.launch {
-            boardDetailViewModel.requestBoardChildItems(mediaId!!)
-        }
     }
 
     private fun initObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardDetailViewModel.boardDetailUiState.collectLatest { state ->
+                boardViewModel.boardDetailUiState.collectLatest { state ->
                     when (state) {
                         is BoardDetailUiState.Success -> {
                             binding.progressBar.isVisible = false

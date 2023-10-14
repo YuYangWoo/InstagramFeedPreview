@@ -22,6 +22,7 @@ dependencies {
     testImplementation(libs.junit4)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    implementation(libs.okhttp.logging)
     implementation(project(":data:datasource"))
     implementation(project(":core:dto"))
 }

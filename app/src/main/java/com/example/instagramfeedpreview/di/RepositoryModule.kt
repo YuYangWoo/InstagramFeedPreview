@@ -1,8 +1,10 @@
 package com.example.instagramfeedpreview.di
 
+import com.example.repository.BoardRepository
 import com.example.repository.InstagramRepository
 import com.example.repository.UserRepository
 import com.example.repository.local.UserRepositoryImpl
+import com.example.repository.remote.BoardRepositoryImpl
 import com.example.repository.remote.InstagramRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -21,4 +23,8 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    fun provideBoardRepository(boardRepositoryImpl: BoardRepositoryImpl): BoardRepository
 }

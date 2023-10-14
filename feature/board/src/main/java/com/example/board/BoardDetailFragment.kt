@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.viewpager2.widget.ViewPager2
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
 import com.example.library.binding.BindingFragment
@@ -23,7 +24,19 @@ class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout
     override fun init() {
         super.init()
         initObserver()
+        initAdapter()
+    }
+
+    private fun initAdapter() {
         binding.viewPager.adapter = boardDetailAdapter
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val totalPageCount = boardDetailAdapter.itemCount
+                val currentPage = position + 1
+
+                binding.pageTextView.text = "$currentPage/$totalPageCount"
+            }
+        })
     }
 
     private fun initObserver() {

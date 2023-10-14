@@ -1,6 +1,6 @@
 package com.example.network.service
 
-import com.example.dto.BoardChildDTO
+import com.example.dto.BoardDetailDTO
 import com.example.dto.BoardDTO
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,5 +11,5 @@ interface GraphInstagramApiService {
     suspend fun getBoardInformation(@Query("access_token") accessToken: String): BoardDTO
 
     @GET("/{mediaId}/children?fields=media_url")
-    suspend fun getBoardChildInformation(@Path("mediaId") mediaId: String, @Query("access_token") accessToken: String): BoardChildDTO
+    suspend fun getBoardChildInformation(@Path("mediaId") mediaId: String, @Query("access_token") accessToken: String): BoardDetailDTO
 }

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
-import com.example.model.BoardChild
+import com.example.model.BoardDetail
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
@@ -23,7 +23,7 @@ class BoardViewModel @Inject constructor(
     private val _boardUiState = MutableStateFlow<BoardUiState<Board>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
-    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardChild>>(BoardDetailUiState.Loading)
+    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     fun requestBoardItem() = viewModelScope.launch {

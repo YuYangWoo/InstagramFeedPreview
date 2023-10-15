@@ -18,8 +18,7 @@ class BoardDetailAdapter @Inject constructor(): ListAdapter<BoardDetail.Item, Bo
 
     class BoardDetailItemHolder(private val binding: HolderBoardDetailItemBinding) : ViewHolder(binding.root) {
         fun bind(item: BoardDetail.Item) {
-            Glide.with(binding.root.context).load(item.mediaUrl).error(R.drawable.no_image).placeholder(
-                R.drawable.no_image).diskCacheStrategy(
+            Glide.with(binding.root.context).load(item.mediaUrl).error(R.drawable.no_image).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.image)
         }
     }

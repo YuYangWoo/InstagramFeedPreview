@@ -25,4 +25,12 @@
         android:label="게시판">
         <deepLink app:uri="app://example.app/boardFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/boardDetailFragment"
+        android:name="com.example.board.BoardDetailFragment"
+        android:label="상세보기">
+        <deepLink
+            app:uri="app://example.app/boardDetailFragment" />
+
+    </fragment>
 </navigation>

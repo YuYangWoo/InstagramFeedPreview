@@ -1,7 +1,12 @@
 package com.example.board
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -9,20 +14,30 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
-import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout.fragment_board_detail) {
+class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
     private val boardViewModel: BoardViewModel by activityViewModels()
     @Inject
     lateinit var boardDetailAdapter: BoardDetailAdapter
+    private var _binding: FragmentBoardDetailBinding? = null
+    private val binding get() = _binding!!
 
-    override fun init() {
-        super.init()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentBoardDetailBinding.inflate(inflater,container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initObserver()
         initAdapter()
     }
@@ -60,6 +75,11 @@ class BoardDetailFragment : BindingFragment<FragmentBoardDetailBinding>(R.layout
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

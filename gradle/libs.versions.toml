@@ -54,10 +54,10 @@ turbine = "0.12.1"
 material = "1.8.0"
 constraintLayout = "2.1.4"
 junit = "1.1.5"
-yuyangwooAndroidLibrary="1.1"
 glide = "4.15.1"
 swipeRefreshLayout = "1.1.0"
 org-jetbrains-kotlin-android = "1.8.0"
+kotest = "4.6.0"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -144,13 +144,14 @@ androidx-navigation-fragment = {group = "androidx.navigation", name = "navigatio
 androidx-navigation-ktx = {group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidxNavigation"}
 androidx-navigation = {group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "androidxNavigation"}
 android-junit = {group = "androidx.test.ext", name = "junit", version.ref = "junit"}
-yyw-android-library = {group = "com.github.YuYangWoo", name = "AndroidLibrary", version.ref = "yuyangwooAndroidLibrary"}
 glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
 swipeRefreshLayout = {group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout"}
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+kotest = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest"}
+kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

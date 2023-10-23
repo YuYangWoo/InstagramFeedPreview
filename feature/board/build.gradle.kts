@@ -17,7 +17,6 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        dataBinding = true
     }
 }
 
@@ -31,7 +30,6 @@ dependencies {
     testImplementation(libs.junit4)
     androidTestImplementation (libs.android.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
-    implementation(libs.yyw.android.library)
     implementation(libs.glide)
     implementation(libs.swipeRefreshLayout)
     implementation(libs.hilt.android)

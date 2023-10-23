@@ -1,18 +1,22 @@
 package com.example.login
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import com.example.library.binding.BindingFragment
 import com.example.login.databinding.FragmentInstagramBinding
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,11 +25,22 @@ import kotlinx.coroutines.launch
 import java.net.URLDecoder
 
 @AndroidEntryPoint
-class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.layout.fragment_instagram) {
+class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
     private val instagramViewModel by activityViewModels<InstagramViewModel>()
-    override fun init() {
-        super.init()
+    private var _binding: FragmentInstagramBinding? = null
+    private val binding get() = _binding!!
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentInstagramBinding.inflate(inflater,container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.webView.apply {
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -88,6 +103,11 @@ class InstagramWebViewFragment : BindingFragment<FragmentInstagramBinding>(R.lay
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

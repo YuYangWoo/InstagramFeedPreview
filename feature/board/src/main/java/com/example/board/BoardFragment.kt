@@ -1,10 +1,16 @@
 package com.example.board
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,22 +19,31 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.board.databinding.FragmentBoardBinding
-import com.example.library.binding.BindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board){
+class BoardFragment : Fragment(R.layout.fragment_board){
     private val boardViewModel: BoardViewModel by activityViewModels()
     private var backKeyPressedTime: Long = 0
 
     @Inject
     lateinit var boardAdapter: BoardAdapter
+    private var _binding: FragmentBoardBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentBoardBinding.inflate(inflater,container, false)
+        return binding.root
+    }
 
-    override fun init() {
-        super.init()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         requestBoardItems()
         initObserver()
@@ -72,14 +87,17 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
                         is BoardUiState.Success -> {
+                            Log.d(TAG, "success")
                             binding.progressBar.isVisible = false
                             boardAdapter.submitList(state.data.items)
                         }
                         is BoardUiState.Error -> {
+                            Log.d(TAG, "Error")
                             binding.progressBar.isVisible = false
                             Log.d(TAG, state.message)
                         }
                         is BoardUiState.Loading -> {
+                            Log.d(TAG, "loading")
                             binding.progressBar.isVisible = true
                         }
                     }
@@ -95,7 +113,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             override fun handleOnBackPressed() {
                 if (System.currentTimeMillis() > backKeyPressedTime + LIMIT_TIME) {
                     backKeyPressedTime = System.currentTimeMillis()
-                    shortToast(requireContext(), "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.")
+                    Toast.makeText(requireContext(), "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -104,6 +122,11 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

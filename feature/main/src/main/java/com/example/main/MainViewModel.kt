@@ -13,7 +13,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<String>>(UiState.Empty)
+    private val _uiState = MutableStateFlow<UiState<String>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     fun getUserAccessToken() =
@@ -37,5 +37,4 @@ sealed class UiState<out T> {
     data class Success<T>(val data: T) : UiState<T>()
     data class Error(val message: String) : UiState<Nothing>()
     object Loading : UiState<Nothing>()
-    object Empty : UiState<Nothing>()
 }

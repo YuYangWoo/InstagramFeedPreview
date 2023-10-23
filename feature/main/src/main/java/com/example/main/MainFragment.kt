@@ -58,9 +58,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                         is UiState.Loading -> {
                             binding.progressBar.isVisible = true
                         }
-                        is UiState.Empty -> {
-
-                        }
                     }
                 }
             }

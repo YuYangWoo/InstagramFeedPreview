@@ -10,6 +10,10 @@ android {
     namespace = "com.example.main"
     compileSdk = 33
 
+    defaultConfig {
+        minSdk = 14
+    }
+
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
@@ -34,9 +38,11 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ktx)
     implementation(libs.hilt.android)
+    implementation(libs.kotlin.reflect)
     kapt(libs.hilt.compiler)
     implementation(project(":domain:usecase"))
 
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.mockk)
 }

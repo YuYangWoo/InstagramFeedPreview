@@ -7,7 +7,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import java.lang.Exception
 
@@ -27,9 +26,7 @@ class MainViewModelTest : BehaviorSpec({
 
         When("getUserAccessToken 호출 후 결과가 성공적일 때") {
             coEvery { manageUserInformationUseCase.get() } returns fakeToken
-            runTest {
-                viewModel.getUserAccessToken()
-            }
+            viewModel.getUserAccessToken()
             Then("결과는 UiState.Success 이여야 한다") {
                 val uiState = viewModel.uiState.value
                 uiState shouldBe UiState.Success(fakeToken)
@@ -38,9 +35,7 @@ class MainViewModelTest : BehaviorSpec({
 
         When("getUserAccessToken 호출 후 결과가 실패했을 때") {
             coEvery { manageUserInformationUseCase.get() } throws Exception("Fake error")
-            runTest {
-                viewModel.getUserAccessToken()
-            }
+            viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
                 val uiState = viewModel.uiState.value
@@ -50,9 +45,7 @@ class MainViewModelTest : BehaviorSpec({
 
         When("getUserAccessToken 호출 후 결과가 비어 있을 때") {
             coEvery { manageUserInformationUseCase.get() } returns ""
-            runTest {
-                viewModel.getUserAccessToken()
-            }
+            viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
                 val uiState = viewModel.uiState.value
@@ -62,9 +55,7 @@ class MainViewModelTest : BehaviorSpec({
 
         When("getUserAccessToken 호출 후 결과가 null일 때") {
             coEvery { manageUserInformationUseCase.get() } returns null
-            runTest {
-                viewModel.getUserAccessToken()
-            }
+            viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
                 val uiState = viewModel.uiState.value

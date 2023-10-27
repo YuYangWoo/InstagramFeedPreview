@@ -9,6 +9,16 @@ plugins {
 android {
     namespace = "com.example.login"
     compileSdk = 33
+    
+    defaultConfig {
+        minSdk = 14
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
@@ -28,9 +38,9 @@ dependencies {
     implementation(libs.androidx.constraintLayout)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ktx)
-    testImplementation(libs.junit4)
-    androidTestImplementation (libs.android.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
+    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.mockk)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(project(":domain:usecase"))

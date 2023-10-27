@@ -1,7 +1,7 @@
 [versions]
 accompanist = "0.28.0"
 androidDesugarJdkLibs = "1.2.2"
-androidGradlePlugin = "7.4.2"
+androidGradlePlugin = "8.1.1"
 androidxActivity = "1.7.0"
 androidxAppCompat = "1.5.1"
 androidxBrowser = "1.4.0"
@@ -38,7 +38,7 @@ hiltExt = "1.0.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
 kotlin = "1.8.0"
-kotlinxCoroutines = "1.6.4"
+kotlinxCoroutines = "1.7.0"
 kotlinxDatetime = "0.4.0"
 kotlinxSerializationJson = "1.4.1"
 ksp = "1.8.0-1.0.9"
@@ -57,7 +57,8 @@ junit = "1.1.5"
 glide = "4.15.1"
 swipeRefreshLayout = "1.1.0"
 org-jetbrains-kotlin-android = "1.8.0"
-kotest = "4.6.0"
+kotest = "5.7.2"
+mockk = "1.13.4"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -122,6 +123,7 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin"}
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines"}
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
@@ -150,8 +152,10 @@ swipeRefreshLayout = {group = "androidx.swiperefreshlayout", name = "swiperefres
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-kotest = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest"}
-kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest"}
+kotest-junit = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
+kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -171,3 +175,4 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 [bundles]
 coroutine = ["kotlinx-coroutines-android", "kotlinx-coroutines-core", "kotlinx-coroutines-test"]
 retrofit = ["retrofit-core", "retrofit-gson"]
+kotest = ["kotest-junit", "kotest-assertions", "kotest-property"]

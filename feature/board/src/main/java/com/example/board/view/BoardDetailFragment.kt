@@ -1,4 +1,4 @@
-package com.example.board
+package com.example.board.view
 
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +12,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
+import com.example.board.R
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
+import com.example.board.viewmodel.BoardDetailUiState
+import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

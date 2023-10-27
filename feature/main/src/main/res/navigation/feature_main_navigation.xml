@@ -21,13 +21,13 @@
 
     <fragment
         android:id="@+id/boardFragment"
-        android:name="com.example.board.BoardFragment"
+        android:name="com.example.board.view.BoardFragment"
         android:label="게시판">
         <deepLink app:uri="app://example.app/boardFragment" />
     </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"
-        android:name="com.example.board.BoardDetailFragment"
+        android:name="com.example.board.view.BoardDetailFragment"
         android:label="상세보기">
         <deepLink
             app:uri="app://example.app/boardDetailFragment" />

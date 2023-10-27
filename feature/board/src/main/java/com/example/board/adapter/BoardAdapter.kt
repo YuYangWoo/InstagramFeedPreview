@@ -1,4 +1,4 @@
-package com.example.board
+package com.example.board.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.board.R
 import com.example.board.databinding.HolderFeedItemBinding
 import com.example.model.Board
 import dagger.hilt.android.scopes.FragmentScoped
@@ -31,7 +32,9 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(boardInformation: Board.Item, onItemClick: ((Board.Item) -> Unit)?) {
-            Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(R.drawable.no_image).diskCacheStrategy(
+            Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(
+                R.drawable.no_image
+            ).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
 
             binding.root.setOnClickListener {

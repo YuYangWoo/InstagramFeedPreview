@@ -1,4 +1,4 @@
-package com.example.board
+package com.example.board.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -23,7 +23,9 @@ class BoardViewModel @Inject constructor(
     private val _boardUiState = MutableStateFlow<BoardUiState<Board>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
-    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
+    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(
+        BoardDetailUiState.Loading
+    )
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     fun requestBoardItem() = viewModelScope.launch {
@@ -37,7 +39,9 @@ class BoardViewModel @Inject constructor(
                 }
                 .onSuccess { board ->
                     Log.d(TAG, board.toString())
-                    _boardUiState.value = board?.let { BoardUiState.Success(it) } ?: BoardUiState.Error("board is Null!!")
+                    _boardUiState.value = board?.let { BoardUiState.Success(it) } ?: BoardUiState.Error(
+                        "board is Null!!"
+                    )
                 }
             } else {
                 _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
@@ -54,7 +58,9 @@ class BoardViewModel @Inject constructor(
                 }.onFailure {
                     _boardDetailUiState.value = BoardDetailUiState.Error("boardChild fetch Error!!")
                 }.onSuccess { boardChild ->
-                    _boardDetailUiState.value = boardChild?.let { BoardDetailUiState.Success(it) } ?: BoardDetailUiState.Error("boardChild is Null!!")
+                    _boardDetailUiState.value = boardChild?.let { BoardDetailUiState.Success(it) } ?: BoardDetailUiState.Error(
+                        "boardChild is Null!!"
+                    )
                 }
             } else {
                 _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")

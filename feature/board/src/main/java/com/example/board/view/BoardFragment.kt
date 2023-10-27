@@ -1,6 +1,7 @@
-package com.example.board
+package com.example.board.view
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +19,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.board.GridDividerItemDecoration
+import com.example.board.R
+import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
+import com.example.board.viewmodel.BoardUiState
+import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -77,7 +83,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 }
             }
             layoutManager = GridLayoutManager(context, 3)
-            addItemDecoration(GridDividerItemDecoration(4, android.graphics.Color.parseColor("#000000")))
+            addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }
 

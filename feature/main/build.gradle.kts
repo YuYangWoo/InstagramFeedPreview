@@ -4,6 +4,10 @@ plugins {
     id ("instagram.hilt")
 }
 
+android {
+    namespace = "com.example.main"
+}
+
 dependencies {
     implementation(project(":domain:usecase"))
 

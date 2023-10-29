@@ -28,7 +28,6 @@ internal class AndroidPlugin : Plugin<Project> {
     private fun applyAndroidExtensions(extensions: CommonExtension<*, *, *, *, *>)
     = extensions.apply {
         compileSdk = Build.COMPILE_SDK
-        namespace = "com.example.main"
 
         testOptions {
             unitTests.all {

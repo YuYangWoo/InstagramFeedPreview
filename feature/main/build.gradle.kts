@@ -1,6 +1,5 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id ("instagram.android")
     id ("kotlin-kapt")
     id ("instagram.hilt")
 }

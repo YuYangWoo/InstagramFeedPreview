@@ -4,7 +4,9 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    includeBuild("build-logic")
 }
+
 dependencyResolutionManagement {
 //    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {

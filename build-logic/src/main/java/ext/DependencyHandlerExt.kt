@@ -15,7 +15,10 @@ internal fun DependencyHandler.implementation(dependencyNotation: Dependency) = 
 internal fun DependencyHandler.implementation(dependencyNotation: Provider<MinimalExternalModuleDependency>) = add("implementation", dependencyNotation)
 @JvmName("implementationExternalModuleDependencyBundle")
 internal fun DependencyHandler.implementation(dependencyNotation: Provider<ExternalModuleDependencyBundle>) = add("implementation", dependencyNotation)
-
+@JvmName("testImplementationMinimalExternalModuleDependency")
+internal fun DependencyHandler.testImplementation(dependencyNotation: Provider<MinimalExternalModuleDependency>) = add("testImplementation", dependencyNotation)
+@JvmName("testImplementationExternalModuleDependencyBundle")
+internal fun DependencyHandler.testImplementation(dependencyNotation: Provider<ExternalModuleDependencyBundle>) = add("testImplementation", dependencyNotation)
 @JvmName("debugImplementationMinimalExternalModuleDependency")
 internal fun DependencyHandler.debugImplementation(dependencyNotation: Provider<MinimalExternalModuleDependency>) = add("debugImplementation", dependencyNotation)
 @JvmName("debugImplementationExternalModuleDependencyBundle")

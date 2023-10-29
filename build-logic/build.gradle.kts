@@ -24,5 +24,9 @@ gradlePlugin {
             id = "instagram.android"
             implementationClass = "plugin.AndroidPlugin"
         }
+        register("instagram.test") {
+            id = "instagram.test"
+            implementationClass = "plugin.TestPlugin"
+        }
     }
 }

@@ -20,6 +20,7 @@ internal class HiltPlugin : Plugin<Project> {
 
     private fun applyPlugin(manager: PluginManager) = with(manager) {
         apply("com.google.dagger.hilt.android")
+        apply("kotlin-kapt")
     }
 
     private fun applyDependency(handler: DependencyHandler, libs: VersionCatalog) = with(handler) {

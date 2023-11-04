@@ -1,6 +1,5 @@
 plugins {
     id ("instagram.android")
-    id ("kotlin-kapt")
     id ("instagram.hilt")
     id ("instagram.test")
 }

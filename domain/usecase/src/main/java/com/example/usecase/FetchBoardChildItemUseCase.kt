@@ -7,10 +7,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FetchBoardChildItemUseCase @Inject constructor(
+public class FetchBoardChildItemUseCase @Inject constructor(
     private val boardRepository: BoardRepository
 ) {
-    suspend operator fun invoke(mediaId: String, accessToken: String): BoardDetail? {
+    public suspend operator fun invoke(mediaId: String, accessToken: String): BoardDetail? {
         return boardRepository.fetchBoardChildItems(mediaId, accessToken).firstOrNull()
     }
 }

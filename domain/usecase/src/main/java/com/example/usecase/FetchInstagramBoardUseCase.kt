@@ -7,8 +7,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FetchInstagramBoardUseCase @Inject constructor(private val instagramRepository: InstagramRepository) {
-    suspend operator fun invoke(accessToken: String): Board? {
+public class FetchInstagramBoardUseCase @Inject constructor(private val instagramRepository: InstagramRepository) {
+    public suspend operator fun invoke(accessToken: String): Board? {
          return instagramRepository.fetchBoardInformation(accessToken).firstOrNull()
     }
 }

@@ -59,6 +59,7 @@ swipeRefreshLayout = "1.1.0"
 org-jetbrains-kotlin-android = "1.8.0"
 kotest = "5.7.2"
 mockk = "1.13.4"
+java-inject = "1"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -149,6 +150,8 @@ androidx-navigation = {group = "androidx.navigation", name = "navigation-safe-ar
 android-junit = {group = "androidx.test.ext", name = "junit", version.ref = "junit"}
 glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
 swipeRefreshLayout = {group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout"}
+java-inject = { group = "javax.inject", name = "javax.inject", version.ref = "java-inject" }
+
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }

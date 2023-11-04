@@ -8,10 +8,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FetchInstagramTokenUseCase @Inject constructor(
+public class FetchInstagramTokenUseCase @Inject constructor(
     private val instagramRepository: InstagramRepository
 ) {
-    suspend fun invoke(login: Login): Token? {
+    public suspend fun invoke(login: Login): Token? {
         return instagramRepository.fetchToken(login).firstOrNull()
     }
 }

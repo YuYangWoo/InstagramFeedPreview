@@ -28,5 +28,9 @@ gradlePlugin {
             id = "instagram.test"
             implementationClass = "plugin.TestPlugin"
         }
+        register("instagram.kotlin") {
+            id = "instagram.kotlin"
+            implementationClass = "plugin.KotlinPlugin"
+        }
     }
 }

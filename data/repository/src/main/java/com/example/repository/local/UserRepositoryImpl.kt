@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(private val userDataStore: UserDataStore) :
+public class UserRepositoryImpl @Inject constructor(private val userDataStore: UserDataStore) :
     UserRepository {
     override suspend fun saveUserAccessToken(accessToken: String) {
         userDataStore.saveUserAccessToken(accessToken)

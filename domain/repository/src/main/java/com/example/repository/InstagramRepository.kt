@@ -18,11 +18,11 @@ import kotlinx.coroutines.flow.Flow
  * 클린아키텍처 domain은 아무것도 의존성이 없다.
  *
  */
-interface InstagramRepository {
+public interface InstagramRepository {
 
-    fun fetchToken(login: Login): Flow<Token>
+    public fun fetchToken(login: Login): Flow<Token>
 
-    fun fetchBoardInformation(
+    public fun fetchBoardInformation(
         accessToken: String
     ): Flow<Board>
     

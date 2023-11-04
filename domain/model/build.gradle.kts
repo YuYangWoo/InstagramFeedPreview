@@ -1,6 +1,5 @@
 plugins {
     id ("instagram.kotlin")
-    id ("kotlin-kapt")
 }
 
 dependencies {

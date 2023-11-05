@@ -1,9 +1,12 @@
 plugins {
-    id ("instagram.kotlin")
+    id ("instagram.android")
+    id ("instagram.hilt")
 }
 
+android {
+    namespace = "com.example.repository"
+}
 dependencies {
-    implementation(libs.java.inject)
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(project(":core:datastore"))

@@ -1,7 +1,7 @@
 package com.example.network.di
 
-import com.example.datasource.GraphInstagramApiServiceSource
-import com.example.datasource.InstagramLoginDataSource
+import com.example.network.service.GraphInstagramApiServiceSourceImpl
+import com.example.network.service.InstagramLoginDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,13 +25,13 @@ class NetworkModule {
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build();
 
     @Provides
-    fun provideApiService(): InstagramLoginDataSource =
-        Retrofit.Builder().baseUrl(instagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(
-            InstagramLoginDataSource::class.java)
+    fun provideApiService(): InstagramLoginDataSourceImpl =
+        Retrofit.Builder().baseUrl(instagramBaseUrl).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(
+            InstagramLoginDataSourceImpl::class.java)
 
     @Provides
-    fun provideGraphApiService(): GraphInstagramApiServiceSource {
+    fun provideGraphApiService(): GraphInstagramApiServiceSourceImpl {
         return Retrofit.Builder().baseUrl(graphInstagramBaseUrl).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(
-            GraphInstagramApiServiceSource::class.java)
+            GraphInstagramApiServiceSourceImpl::class.java)
     }
 }

@@ -1,18 +1,15 @@
 package com.example.network.di
 
-import com.example.network.service.GraphInstagramApiService
-import com.example.network.service.InstagramLoginDataSourceImpl
+import com.example.datasource.GraphInstagramApiServiceSource
+import com.example.datasource.InstagramLoginDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,13 +25,13 @@ class NetworkModule {
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build();
 
     @Provides
-    fun provideApiService(): InstagramLoginDataSourceImpl =
+    fun provideApiService(): InstagramLoginDataSource =
         Retrofit.Builder().baseUrl(instagramBaseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(
-            InstagramLoginDataSourceImpl::class.java)
+            InstagramLoginDataSource::class.java)
 
     @Provides
-    fun provideGraphApiService(): GraphInstagramApiService {
+    fun provideGraphApiService(): GraphInstagramApiServiceSource {
         return Retrofit.Builder().baseUrl(graphInstagramBaseUrl).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(
-            GraphInstagramApiService::class.java)
+            GraphInstagramApiServiceSource::class.java)
     }
 }

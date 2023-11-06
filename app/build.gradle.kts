@@ -8,10 +8,6 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
 android {
     compileSdk = 33
     defaultConfig {

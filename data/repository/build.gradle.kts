@@ -9,7 +9,6 @@ android {
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
-    implementation(project(":core:datastore"))
     implementation(project(":core:dto"))
     implementation(project(":domain:repository"))
     implementation(project(":domain:model"))

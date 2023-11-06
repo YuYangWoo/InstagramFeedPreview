@@ -37,7 +37,7 @@ hilt = "2.44.2"
 hiltExt = "1.0.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
-kotlin = "1.8.0"
+kotlin = "1.8.10"
 kotlinxCoroutines = "1.7.0"
 kotlinxDatetime = "0.4.0"
 kotlinxSerializationJson = "1.4.1"
@@ -59,6 +59,7 @@ swipeRefreshLayout = "1.1.0"
 org-jetbrains-kotlin-android = "1.8.0"
 kotest = "5.7.2"
 mockk = "1.13.4"
+java-inject = "1"
 
 [libraries]
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
@@ -121,6 +122,7 @@ hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testi
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
 hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
+hilt-gradle = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin"}
@@ -148,6 +150,8 @@ androidx-navigation = {group = "androidx.navigation", name = "navigation-safe-ar
 android-junit = {group = "androidx.test.ext", name = "junit", version.ref = "junit"}
 glide = {group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
 swipeRefreshLayout = {group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout"}
+java-inject = { group = "javax.inject", name = "javax.inject", version.ref = "java-inject" }
+
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }

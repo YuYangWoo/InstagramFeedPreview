@@ -4,7 +4,9 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    includeBuild("build-logic")
 }
+
 dependencyResolutionManagement {
 //    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
@@ -28,4 +30,4 @@ include(":feature:login")
 include(":feature:board")
 include(":domain:model")
 include(":data:datasource")
-include(":core:dto")
+include(":data:dto")

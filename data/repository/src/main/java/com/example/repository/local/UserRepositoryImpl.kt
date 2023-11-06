@@ -1,20 +1,21 @@
 package com.example.repository.local
 
-import com.example.datastore.UserDataStore
+import com.example.datasource.UserDataStoreSource
 import com.example.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepositoryImpl @Inject constructor(private val userDataStore: UserDataStore) :
+class UserRepositoryImpl @Inject constructor(
+    private val userDataStoreSource: UserDataStoreSource) :
     UserRepository {
     override suspend fun saveUserAccessToken(accessToken: String) {
-        userDataStore.saveUserAccessToken(accessToken)
+        userDataStoreSource.saveUserAccessToken(accessToken)
     }
 
     override fun getUserAccessToken(): Flow<String?> {
-        return userDataStore.getUserAccessToken()
+        return userDataStoreSource.getUserAccessToken()
     }
 
 }

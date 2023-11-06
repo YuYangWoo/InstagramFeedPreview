@@ -1,11 +1,11 @@
 package com.example.repository.remote
 
+import com.example.datasource.GraphInstagramApiServiceSource
+import com.example.datasource.InstagramLoginDataSource
 import com.example.dto.toDomain
 import com.example.model.Board
 import com.example.model.Login
 import com.example.model.Token
-import com.example.network.service.GraphInstagramApiService
-import com.example.network.service.InstagramLoginDataSourceImpl
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -16,13 +16,13 @@ import javax.inject.Singleton
 
 @Singleton
 class InstagramRepositoryImpl @Inject constructor(
-    private val instagramLoginDataSourceImpl: InstagramLoginDataSourceImpl,
-    private val graphInstagramApiService: GraphInstagramApiService
+    private val instagramLoginDataSource: InstagramLoginDataSource,
+    private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
 ) : InstagramRepository {
 
     override fun fetchToken(login: Login): Flow<Token> = flow {
         emit(
-            instagramLoginDataSourceImpl.getAccessToken(
+            instagramLoginDataSource.getAccessToken(
                 login.clientId,
                 login.clientSecret,
                 login.grantType,
@@ -33,7 +33,7 @@ class InstagramRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun fetchBoardInformation(accessToken: String): Flow<Board> = flow {
-        emit(graphInstagramApiService.getBoardInformation(accessToken).toDomain())
+        emit(graphInstagramApiServiceSource.getBoardInformation(accessToken).toDomain())
     }.flowOn(Dispatchers.IO)
 
 }

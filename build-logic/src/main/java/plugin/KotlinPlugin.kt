@@ -1,17 +1,16 @@
 package plugin
 
+import Build
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.PluginManager
 import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 internal class KotlinPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         applyPlugin(target.pluginManager)
         applyJavaPluginExtension(target.extensions.getByType())
-        applyKotlinJvmProjectExtension(target.extensions.getByType())
     }
 
     private fun applyPlugin(pluginManager: PluginManager) = pluginManager.apply {
@@ -21,10 +20,6 @@ internal class KotlinPlugin : Plugin<Project> {
     private fun applyJavaPluginExtension(extension: JavaPluginExtension) = extension.apply {
         sourceCompatibility = Build.SOURCE_COMPATIBILITY
         targetCompatibility = Build.TARGET_COMPATIBILITY
-    }
-
-    private fun applyKotlinJvmProjectExtension(extension: KotlinJvmProjectExtension) = extension.apply {
-        explicitApi()
     }
 
 }

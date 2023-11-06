@@ -11,9 +11,8 @@ android {
 dependencies {
     implementation(libs.glide)
     implementation(libs.swipeRefreshLayout)
-    implementation(project(":domain:usecase"))
-    implementation(project(":domain:model"))
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.mockk)
-
+    implementation(project(":domain:usecase"))
+    implementation(project(":domain:model"))
 }

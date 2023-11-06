@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-public class InstagramRepositoryImpl @Inject constructor(
+class InstagramRepositoryImpl @Inject constructor(
     private val instagramLoginDataSource: InstagramLoginDataSource,
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
 ) : InstagramRepository {

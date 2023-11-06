@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-public class BoardRepositoryImpl @Inject constructor(
+class BoardRepositoryImpl @Inject constructor(
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
 ) : BoardRepository {
     override fun fetchBoardChildItems(mediaId: String, accessToken: String): Flow<BoardDetail> = flow {

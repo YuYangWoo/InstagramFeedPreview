@@ -1,9 +1,5 @@
 plugins {
-    id ("instagram.android")
-}
-
-android {
-    namespace = "com.example.dto"
+    id ("instagram.kotlin")
 }
 
 dependencies {

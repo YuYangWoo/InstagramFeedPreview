@@ -9,20 +9,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-public class UserDataStoreSourceImpl @Inject constructor() : UserDataStoreSource {
+class UserDataStoreSourceImpl @Inject constructor() : UserDataStoreSource {
     @Inject
     lateinit var dataStore: DataStore<Preferences>
 
     private val ACCESS_TOKEN = stringPreferencesKey(KEY_ACCESS_TOKEN)
 
-    public override suspend fun saveUserAccessToken(accessToken: String) {
+    override suspend fun saveUserAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
             val userToken = preferences[ACCESS_TOKEN] ?: accessToken
             preferences[ACCESS_TOKEN] = userToken
         }
     }
 
-    public override fun getUserAccessToken(): Flow<String?> {
+    override fun getUserAccessToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
             preferences[ACCESS_TOKEN]
         }

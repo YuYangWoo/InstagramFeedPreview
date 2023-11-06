@@ -1,9 +1,9 @@
 plugins {
-    id ("instagram.android")
+    id ("instagram.kotlin")
 }
-android {
-    namespace = "com.example.datasource"
-}
+
 dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+
     implementation(project(":core:dto"))
 }

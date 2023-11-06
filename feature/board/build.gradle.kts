@@ -1,7 +1,5 @@
 plugins {
-    id ("instagram.android")
-    id ("instagram.hilt")
-    id ("instagram.test")
+    id ("instagram.feature")
 }
 
 android {

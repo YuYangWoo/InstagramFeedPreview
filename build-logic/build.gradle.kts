@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     `kotlin-dsl`
 }
@@ -30,6 +29,10 @@ gradlePlugin {
         register("instagram.kotlin") {
             id = "instagram.kotlin"
             implementationClass = "plugin.KotlinPlugin"
+        }
+        register("instagram.feature") {
+            id = "instagram.feature"
+            implementationClass = "plugin.FeaturePlugin"
         }
     }
 }

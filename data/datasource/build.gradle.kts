@@ -5,5 +5,5 @@ plugins {
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
-    implementation(project(":core:dto"))
+    implementation(project(":data:dto"))
 }

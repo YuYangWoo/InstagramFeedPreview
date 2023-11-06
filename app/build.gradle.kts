@@ -1,19 +1,11 @@
 plugins {
-    id ("com.android.application")
-    id ("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
-    id ("androidx.navigation.safeargs.kotlin")
-    id ("com.google.dagger.hilt.android")
-    id ("kotlin-parcelize")
-    id("com.google.devtools.ksp")
+    id ("instagram.application")
+    id ("instagram.hilt")
 }
 
 android {
-    compileSdk = 33
     defaultConfig {
         applicationId = "com.example.instagramfeedpreview"
-        minSdk = 24
-        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -27,20 +19,10 @@ android {
         }
     }
 
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
-    }
     namespace = "com.example.instagramfeedpreview"
 }
 
 dependencies {
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ktx)
-    kapt(libs.hilt.compiler)
-
     implementation(project(":core:datastore"))
     implementation(project(":core:network"))
     implementation(project(":domain:usecase"))

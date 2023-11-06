@@ -12,7 +12,8 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.plugins.PluginManager
 import org.gradle.kotlin.dsl.getByType
 
-internal class AndroidPlugin : Plugin<Project> {
+class ApplicationPlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         applyPlugin(target.pluginManager)
         applyAndroidExtensions(target.extensions.getByType(CommonExtension::class))
@@ -20,40 +21,31 @@ internal class AndroidPlugin : Plugin<Project> {
     }
 
     private fun applyPlugin(pluginManager: PluginManager) = pluginManager.apply {
-        apply("com.android.library")
+        apply("com.android.application")
         apply("org.jetbrains.kotlin.android")
-        apply("androidx.navigation.safeargs.kotlin")
+        apply ("androidx.navigation.safeargs.kotlin")
     }
 
-    private fun applyAndroidExtensions(extensions: CommonExtension<*, *, *, *, *>)
-    = extensions.apply {
+    private fun applyAndroidExtensions(extensions: CommonExtension<*, *, *, *, *>) = extensions.apply {
         compileSdk = Build.COMPILE_SDK
 
         defaultConfig {
             minSdk = Build.MIN_SDK
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
 
-        testOptions {
-            unitTests.all {
-                it.useJUnitPlatform()
+            compileOptions {
+                sourceCompatibility = Build.SOURCE_COMPATIBILITY
+                targetCompatibility = Build.TARGET_COMPATIBILITY
             }
-        }
-        compileOptions {
-            sourceCompatibility = Build.SOURCE_COMPATIBILITY
-            targetCompatibility = Build.TARGET_COMPATIBILITY
-        }
 
-        kotlinOptions { jvmTarget = Build.JVM_TARGET }
-        buildFeatures { viewBinding = true}
+            kotlinOptions { jvmTarget = Build.JVM_TARGET }
+
+            buildFeatures { viewBinding = true}
+        }
     }
 
     private fun applyDependency(dependencyHandler: DependencyHandler, libs: VersionCatalog)
     = dependencyHandler.apply {
-        implementation(libs.findLibrary("androidx-core-ktx").get())
-        implementation(libs.findLibrary("androidx-appcompat").get())
-        implementation(libs.findLibrary("android-material").get())
-        implementation(libs.findLibrary("androidx-constraintLayout").get())
         implementation(libs.findLibrary("androidx-navigation-fragment").get())
         implementation(libs.findLibrary("androidx-navigation-ktx").get())
     }

@@ -30,5 +30,9 @@ gradlePlugin {
             id = "instagram.feature"
             implementationClass = "plugin.FeaturePlugin"
         }
+        register("instagram.application") {
+            id = "instagram.application"
+            implementationClass = "plugin.ApplicationPlugin"
+        }
     }
 }

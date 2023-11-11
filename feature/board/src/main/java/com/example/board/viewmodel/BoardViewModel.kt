@@ -1,12 +1,12 @@
 package com.example.board.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
+import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +19,7 @@ class BoardViewModel @Inject constructor(
     private val manageUserInformationUseCase: ManageUserInformationUseCase,
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchBoardChildItemUseCase: FetchBoardChildItemUseCase,
+    private val insertBoardUseCase: InsertBoardUseCase
     ) : ViewModel() {
     private val _boardUiState = MutableStateFlow<BoardUiState<Board>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
@@ -37,6 +38,9 @@ class BoardViewModel @Inject constructor(
                     _boardUiState.value = BoardUiState.Error("board fetch Error!!")
                 }
                 .onSuccess { board ->
+                    if (board != null) {
+                        insertBoardUseCase.invoke(board)
+                    }
                     _boardUiState.value = board?.let { BoardUiState.Success(it) } ?: BoardUiState.Error(
                         "board is Null!!"
                     )

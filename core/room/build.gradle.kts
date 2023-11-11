@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.datastore"
+    namespace = "com.example.room"
     defaultConfig {
         javaCompileOptions {
             annotationProcessorOptions {
@@ -21,6 +21,11 @@ android {
 
 dependencies {
     implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
+    implementation(libs.retrofit.gson)
+
+    implementation(project(":data:datasource"))
+    implementation(project(":domain:model"))
 }

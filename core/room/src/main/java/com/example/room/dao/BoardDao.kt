@@ -1,12 +1,12 @@
 package com.example.room.dao
 
 import androidx.room.Dao
-import com.example.room.entity.Board
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import com.example.room.entity.BoardEntity
 
 @Dao
 interface BoardDao {
-    fun getBoardList(): List<Board>
-    fun insertBoard()
-    fun deleteBoard()
-    fun updateBoard()
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertBoard(boardEntity: BoardEntity)
 }

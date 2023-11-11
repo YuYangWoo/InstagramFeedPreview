@@ -6,6 +6,7 @@ import com.example.room.db.BoardDataBase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,5 +16,5 @@ class RoomModule {
 
     @Provides
     @Singleton
-    fun provideBoardDataBase(context: Context) = Room.databaseBuilder(context.applicationContext, BoardDataBase::class.java, "board_database").build()
+    fun provideBoardDataBase(@ApplicationContext context: Context) = Room.databaseBuilder(context.applicationContext, BoardDataBase::class.java, "board_database").build()
 }

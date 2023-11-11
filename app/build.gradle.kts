@@ -42,4 +42,5 @@ dependencies {
     implementation(project(":feature:main"))
     implementation(project(":feature:login"))
     implementation(project(":feature:board"))
+    implementation(project(":core:room"))
 }

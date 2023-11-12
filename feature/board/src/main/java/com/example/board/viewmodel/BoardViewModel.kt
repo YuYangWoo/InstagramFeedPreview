@@ -32,8 +32,8 @@ class BoardViewModel @Inject constructor(
     )
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardItem() = viewModelScope.launch {
-        manageUserInformationUseCase.get().also { accessToken ->
+    fun requestBoardItem(token: String?) = viewModelScope.launch {
+        token.also { accessToken ->
             if (!accessToken.isNullOrBlank()) {
                 runCatching {
                     fetchInstagramBoardUseCase.invoke(accessToken)

@@ -23,7 +23,12 @@
         android:id="@+id/boardFragment"
         android:name="com.example.board.view.BoardFragment"
         android:label="게시판">
-        <deepLink app:uri="app://example.app/boardFragment" />
+
+        <argument
+            android:name="accessToken"
+            app:argType="string"
+            android:defaultValue=""/>
+        <deepLink app:uri="app://example.app/boardFragment/{accessToken}" />
     </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"

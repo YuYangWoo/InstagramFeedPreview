@@ -50,25 +50,26 @@ class BoardFragment : Fragment(R.layout.fragment_board){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val token = arguments?.getString("accessToken")
         initRecyclerView()
-        requestBoardItems()
+        requestBoardItems(token)
         initObserver()
-        initSwipeRefreshLayout()
+        initSwipeRefreshLayout(token)
     }
 
-    private fun initSwipeRefreshLayout() {
+    private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    requestBoardItems()
+                    requestBoardItems(token)
                 }
                 isRefreshing = false
             }
         }
     }
 
-    private fun requestBoardItems() {
-        boardViewModel.requestBoardItem()
+    private fun requestBoardItems(token: String?) {
+        boardViewModel.requestBoardItem(token)
     }
 
     private fun initRecyclerView() {

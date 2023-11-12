@@ -19,7 +19,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.board.GridDividerItemDecoration
+import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
@@ -82,8 +85,21 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                         .build()
                     findNavController().navigate(request)
                 }
+                setOnItemLongClickListener {
+                    binding.swipeRefreshLayout.isEnabled = false
+                }
             }
             layoutManager = GridLayoutManager(context, 3)
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    binding.swipeRefreshLayout.isEnabled = true
+                }
+            })
+
+            val callback = ItemMoveCallback(boardAdapter)
+            val touchHelper = ItemTouchHelper(callback)
+            touchHelper.attachToRecyclerView(binding.feedRecyclerView)
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }

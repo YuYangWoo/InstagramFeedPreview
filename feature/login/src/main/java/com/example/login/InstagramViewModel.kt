@@ -18,7 +18,7 @@ class InstagramViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Empty)
     val uiState: StateFlow<UiState<Token>> = _uiState.asStateFlow()
 
     fun requestAccessToken(
@@ -51,4 +51,5 @@ sealed class UiState<out T> {
     object Loading : UiState<Nothing>()
     data class Success<T>(val data: T) : UiState<T>()
     data class Error(val message: String) : UiState<Nothing>()
+    object Empty : UiState<Nothing>()
 }

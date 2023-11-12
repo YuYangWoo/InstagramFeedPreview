@@ -96,6 +96,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
                             binding.progressBar.isVisible = false
                             Log.d(TAG, state.message)
                         }
+                        is UiState.Empty -> {}
                     }
                 }
             }

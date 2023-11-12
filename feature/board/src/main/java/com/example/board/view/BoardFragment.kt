@@ -93,9 +93,9 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
                         is BoardUiState.Success -> {
-                            Log.d(TAG, "success")
+                            Log.d(TAG, "success${state.data}")
                             binding.progressBar.isVisible = false
-                            boardAdapter.submitList(state.data.items)
+                            boardAdapter.submitList(state.data)
                         }
                         is BoardUiState.Error -> {
                             Log.d(TAG, "Error")

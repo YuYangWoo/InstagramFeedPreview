@@ -14,4 +14,8 @@ class BoardLocalRepositoryImpl @Inject constructor(
         boardLocalDataSource.insert(board)
     }
 
+    override suspend fun findBoardItems(): ArrayList<Board.Item>? {
+        return boardLocalDataSource.select()
+    }
+
 }

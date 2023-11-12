@@ -5,4 +5,6 @@ import com.example.model.Board
 interface BoardLocalDataSource {
 
     suspend fun insert(board: Board)
+
+    suspend fun select(): ArrayList<Board.Item>?
 }

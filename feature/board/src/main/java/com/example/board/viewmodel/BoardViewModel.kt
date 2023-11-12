@@ -33,21 +33,29 @@ class BoardViewModel @Inject constructor(
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     fun requestBoardItem(token: String?) = viewModelScope.launch {
-        token.also { accessToken ->
-            if (!accessToken.isNullOrBlank()) {
-                runCatching {
-                    fetchInstagramBoardUseCase.invoke(accessToken)
-                }.onFailure {
-                    _boardUiState.value = BoardUiState.Error("board fetch Error!!")
-                }.onSuccess { board ->
-                    if (board != null) {
-                        findBoardItem(board)
+        val boardAll = findBoardUseCase.invoke()
+        when {
+            !boardAll.isNullOrEmpty() -> {
+                _boardUiState.value = BoardUiState.Success(boardAll)
+            }
+            else -> {
+                token.also { accessToken ->
+                    if (!accessToken.isNullOrBlank()) {
+                        runCatching {
+                            fetchInstagramBoardUseCase.invoke(accessToken)
+                        }.onFailure {
+                            _boardUiState.value = BoardUiState.Error("board fetch Error!!")
+                        }.onSuccess { board ->
+                            if (board != null) {
+                                findBoardItem(board)
+                            } else {
+                                _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
+                            }
+                        }
                     } else {
-                        _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
+                        _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
                     }
                 }
-            } else {
-                _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
             }
         }
     }

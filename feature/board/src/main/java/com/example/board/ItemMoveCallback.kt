@@ -6,7 +6,7 @@ import com.example.board.adapter.BoardAdapter
 import com.example.model.Board
 
 
-class ItemMoveCallback(private val boardAdapter: BoardAdapter, private val onCompleteListener:(ArrayList<Board.Item>) -> Unit) : ItemTouchHelper.Callback() {
+class ItemMoveCallback(private val boardAdapter: BoardAdapter, private val onCompleteListener:(List<Board.Item>) -> Unit) : ItemTouchHelper.Callback() {
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,

@@ -26,7 +26,7 @@ class BoardViewModel @Inject constructor(
     private val findBoardUseCase: FindBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase
     ) : ViewModel() {
-    private val _boardUiState = MutableStateFlow<BoardUiState<ArrayList<Board.Item>>>(BoardUiState.Loading)
+    private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(
@@ -36,7 +36,6 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardItem(token: String?) = viewModelScope.launch {
         val boardAll = findBoardUseCase.invoke()
-        Log.d("333333", boardAll.toString())
         when {
             !boardAll.isNullOrEmpty() -> {
                 _boardUiState.value = BoardUiState.Success(boardAll)
@@ -99,9 +98,6 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
         updateBoardUseCase.invoke(board)
-        findBoardUseCase.invoke()?.forEach {
-            Log.d("111111", it.id)
-        }
     }
 
     companion object {

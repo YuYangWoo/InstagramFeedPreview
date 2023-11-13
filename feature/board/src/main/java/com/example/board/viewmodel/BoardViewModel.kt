@@ -10,6 +10,7 @@ import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FindBoardUseCase
 import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
+import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +23,8 @@ class BoardViewModel @Inject constructor(
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchBoardChildItemUseCase: FetchBoardChildItemUseCase,
     private val insertBoardUseCase: InsertBoardUseCase,
-    private val findBoardUseCase: FindBoardUseCase
+    private val findBoardUseCase: FindBoardUseCase,
+    private val updateBoardUseCase: UpdateBoardUseCase
     ) : ViewModel() {
     private val _boardUiState = MutableStateFlow<BoardUiState<ArrayList<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
@@ -34,6 +36,7 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardItem(token: String?) = viewModelScope.launch {
         val boardAll = findBoardUseCase.invoke()
+        Log.d("333333", boardAll.toString())
         when {
             !boardAll.isNullOrEmpty() -> {
                 _boardUiState.value = BoardUiState.Success(boardAll)
@@ -91,6 +94,13 @@ class BoardViewModel @Inject constructor(
             } else {
                 _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
             }
+        }
+    }
+
+    fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
+        updateBoardUseCase.invoke(board)
+        findBoardUseCase.invoke()?.forEach {
+            Log.d("111111", it.id)
         }
     }
 

@@ -18,4 +18,8 @@ class BoardLocalRepositoryImpl @Inject constructor(
         return boardLocalDataSource.select()
     }
 
+    override suspend fun updateBoardItems(board: Board) {
+        boardLocalDataSource.update(board)
+    }
+
 }

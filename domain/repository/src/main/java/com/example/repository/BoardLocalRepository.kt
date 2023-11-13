@@ -6,4 +6,6 @@ interface BoardLocalRepository {
     suspend fun insertBoardItems(board: Board)
 
     suspend fun findBoardItems(): ArrayList<Board.Item>?
+
+    suspend fun updateBoardItems(board: Board)
 }

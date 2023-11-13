@@ -28,6 +28,7 @@ import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
+import com.example.model.Board
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -97,7 +98,9 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 }
             })
 
-            val callback = ItemMoveCallback(boardAdapter)
+            val callback = ItemMoveCallback(boardAdapter) {
+                boardViewModel.requestBoardItemUpdate(Board(it))
+            }
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.feedRecyclerView)
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))

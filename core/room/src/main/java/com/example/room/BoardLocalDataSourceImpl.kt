@@ -19,5 +19,13 @@ class BoardLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun select(): ArrayList<Board.Item>? = boardDao.findBoardItems().firstOrNull()?.toDomain()
+    override suspend fun update(board: Board) {
+        boardDao.updateBoard(BoardEntity(BoardItemWrapper(board.items)))
+
+    //        kotlin.runCatching {
+//            boardDao.updateBoard(BoardEntity(BoardItemWrapper(board.items)))
+//        }.onSuccess { Log.d("111111", "성공") }
+//            .onFailure { Log.d("11111", "실패") }
+    }
 
 }

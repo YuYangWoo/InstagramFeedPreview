@@ -66,11 +66,12 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
 
     }
 
-    fun onItemMove(fromPosition: Int, toPosition: Int) {
+    fun onItemMove(fromPosition: Int, toPosition: Int): ArrayList<Board.Item> {
         val updatedList = currentList.toMutableList()
         updatedList.swap(fromPosition, toPosition)
 
         submitList(updatedList)
+        return updatedList as ArrayList<Board.Item>
     }
 
     private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {

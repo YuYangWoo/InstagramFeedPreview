@@ -19,12 +19,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.board.GridDividerItemDecoration
+import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
+import com.example.model.Board
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,25 +54,26 @@ class BoardFragment : Fragment(R.layout.fragment_board){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val token = arguments?.getString("accessToken")
         initRecyclerView()
-        requestBoardItems()
+        requestBoardItems(token)
         initObserver()
-        initSwipeRefreshLayout()
+        initSwipeRefreshLayout(token)
     }
 
-    private fun initSwipeRefreshLayout() {
+    private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    requestBoardItems()
+                    requestBoardItems(token)
                 }
                 isRefreshing = false
             }
         }
     }
 
-    private fun requestBoardItems() {
-        boardViewModel.requestBoardItem()
+    private fun requestBoardItems(token: String?) {
+        boardViewModel.requestBoardItem(token)
     }
 
     private fun initRecyclerView() {
@@ -81,8 +86,23 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                         .build()
                     findNavController().navigate(request)
                 }
+                setOnItemLongClickListener {
+                    binding.swipeRefreshLayout.isEnabled = false
+                }
             }
             layoutManager = GridLayoutManager(context, 3)
+
+            addOnScrollListener(object: RecyclerView.OnScrollListener(){
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    binding.swipeRefreshLayout.isEnabled = true
+                }
+            })
+
+            val callback = ItemMoveCallback(boardAdapter) {
+                boardViewModel.requestBoardItemUpdate(Board(it))
+            }
+            val touchHelper = ItemTouchHelper(callback)
+            touchHelper.attachToRecyclerView(binding.feedRecyclerView)
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }
@@ -93,9 +113,9 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
                         is BoardUiState.Success -> {
-                            Log.d(TAG, "success")
+                            Log.d(TAG, "success${state.data}")
                             binding.progressBar.isVisible = false
-                            boardAdapter.submitList(state.data.items)
+                            boardAdapter.submitList(state.data)
                         }
                         is BoardUiState.Error -> {
                             Log.d(TAG, "Error")

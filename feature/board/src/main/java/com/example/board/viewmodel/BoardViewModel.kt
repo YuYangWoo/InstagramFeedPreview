@@ -7,7 +7,10 @@ import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
+import com.example.usecase.FindBoardUseCase
+import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
+import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,8 +22,11 @@ class BoardViewModel @Inject constructor(
     private val manageUserInformationUseCase: ManageUserInformationUseCase,
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchBoardChildItemUseCase: FetchBoardChildItemUseCase,
+    private val insertBoardUseCase: InsertBoardUseCase,
+    private val findBoardUseCase: FindBoardUseCase,
+    private val updateBoardUseCase: UpdateBoardUseCase
     ) : ViewModel() {
-    private val _boardUiState = MutableStateFlow<BoardUiState<Board>>(BoardUiState.Loading)
+    private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(
@@ -28,22 +34,46 @@ class BoardViewModel @Inject constructor(
     )
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardItem() = viewModelScope.launch {
-        manageUserInformationUseCase.get().also { accessToken ->
-            if (!accessToken.isNullOrBlank()) {
-                runCatching {
-                    fetchInstagramBoardUseCase.invoke(accessToken)
-                }.onFailure {
-                    _boardUiState.value = BoardUiState.Error("board fetch Error!!")
-                }
-                .onSuccess { board ->
-                    _boardUiState.value = board?.let { BoardUiState.Success(it) } ?: BoardUiState.Error(
-                        "board is Null!!"
-                    )
-                }
-            } else {
-                _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
+    fun requestBoardItem(token: String?) = viewModelScope.launch {
+        val boardAll = findBoardUseCase.invoke()
+        when {
+            !boardAll.isNullOrEmpty() -> {
+                _boardUiState.value = BoardUiState.Success(boardAll)
             }
+            else -> {
+                token.also { accessToken ->
+                    if (!accessToken.isNullOrBlank()) {
+                        runCatching {
+                            fetchInstagramBoardUseCase.invoke(accessToken)
+                        }.onFailure {
+                            _boardUiState.value = BoardUiState.Error("board fetch Error!!")
+                        }.onSuccess { board ->
+                            if (board != null) {
+                                findBoardItem(board)
+                            } else {
+                                _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
+                            }
+                        }
+                    } else {
+                        _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun findBoardItem(board: Board) = viewModelScope.launch {
+        runCatching {
+            insertBoardUseCase.invoke(board)
+        }.onSuccess {
+            _boardUiState.value = findBoardUseCase.invoke()?.let {
+                Log.d(TAG, it.toString())
+                BoardUiState.Success(it)
+            } ?: BoardUiState.Error(
+                "board is Null!!"
+            )
+        }.onFailure {
+            Log.d(TAG, "insertBoardUseCase.invoke() 실패")
         }
     }
 
@@ -64,6 +94,10 @@ class BoardViewModel @Inject constructor(
                 _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
             }
         }
+    }
+
+    fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
+        updateBoardUseCase.invoke(board)
     }
 
     companion object {

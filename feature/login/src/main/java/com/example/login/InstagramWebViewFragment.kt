@@ -87,7 +87,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
                         is UiState.Success -> {
                             binding.progressBar.isVisible = false
                             val request = NavDeepLinkRequest.Builder
-                                .fromUri("app://example.app/boardFragment".toUri())
+                                .fromUri("app://example.app/boardFragment/${state.data.accessToken}".toUri())
                                 .build()
                             findNavController().navigate(request)
                             Log.d(TAG, state.data.toString())
@@ -96,9 +96,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
                             binding.progressBar.isVisible = false
                             Log.d(TAG, state.message)
                         }
-                        is UiState.Empty -> {
-
-                        }
+                        is UiState.Empty -> {}
                     }
                 }
             }

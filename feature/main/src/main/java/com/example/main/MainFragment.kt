@@ -48,7 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                         is UiState.Success -> {
                             binding.progressBar.isVisible = false
                             val request = NavDeepLinkRequest.Builder
-                                .fromUri("app://example.app/boardFragment".toUri())
+                                .fromUri("app://example.app/boardFragment/${state.data}".toUri())
                                 .build()
                             findNavController().navigate(request)
                         }

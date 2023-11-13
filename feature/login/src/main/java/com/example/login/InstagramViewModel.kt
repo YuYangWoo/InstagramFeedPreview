@@ -7,7 +7,9 @@ import com.example.model.Token
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

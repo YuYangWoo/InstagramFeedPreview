@@ -11,11 +11,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BoardDao {
 
-    @Query("Select * From BoardEntity")
-    fun findBoardItems(): Flow<BoardEntity>
+    @Query("Select * From BoardEntity ORDER BY `order` ASC")
+    fun findBoardItems(): Flow<List<BoardEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBoard(boardEntity: BoardEntity)
 
     @Update
     suspend fun updateBoard(boardEntity: BoardEntity)
+
+    @Query("SELECT MAX(`order`) FROM BoardEntity")
+    suspend fun getMaxOrder(): Int
 }

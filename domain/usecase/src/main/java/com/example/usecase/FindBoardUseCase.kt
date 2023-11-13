@@ -8,6 +8,6 @@ import javax.inject.Singleton
 @Singleton
 class FindBoardUseCase @Inject constructor(private val boardLocalRepository: BoardLocalRepository) {
 
-    suspend operator fun invoke(): ArrayList<Board.Item>? = boardLocalRepository.findBoardItems()
+    suspend operator fun invoke(): List<Board.Item>? = boardLocalRepository.findBoardItems()
 
 }

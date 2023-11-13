@@ -6,7 +6,7 @@ interface BoardLocalDataSource {
 
     suspend fun insert(board: Board)
 
-    suspend fun select(): ArrayList<Board.Item>?
+    suspend fun select(): List<Board.Item>?
 
     suspend fun update(board: Board)
 }

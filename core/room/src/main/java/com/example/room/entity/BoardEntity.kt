@@ -2,17 +2,16 @@ package com.example.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import com.example.model.Board
-import com.example.room.BoardItemWrapper
-import com.example.room.ListConverter
 
 @Entity
 data class BoardEntity(
-    @TypeConverters(ListConverter::class) val boards: BoardItemWrapper
-) {
-    @PrimaryKey(autoGenerate = true) var id: Int = 0
-}
-fun BoardEntity.toDomain(): ArrayList<Board.Item> {
-    return boards.items
-}
+    @PrimaryKey
+    val id: String,
+    val caption: String,
+    val mediaUrl: String,
+    val order: Int = 0
+)
+
+fun List<BoardEntity>.toDomain(): List<Board.Item> = this.map { Board.Item(it.id, it.caption, it.mediaUrl, it.order) }
+

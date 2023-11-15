@@ -9,4 +9,6 @@ interface BoardLocalDataSource {
     suspend fun select(): List<Board.Item>?
 
     suspend fun update(board: Board)
+
+    suspend fun delete(boardItem: Board.Item)
 }

@@ -22,4 +22,8 @@ class BoardLocalRepositoryImpl @Inject constructor(
         boardLocalDataSource.update(board)
     }
 
+    override suspend fun deleteBoardItem(boardItem: Board.Item) {
+        boardLocalDataSource.delete(boardItem)
+    }
+
 }

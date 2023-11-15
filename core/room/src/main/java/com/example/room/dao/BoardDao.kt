@@ -1,6 +1,7 @@
 package com.example.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,4 +23,7 @@ interface BoardDao {
 
     @Query("SELECT MAX(`order`) FROM BoardEntity")
     suspend fun getMaxOrder(): Int
+
+    @Delete
+    suspend fun deleteBoard(boardEntity: BoardEntity)
 }

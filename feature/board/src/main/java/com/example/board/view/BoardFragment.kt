@@ -6,8 +6,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +22,6 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
@@ -66,11 +63,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         initSwipeRefreshLayout(token)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-
-    }
-
     private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
@@ -97,16 +89,9 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                     findNavController().navigate(request)
                 }
                 setOnItemLongClickListener {
-                    binding.swipeRefreshLayout.isEnabled = false
                 }
             }
             layoutManager = GridLayoutManager(context, 3)
-
-            addOnScrollListener(object: RecyclerView.OnScrollListener(){
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    binding.swipeRefreshLayout.isEnabled = true
-                }
-            })
 
             setOnTouchListener { v, event ->
                 when (event.action) {
@@ -141,6 +126,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                     boardViewModel.requestBoardItemUpdate(Board(it))
                 },
                 onCutOffListener = {
+                    binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
                     binding.trashCanImageView.isVisible = binding.trashCanImageView.isVisible.not()
                 }
             )

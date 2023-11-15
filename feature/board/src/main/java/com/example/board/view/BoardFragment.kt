@@ -2,9 +2,13 @@ package com.example.board.view
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -24,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
+import com.example.board.VibrateHelper
 import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardUiState
@@ -59,6 +64,11 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         requestBoardItems(token)
         initObserver()
         initSwipeRefreshLayout(token)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
@@ -98,9 +108,42 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 }
             })
 
-            val callback = ItemMoveCallback(boardAdapter) {
-                boardViewModel.requestBoardItemUpdate(Board(it))
+            setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_MOVE -> {
+                        val touchedItem = findChildViewUnder(event.x, event.y)
+
+                        if (touchedItem != null) {
+                            val touchedViewHolder = getChildViewHolder(touchedItem) as BoardAdapter.FeedHolder
+                            val dragX = event.rawX.toInt()
+                            val dragY = event.rawY.toInt()
+                            val imageViewRect = Rect()
+                            binding.trashCanImageView.getGlobalVisibleRect(imageViewRect)
+
+                            if (imageViewRect.contains(dragX, dragY)) {
+                                val currentItem = touchedViewHolder.currentItem
+                                if (currentItem != null) {
+                                    VibrateHelper(requireContext()).vibrate(300L)
+                                    boardViewModel.requestBoardItemDelete(currentItem)
+                                    Log.d("111111", currentItem.toString())
+                                }
+                            }
+                        }
+
+                    }
+                }
+                false
             }
+
+            val callback = ItemMoveCallback(
+                boardAdapter = boardAdapter,
+                onCompleteListener = {
+                    boardViewModel.requestBoardItemUpdate(Board(it))
+                },
+                onCutOffListener = {
+                    binding.trashCanImageView.isVisible = binding.trashCanImageView.isVisible.not()
+                }
+            )
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.feedRecyclerView)
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))

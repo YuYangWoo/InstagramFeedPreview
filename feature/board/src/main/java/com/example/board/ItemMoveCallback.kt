@@ -6,7 +6,11 @@ import com.example.board.adapter.BoardAdapter
 import com.example.model.Board
 
 
-class ItemMoveCallback(private val boardAdapter: BoardAdapter, private val onCompleteListener:(List<Board.Item>) -> Unit) : ItemTouchHelper.Callback() {
+class ItemMoveCallback(
+    private val boardAdapter: BoardAdapter,
+    private val onCompleteListener:(List<Board.Item>) -> Unit,
+    private val onCutOffListener:() -> Unit
+) : ItemTouchHelper.Callback() {
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -16,6 +20,10 @@ class ItemMoveCallback(private val boardAdapter: BoardAdapter, private val onCom
         return makeMovementFlags(dragFlags, 0)
     }
 
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        onCutOffListener()
+    }
+
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
@@ -23,6 +31,10 @@ class ItemMoveCallback(private val boardAdapter: BoardAdapter, private val onCom
     ): Boolean {
         onCompleteListener.invoke(boardAdapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition))
         return true
+    }
+
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}

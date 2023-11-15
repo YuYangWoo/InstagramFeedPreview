@@ -29,12 +29,8 @@ class ItemMoveCallback(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-        onCompleteListener.invoke(boardAdapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition))
+        onCompleteListener(boardAdapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition))
         return true
-    }
-
-    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-        super.clearView(recyclerView, viewHolder)
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}

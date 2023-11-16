@@ -3,6 +3,7 @@ package com.example.board.adapter
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
 ) {
 
     private var onItemClick: ((Board.Item) -> Unit)? = null
-    private var onItemLongClick: (() -> Unit)? = null
+    private var onItemLongClick: ((ImageView) -> Unit)? = null
     private var onItemTouch: ((Board.Item, MotionEvent) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
@@ -34,7 +35,7 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
         onItemClick = listener
     }
 
-    fun setOnItemLongClickListener(longClickListener:(() -> Unit)) {
+    fun setOnItemLongClickListener(longClickListener:((ImageView) -> Unit)) {
         onItemLongClick = longClickListener
     }
 
@@ -48,7 +49,7 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
         fun bind(
             boardInformation: Board.Item,
             onItemClick: ((Board.Item) -> Unit)?,
-            onItemLongClick:(() -> Unit)?,
+            onItemLongClick:((ImageView) -> Unit)?,
             onTouchClick: ((Board.Item, MotionEvent) -> Unit)?
         ) {
             currentItem = boardInformation
@@ -58,18 +59,10 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
             ).diskCacheStrategy(
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
 
-            binding.root.setOnLongClickListener {
-                onItemLongClick?.invoke()
-                true
-            }
-
             binding.root.setOnClickListener {
                 onItemClick?.let { it -> it(boardInformation) }
             }
-            binding.root.setOnTouchListener { v, event ->
-                onTouchClick?.let {it -> it(boardInformation, event)}
-                false
-            }
+
         }
     }
 

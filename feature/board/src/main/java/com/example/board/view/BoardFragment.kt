@@ -2,11 +2,9 @@ package com.example.board.view
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -88,50 +86,40 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                         .build()
                     findNavController().navigate(request)
                 }
-                setOnItemLongClickListener {
-                }
             }
             layoutManager = GridLayoutManager(context, 3)
-
-            setOnTouchListener { v, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_MOVE -> {
-                        val touchedItem = findChildViewUnder(event.x, event.y)
-
-                        if (touchedItem != null) {
-                            val touchedViewHolder = getChildViewHolder(touchedItem) as BoardAdapter.FeedHolder
-                            val dragX = event.rawX.toInt()
-                            val dragY = event.rawY.toInt()
-                            val imageViewRect = Rect()
-                            binding.trashCanImageView.getGlobalVisibleRect(imageViewRect)
-
-                            if (imageViewRect.contains(dragX, dragY)) {
-                                val currentItem = touchedViewHolder.currentItem
-                                if (currentItem != null) {
-                                    VibrateHelper(requireContext()).vibrate(300L)
-                                    boardViewModel.requestBoardItemDelete(currentItem)
-                                    Log.d("111111", currentItem.toString())
-                                }
-                            }
-                        }
-
-                    }
-                }
-                false
-            }
 
             val callback = ItemMoveCallback(
                 boardAdapter = boardAdapter,
                 onCompleteListener = {
                     boardViewModel.requestBoardItemUpdate(Board(it))
                 },
-                onCutOffListener = {
+                onSelectedChangedListener = {
                     binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
                     binding.trashCanImageView.isVisible = binding.trashCanImageView.isVisible.not()
+                },
+                onClearViewListener = { currentViewHolder ->
+                    val holderX = currentViewHolder.itemView.x.toInt()
+                    val holderY = currentViewHolder.itemView.y.toInt()
+
+                    val currentViewHolderX = currentViewHolder.itemView.x.toInt()
+                    val currentViewHolderY = currentViewHolder.itemView.y.toInt()
+
+                    val errorMargin = 10
+                    if (currentViewHolderX in holderX - errorMargin .. holderX + errorMargin &&
+                        currentViewHolderY in holderY - errorMargin .. holderY + errorMargin
+                        ){
+                        val currentItem = (currentViewHolder as BoardAdapter.FeedHolder).currentItem
+                        if (currentItem != null) {
+                            VibrateHelper(requireContext()).vibrate(300L)
+                            boardViewModel.requestBoardItemDelete(currentItem)
+                        }
+                    }
                 }
             )
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.feedRecyclerView)
+
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }

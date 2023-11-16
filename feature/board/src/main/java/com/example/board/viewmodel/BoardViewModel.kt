@@ -1,6 +1,5 @@
 package com.example.board.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
@@ -51,7 +50,8 @@ class BoardViewModel @Inject constructor(
                             _boardUiState.value = BoardUiState.Error("board fetch Error!!")
                         }.onSuccess { board ->
                             if (board != null) {
-                                findBoardItem(board)
+                                requestBoardItemInsert(board)
+                                requestBoardItemsFind()
                             } else {
                                 _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
                             }
@@ -61,21 +61,6 @@ class BoardViewModel @Inject constructor(
                     }
                 }
             }
-        }
-    }
-
-    private fun findBoardItem(board: Board) = viewModelScope.launch {
-        runCatching {
-            insertBoardUseCase.invoke(board)
-        }.onSuccess {
-            _boardUiState.value = findBoardUseCase.invoke()?.let {
-                Log.d(TAG, it.toString())
-                BoardUiState.Success(it)
-            } ?: BoardUiState.Error(
-                "board is Null!!"
-            )
-        }.onFailure {
-            Log.d(TAG, "insertBoardUseCase.invoke() 실패")
         }
     }
 
@@ -98,18 +83,27 @@ class BoardViewModel @Inject constructor(
         }
     }
 
+    private fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
+        insertBoardUseCase.invoke(board)
+    }
+
     fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
         updateBoardUseCase.invoke(board)
     }
 
-    fun requestBoardItemDelete(boardItem: Board.Item) = viewModelScope.launch {
-        deleteBoardUseCase.invoke(boardItem)
+    private fun requestBoardItemsFind() = viewModelScope.launch {
         _boardUiState.value = findBoardUseCase.invoke()?.let {
-            Log.d(TAG, it.toString())
             BoardUiState.Success(it)
-        } ?: BoardUiState.Error(
-            "board is Null!!"
-        )
+        } ?: BoardUiState.Error("board is Null!!")
+    }
+
+    private fun requestBoardItemDelete(item: Board.Item) = viewModelScope.launch {
+        deleteBoardUseCase.invoke(item)
+    }
+
+    fun requestBoardItemDeleteAndSelect(item: Board.Item) = viewModelScope.launch {
+        requestBoardItemDelete(item)
+        requestBoardItemsFind()
     }
 
     companion object {

@@ -20,7 +20,6 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
@@ -43,6 +42,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +59,20 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         requestBoardItems(token)
         initObserver()
         initSwipeRefreshLayout(token)
+        initClickListener()
+    }
+
+    private fun initClickListener() {
+        binding.trashCanImageView.setOnClickListener {
+            Toast.makeText(requireContext(), "삭제할 사진을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            binding.trashCanImageView.tag = if (binding.trashCanImageView.tag == true) {
+                binding.trashCanImageView.isSelected = false
+                false
+            } else {
+                binding.trashCanImageView.isSelected = true
+                true
+            }
+        }
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
@@ -79,30 +93,36 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-                setOnItemClickListener {
-                    boardViewModel.requestBoardChildItems(it.id)
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment".toUri())
-                        .build()
-                    findNavController().navigate(request)
-                }
-                setOnItemLongClickListener {
-                    binding.swipeRefreshLayout.isEnabled = false
+                setOnItemClickListener { board ->
+                    when (binding.trashCanImageView.tag) {
+                        true -> {
+                            boardViewModel.requestBoardItemDelete(board)
+                        }
+                        else -> {
+                            boardViewModel.requestBoardChildItems(board.id)
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("app://example.app/boardDetailFragment".toUri())
+                                .build()
+                            findNavController().navigate(request)
+                        }
+                    }
+
                 }
             }
             layoutManager = GridLayoutManager(context, 3)
 
-            addOnScrollListener(object: RecyclerView.OnScrollListener(){
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    binding.swipeRefreshLayout.isEnabled = true
+            val callback = ItemMoveCallback(
+                boardAdapter = boardAdapter,
+                onCompleteListener = {
+                    boardViewModel.requestBoardItemUpdate(Board(it))
+                },
+                onSelectedChangedListener = {
+                    binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
                 }
-            })
-
-            val callback = ItemMoveCallback(boardAdapter) {
-                boardViewModel.requestBoardItemUpdate(Board(it))
-            }
+            )
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.feedRecyclerView)
+
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }
@@ -113,7 +133,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
                         is BoardUiState.Success -> {
-                            Log.d(TAG, "success${state.data}")
                             binding.progressBar.isVisible = false
                             boardAdapter.submitList(state.data)
                         }

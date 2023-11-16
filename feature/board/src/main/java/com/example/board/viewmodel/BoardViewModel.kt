@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.model.Board
 import com.example.model.BoardDetail
+import com.example.usecase.DeleteBoardUseCase
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FindBoardUseCase
@@ -24,7 +25,8 @@ class BoardViewModel @Inject constructor(
     private val fetchBoardChildItemUseCase: FetchBoardChildItemUseCase,
     private val insertBoardUseCase: InsertBoardUseCase,
     private val findBoardUseCase: FindBoardUseCase,
-    private val updateBoardUseCase: UpdateBoardUseCase
+    private val updateBoardUseCase: UpdateBoardUseCase,
+    private val deleteBoardUseCase: DeleteBoardUseCase
     ) : ViewModel() {
     private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
@@ -98,6 +100,16 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
         updateBoardUseCase.invoke(board)
+    }
+
+    fun requestBoardItemDelete(boardItem: Board.Item) = viewModelScope.launch {
+        deleteBoardUseCase.invoke(boardItem)
+        _boardUiState.value = findBoardUseCase.invoke()?.let {
+            Log.d(TAG, it.toString())
+            BoardUiState.Success(it)
+        } ?: BoardUiState.Error(
+            "board is Null!!"
+        )
     }
 
     companion object {

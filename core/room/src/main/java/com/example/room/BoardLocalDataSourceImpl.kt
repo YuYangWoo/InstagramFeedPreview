@@ -30,4 +30,8 @@ class BoardLocalDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun delete(boardItem: Board.Item) {
+        boardDao.deleteBoard(BoardEntity(boardItem.id, boardItem.caption, boardItem.mediaUrl, boardItem.order))
+    }
+
 }

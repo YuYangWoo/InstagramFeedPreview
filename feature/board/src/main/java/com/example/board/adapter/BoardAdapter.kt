@@ -21,26 +21,16 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
 ) {
 
     private var onItemClick: ((Board.Item) -> Unit)? = null
-    private var onItemLongClick: ((ImageView) -> Unit)? = null
-    private var onItemTouch: ((Board.Item, MotionEvent) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        holder.bind(getItem(position), onItemClick, onItemLongClick, onItemTouch)
+        holder.bind(getItem(position), onItemClick)
     }
 
     fun setOnItemClickListener(listener: (Board.Item) -> Unit) {
         onItemClick = listener
-    }
-
-    fun setOnItemLongClickListener(longClickListener:((ImageView) -> Unit)) {
-        onItemLongClick = longClickListener
-    }
-
-    fun setOnItemTouchListener(onItemTouchListener:(Board.Item, MotionEvent) -> Unit) {
-        onItemTouch = onItemTouchListener
     }
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -49,11 +39,9 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
         fun bind(
             boardInformation: Board.Item,
             onItemClick: ((Board.Item) -> Unit)?,
-            onItemLongClick:((ImageView) -> Unit)?,
-            onTouchClick: ((Board.Item, MotionEvent) -> Unit)?
         ) {
             currentItem = boardInformation
-
+            binding.root.tag = false
             Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(
                 R.drawable.no_image
             ).diskCacheStrategy(

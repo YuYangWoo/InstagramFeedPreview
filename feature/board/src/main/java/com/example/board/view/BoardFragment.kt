@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
-import com.example.board.VibrateHelper
 import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardUiState
@@ -43,6 +42,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +59,20 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         requestBoardItems(token)
         initObserver()
         initSwipeRefreshLayout(token)
+        initClickListener()
+    }
+
+    private fun initClickListener() {
+        binding.trashCanImageView.setOnClickListener {
+            Toast.makeText(requireContext(), "삭제할 사진을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            binding.trashCanImageView.tag = if (binding.trashCanImageView.tag == true) {
+                binding.trashCanImageView.isSelected = false
+                false
+            } else {
+                binding.trashCanImageView.isSelected = true
+                true
+            }
+        }
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
@@ -79,12 +93,20 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-                setOnItemClickListener {
-                    boardViewModel.requestBoardChildItems(it.id)
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment".toUri())
-                        .build()
-                    findNavController().navigate(request)
+                setOnItemClickListener { board ->
+                    when (binding.trashCanImageView.tag) {
+                        true -> {
+                            boardViewModel.requestBoardItemDelete(board)
+                        }
+                        else -> {
+                            boardViewModel.requestBoardChildItems(board.id)
+                            val request = NavDeepLinkRequest.Builder
+                                .fromUri("app://example.app/boardDetailFragment".toUri())
+                                .build()
+                            findNavController().navigate(request)
+                        }
+                    }
+
                 }
             }
             layoutManager = GridLayoutManager(context, 3)
@@ -96,25 +118,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 },
                 onSelectedChangedListener = {
                     binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
-                    binding.trashCanImageView.isVisible = binding.trashCanImageView.isVisible.not()
-                },
-                onClearViewListener = { currentViewHolder ->
-                    val holderX = currentViewHolder.itemView.x.toInt()
-                    val holderY = currentViewHolder.itemView.y.toInt()
-
-                    val currentViewHolderX = currentViewHolder.itemView.x.toInt()
-                    val currentViewHolderY = currentViewHolder.itemView.y.toInt()
-
-                    val errorMargin = 10
-                    if (currentViewHolderX in holderX - errorMargin .. holderX + errorMargin &&
-                        currentViewHolderY in holderY - errorMargin .. holderY + errorMargin
-                        ){
-                        val currentItem = (currentViewHolder as BoardAdapter.FeedHolder).currentItem
-                        if (currentItem != null) {
-                            VibrateHelper(requireContext()).vibrate(300L)
-                            boardViewModel.requestBoardItemDelete(currentItem)
-                        }
-                    }
                 }
             )
             val touchHelper = ItemTouchHelper(callback)
@@ -130,7 +133,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 boardViewModel.boardUiState.collectLatest { state ->
                     when (state) {
                         is BoardUiState.Success -> {
-                            Log.d(TAG, "success${state.data}")
                             binding.progressBar.isVisible = false
                             boardAdapter.submitList(state.data)
                         }

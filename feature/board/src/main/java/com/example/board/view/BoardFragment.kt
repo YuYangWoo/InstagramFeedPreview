@@ -96,10 +96,10 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 setOnItemClickListener { board ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
-                            boardViewModel.requestBoardItemDelete(board)
+                            boardViewModel.requestBoardItemDeleteAndSelect(board)
                         }
                         else -> {
-                            boardViewModel.requestBoardChildItems(board.id)
+                            boardViewModel.requestBoardItemDeleteAndSelect(board)
                             val request = NavDeepLinkRequest.Builder
                                 .fromUri("app://example.app/boardDetailFragment".toUri())
                                 .build()

@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 
 data class BoardDTO(
     @SerializedName("data")
-    val items: ArrayList<Board.Item>
+    val items: ArrayList<Board.Item>,
+    val paging: Board.Paging
 )
+
 fun BoardDTO.toDomain(): Board {
-    return Board(items)
+    return Board(items, paging)
 }

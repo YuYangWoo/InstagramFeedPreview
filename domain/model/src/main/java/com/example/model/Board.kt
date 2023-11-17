@@ -3,7 +3,8 @@ package com.example.model
 import com.google.gson.annotations.SerializedName
 
 data class Board(
-    val items: List<Item>
+    val items: List<Item>,
+    val paging: Paging?
 ) {
     data class Item(
         val id: String,
@@ -12,5 +13,15 @@ data class Board(
         val mediaUrl: String,
         var order: Int = 0
     )
+
+    data class Paging(
+        val cursors: Cursors,
+        val next: String
+    ) {
+        data class Cursors(
+            val before: String,
+            val after: String
+        )
+    }
 }
 

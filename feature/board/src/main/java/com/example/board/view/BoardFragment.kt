@@ -114,7 +114,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
             val callback = ItemMoveCallback(
                 boardAdapter = boardAdapter,
                 onCompleteListener = {
-                    boardViewModel.requestBoardItemUpdate(Board(it))
+                    boardViewModel.requestBoardItemUpdate(Board(it, null))
                 },
                 onSelectedChangedListener = {
                     binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()

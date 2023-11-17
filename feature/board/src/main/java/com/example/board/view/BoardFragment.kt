@@ -99,7 +99,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                             boardViewModel.requestBoardItemDeleteAndSelect(board)
                         }
                         else -> {
-                            boardViewModel.requestBoardItemDeleteAndSelect(board)
+                            boardViewModel.requestBoardChildItems(board.id)
                             val request = NavDeepLinkRequest.Builder
                                 .fromUri("app://example.app/boardDetailFragment".toUri())
                                 .build()

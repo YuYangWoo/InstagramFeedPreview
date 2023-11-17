@@ -36,7 +36,7 @@ class BoardViewModel @Inject constructor(
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     fun requestBoardItem(token: String?) = viewModelScope.launch {
-        val boardAll = findBoardUseCase.invoke()
+        val boardAll = requestBoardItemsFind()
         when {
             !boardAll.isNullOrEmpty() -> {
                 _boardUiState.value = BoardUiState.Success(boardAll)
@@ -51,7 +51,7 @@ class BoardViewModel @Inject constructor(
                         }.onSuccess { board ->
                             if (board != null) {
                                 requestBoardItemInsert(board)
-                                requestBoardItemsFind()
+                                _boardUiState.value = BoardUiState.Success(board.items)
                             } else {
                                 _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
                             }
@@ -83,7 +83,7 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    private fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
+    private suspend fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
         insertBoardUseCase.invoke(board)
     }
 
@@ -91,10 +91,8 @@ class BoardViewModel @Inject constructor(
         updateBoardUseCase.invoke(board)
     }
 
-    private fun requestBoardItemsFind() = viewModelScope.launch {
-        _boardUiState.value = findBoardUseCase.invoke()?.let {
-            BoardUiState.Success(it)
-        } ?: BoardUiState.Error("board is Null!!")
+    private suspend fun requestBoardItemsFind(): List<Board.Item>? {
+        return findBoardUseCase.invoke()
     }
 
     private fun requestBoardItemDelete(item: Board.Item) = viewModelScope.launch {

@@ -8,7 +8,7 @@ data class Board(
 ) {
     data class Item(
         val id: String,
-        val caption: String,
+        val caption: String?,
         @SerializedName("media_url")
         val mediaUrl: String,
         var order: Int = 0

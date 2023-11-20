@@ -1,5 +1,9 @@
 package com.example.repository.remote
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.datasource.BoardPagingSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
 import com.example.dto.toDomain
@@ -32,8 +36,10 @@ class InstagramRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun fetchBoardInformation(accessToken: String): Flow<Board> = flow {
-        emit(graphInstagramApiServiceSource.getBoardInformation(accessToken).toDomain())
-    }.flowOn(Dispatchers.IO)
+    override fun fetchBoardInformation(accessToken: String, after: String?): Flow<PagingData<Board.Item>> =
+        Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, accessToken) }
+        ).flow
 
 }

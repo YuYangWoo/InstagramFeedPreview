@@ -1,5 +1,6 @@
 package com.example.repository
 
+import androidx.paging.PagingData
 import com.example.model.Board
 import com.example.model.Login
 import com.example.model.Token
@@ -23,8 +24,9 @@ interface InstagramRepository {
     fun fetchToken(login: Login): Flow<Token>
 
     fun fetchBoardInformation(
-        accessToken: String
-    ): Flow<Board>
-    
+        accessToken: String,
+        after: String?
+    ): Flow<PagingData<Board.Item>>
+
 }
 

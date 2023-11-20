@@ -1,11 +1,9 @@
 package com.example.board.adapter
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -16,7 +14,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.FeedHolder>(
+class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(
     DiffFeed
 ) {
 
@@ -26,7 +24,7 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        holder.bind(getItem(position), onItemClick)
+        getItem(position)?.let { holder.bind(it, onItemClick) }
     }
 
     fun setOnItemClickListener(listener: (Board.Item) -> Unit) {
@@ -65,14 +63,14 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
 
     }
 
-    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
-        val updatedList = currentList.toMutableList()
-        updatedList.swap(fromPosition, toPosition)
-
-        submitList(updatedList)
-
-        return listOf(updatedList[fromPosition], updatedList[toPosition])
-    }
+//    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
+//        val updatedList = currentList.toMutableList()
+//        updatedList.swap(fromPosition, toPosition)
+//
+//        submitList(updatedList)
+//
+//        return listOf(updatedList[fromPosition], updatedList[toPosition])
+//    }
 
     private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {
         val tmp = this[fromPosition]

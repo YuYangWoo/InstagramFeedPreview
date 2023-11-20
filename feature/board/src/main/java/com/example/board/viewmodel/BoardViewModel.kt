@@ -2,6 +2,8 @@ package com.example.board.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.usecase.DeleteBoardUseCase
@@ -12,6 +14,7 @@ import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,42 +30,45 @@ class BoardViewModel @Inject constructor(
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val deleteBoardUseCase: DeleteBoardUseCase
     ) : ViewModel() {
-    private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
+    private val _boardUiState = MutableStateFlow<BoardUiState<PagingData<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
-    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(
-        BoardDetailUiState.Loading
-    )
+    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardItem(token: String?) = viewModelScope.launch {
-        val boardAll = requestBoardItemsFind()
-        when {
-            !boardAll.isNullOrEmpty() -> {
-                _boardUiState.value = BoardUiState.Success(boardAll)
-            }
-            else -> {
-                token.also { accessToken ->
-                    if (!accessToken.isNullOrBlank()) {
-                        runCatching {
-                            fetchInstagramBoardUseCase.invoke(accessToken)
-                        }.onFailure {
-                            _boardUiState.value = BoardUiState.Error("board fetch Error!!")
-                        }.onSuccess { board ->
-                            if (board != null) {
-                                requestBoardItemInsert(board)
-                                _boardUiState.value = BoardUiState.Success(board.items)
-                            } else {
-                                _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
-                            }
-                        }
-                    } else {
-                        _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
-                    }
-                }
-            }
-        }
+    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>> {
+       return fetchInstagramBoardUseCase.invoke(token!!).cachedIn(viewModelScope)
     }
+
+//    fun requestBoardItem(token: String?) = viewModelScope.launch {
+//        token.also { accessToken ->
+//            if (!accessToken.isNullOrBlank()) {
+//                runCatching {
+//                    fetchInstagramBoardUseCase.invoke(accessToken)
+//                }.onFailure {
+//                    _boardUiState.value = BoardUiState.Error("board fetch Error!!")
+//                }.onSuccess { board ->
+//                    if (board != null) {
+////                        requestBoardItemInsert(board)
+//                        _boardUiState.value = BoardUiState.Success(board)
+//                    } else {
+//                        _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
+//                    }
+//                }
+//            } else {
+//                _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
+//            }
+//        }
+////        val boardAll = requestBoardItemsFind()
+//        when {
+////            !boardAll.isNullOrEmpty() -> {
+////                _boardUiState.value = BoardUiState.Success(boardAll)
+////            }
+//            else -> {
+//
+//            }
+//        }
+//    }
 
     fun requestBoardChildItems(mediaId: String) = viewModelScope.launch {
         manageUserInformationUseCase.get().also { accessToken ->

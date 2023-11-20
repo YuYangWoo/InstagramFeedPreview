@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.swipeRefreshLayout)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.mockk)
+    implementation(libs.paging.runtime)
+
     implementation(project(":domain:usecase"))
     implementation(project(":domain:model"))
 }

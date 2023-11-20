@@ -9,7 +9,7 @@ import retrofit2.http.Query
 
 interface GraphInstagramApiServiceSourceImpl : GraphInstagramApiServiceSource {
     @GET("/me/media?fields=id,caption,media_url")
-    override suspend fun getBoardInformation(@Query("access_token") accessToken: String): BoardDTO
+    override suspend fun getBoardInformation(@Query("access_token") accessToken: String, @Query("after") after: String?): BoardDTO
 
     @GET("/{mediaId}/children?fields=media_url")
     override suspend fun getBoardChildInformation(@Path("mediaId") mediaId: String, @Query("access_token") accessToken: String): BoardDetailDTO

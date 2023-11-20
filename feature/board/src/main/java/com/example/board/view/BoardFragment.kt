@@ -3,14 +3,12 @@ package com.example.board.view
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -25,7 +23,6 @@ import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.databinding.FragmentBoardBinding
-import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,19 +39,21 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
+    var token: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBoardBinding.inflate(inflater,container, false)
+        _binding = FragmentBoardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val token = arguments?.getString("accessToken")
+        token = arguments?.getString("accessToken")
+
         initRecyclerView()
         requestBoardItems(token)
         initObserver()
@@ -87,7 +86,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     }
 
     private fun requestBoardItems(token: String?) {
-        boardViewModel.requestBoardItem(token)
+//        boardViewModel.requestBoardItem(token)
     }
 
     private fun initRecyclerView() {
@@ -109,6 +108,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
 
                 }
             }
+
             layoutManager = GridLayoutManager(context, 3)
 
             val callback = ItemMoveCallback(
@@ -128,24 +128,32 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     }
 
     private fun initObserver() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                boardViewModel.boardUiState.collectLatest { state ->
+//                    when (state) {
+//                        is BoardUiState.Success -> {
+//                            binding.progressBar.isVisible = false
+//                            boardAdapter.submitData()
+//                        }
+//                        is BoardUiState.Error -> {
+//                            Log.d(TAG, "Error")
+//                            binding.progressBar.isVisible = false
+//                            Log.d(TAG, state.message)
+//                        }
+//                        is BoardUiState.Loading -> {
+//                            Log.d(TAG, "loading")
+//                            binding.progressBar.isVisible = true
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.boardUiState.collectLatest { state ->
-                    when (state) {
-                        is BoardUiState.Success -> {
-                            binding.progressBar.isVisible = false
-                            boardAdapter.submitList(state.data)
-                        }
-                        is BoardUiState.Error -> {
-                            Log.d(TAG, "Error")
-                            binding.progressBar.isVisible = false
-                            Log.d(TAG, state.message)
-                        }
-                        is BoardUiState.Loading -> {
-                            Log.d(TAG, "loading")
-                            binding.progressBar.isVisible = true
-                        }
-                    }
+                boardViewModel.requestBoardPagingItem(token).collectLatest {
+                    boardAdapter.submitData(it)
                 }
             }
         }

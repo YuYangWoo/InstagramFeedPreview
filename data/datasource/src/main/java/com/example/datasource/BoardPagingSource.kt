@@ -10,8 +10,10 @@ import javax.inject.Singleton
 @Singleton
 class BoardPagingSource @Inject constructor(
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
+    private val boardLocalDataSource: BoardLocalDataSource,
     private val accessToken: String
     ) : PagingSource<String, Board.Item>() {
+
     override fun getRefreshKey(state: PagingState<String, Board.Item>): String? {
         return null
     }
@@ -21,9 +23,11 @@ class BoardPagingSource @Inject constructor(
 
         return try {
             val boardDTO = graphInstagramApiServiceSource.getBoardInformation(accessToken, page)
+            boardLocalDataSource.insert(boardDTO.toDomain())
+            val storedBoard = boardLocalDataSource.select() ?: listOf()
 
             LoadResult.Page(
-                data = boardDTO.toDomain().items,
+                data = storedBoard,
                 prevKey = null,
                 nextKey =  boardDTO.paging.cursors.after
             )

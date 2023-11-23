@@ -39,7 +39,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
-    var token: String? = ""
+    private var token: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +55,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         token = arguments?.getString("accessToken")
 
         initRecyclerView()
-        requestBoardItems(token)
         initObserver()
         initSwipeRefreshLayout(token)
         initClickListener()
@@ -78,15 +77,11 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
                 lifecycleScope.launchWhenCreated {
-                    requestBoardItems(token)
+
                 }
                 isRefreshing = false
             }
         }
-    }
-
-    private fun requestBoardItems(token: String?) {
-//        boardViewModel.requestBoardItem(token)
     }
 
     private fun initRecyclerView() {
@@ -128,31 +123,9 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     }
 
     private fun initObserver() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                boardViewModel.boardUiState.collectLatest { state ->
-//                    when (state) {
-//                        is BoardUiState.Success -> {
-//                            binding.progressBar.isVisible = false
-//                            boardAdapter.submitData()
-//                        }
-//                        is BoardUiState.Error -> {
-//                            Log.d(TAG, "Error")
-//                            binding.progressBar.isVisible = false
-//                            Log.d(TAG, state.message)
-//                        }
-//                        is BoardUiState.Loading -> {
-//                            Log.d(TAG, "loading")
-//                            binding.progressBar.isVisible = true
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.requestBoardPagingItem(token).collectLatest {
+                boardViewModel.requestBoardPagingItem(token)?.collectLatest {
                     boardAdapter.submitData(it)
                 }
             }

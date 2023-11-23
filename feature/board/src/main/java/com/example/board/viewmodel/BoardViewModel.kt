@@ -36,39 +36,9 @@ class BoardViewModel @Inject constructor(
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>> {
-       return fetchInstagramBoardUseCase.invoke(token!!).cachedIn(viewModelScope)
+    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>>? {
+        return token?.let { fetchInstagramBoardUseCase.invoke(it).cachedIn(viewModelScope) }
     }
-
-//    fun requestBoardItem(token: String?) = viewModelScope.launch {
-//        token.also { accessToken ->
-//            if (!accessToken.isNullOrBlank()) {
-//                runCatching {
-//                    fetchInstagramBoardUseCase.invoke(accessToken)
-//                }.onFailure {
-//                    _boardUiState.value = BoardUiState.Error("board fetch Error!!")
-//                }.onSuccess { board ->
-//                    if (board != null) {
-////                        requestBoardItemInsert(board)
-//                        _boardUiState.value = BoardUiState.Success(board)
-//                    } else {
-//                        _boardUiState.value = BoardUiState.Error("board is nullOrEmpty")
-//                    }
-//                }
-//            } else {
-//                _boardUiState.value = BoardUiState.Error("accessToken is nullOrEmpty")
-//            }
-//        }
-////        val boardAll = requestBoardItemsFind()
-//        when {
-////            !boardAll.isNullOrEmpty() -> {
-////                _boardUiState.value = BoardUiState.Success(boardAll)
-////            }
-//            else -> {
-//
-//            }
-//        }
-//    }
 
     fun requestBoardChildItems(mediaId: String) = viewModelScope.launch {
         manageUserInformationUseCase.get().also { accessToken ->

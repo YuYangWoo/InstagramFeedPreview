@@ -14,9 +14,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(
-    DiffFeed
-) {
+class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffFeed) {
 
     private var onItemClick: ((Board.Item) -> Unit)? = null
 

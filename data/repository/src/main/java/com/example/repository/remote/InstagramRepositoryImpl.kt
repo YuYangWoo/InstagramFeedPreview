@@ -3,6 +3,7 @@ package com.example.repository.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.datasource.BoardLocalDataSource
 import com.example.datasource.BoardPagingSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
@@ -21,7 +22,8 @@ import javax.inject.Singleton
 @Singleton
 class InstagramRepositoryImpl @Inject constructor(
     private val instagramLoginDataSource: InstagramLoginDataSource,
-    private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
+    private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
+    private val boardLocalDataSource: BoardLocalDataSource,
 ) : InstagramRepository {
 
     override fun fetchToken(login: Login): Flow<Token> = flow {
@@ -38,8 +40,8 @@ class InstagramRepositoryImpl @Inject constructor(
 
     override fun fetchBoardInformation(accessToken: String, after: String?): Flow<PagingData<Board.Item>> =
         Pager(
-            config = PagingConfig(pageSize = 20),
-            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, accessToken) }
+            config = PagingConfig(pageSize = 5),
+            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, accessToken) }
         ).flow
 
 }

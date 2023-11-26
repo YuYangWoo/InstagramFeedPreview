@@ -67,7 +67,7 @@ class BoardViewModel @Inject constructor(
         updateBoardUseCase.invoke(board)
     }
 
-    private suspend fun requestBoardItemsFind(): List<Board.Item>? {
+    suspend fun requestBoardItemsFind(): List<Board.Item>? {
         return findBoardUseCase.invoke()
     }
 

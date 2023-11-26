@@ -16,7 +16,7 @@ import javax.inject.Inject
 @FragmentScoped
 class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffFeed) {
 
-    private var onItemClick: ((Board.Item) -> Unit)? = null
+    private var onItemClick: ((Board.Item, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -25,7 +25,7 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
         getItem(position)?.let { holder.bind(it, onItemClick) }
     }
 
-    fun setOnItemClickListener(listener: (Board.Item) -> Unit) {
+    fun setOnItemClickListener(listener: (Board.Item, Int) -> Unit) {
         onItemClick = listener
     }
 
@@ -34,7 +34,7 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
 
         fun bind(
             boardInformation: Board.Item,
-            onItemClick: ((Board.Item) -> Unit)?,
+            onItemClick: ((Board.Item, Int) -> Unit)?,
         ) {
             currentItem = boardInformation
             binding.root.tag = false
@@ -44,7 +44,7 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
 
             binding.root.setOnClickListener {
-                onItemClick?.let { it -> it(boardInformation) }
+                onItemClick?.let { it -> it(boardInformation, bindingAdapterPosition) }
             }
 
         }

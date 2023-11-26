@@ -76,8 +76,12 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                lifecycleScope.launchWhenCreated {
-
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        boardViewModel.requestBoardPagingItem(token)?.collectLatest {
+                            boardAdapter.submitData(it)
+                        }
+                    }
                 }
                 isRefreshing = false
             }
@@ -87,10 +91,11 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-                setOnItemClickListener { board ->
+                setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
                             boardViewModel.requestBoardItemDeleteAndSelect(board)
+                            boardAdapter.notifyItemRemoved(position)
                         }
                         else -> {
                             boardViewModel.requestBoardChildItems(board.id)

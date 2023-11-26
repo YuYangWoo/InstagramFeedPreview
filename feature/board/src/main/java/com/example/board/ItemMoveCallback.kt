@@ -28,7 +28,7 @@ class ItemMoveCallback(
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
     ): Boolean {
-//        onCompleteListener(boardAdapter.onItemMove(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition))
+        onCompleteListener(boardAdapter.onItemMove(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition))
         return true
     }
 

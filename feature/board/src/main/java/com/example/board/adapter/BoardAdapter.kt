@@ -30,13 +30,11 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
     }
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        var currentItem: Board.Item? = null
 
         fun bind(
             boardInformation: Board.Item,
             onItemClick: ((Board.Item, Int) -> Unit)?,
         ) {
-            currentItem = boardInformation
             binding.root.tag = false
             Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(
                 R.drawable.no_image
@@ -61,23 +59,27 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
 
     }
 
-//    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
-//        val updatedList = currentList.toMutableList()
-//        updatedList.swap(fromPosition, toPosition)
-//
-//        submitList(updatedList)
-//
-//        return listOf(updatedList[fromPosition], updatedList[toPosition])
-//    }
+    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
+        val items = arrayListOf<Board.Item>()
 
-    private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {
-        val tmp = this[fromPosition]
-        this[fromPosition] = this[toPosition]
-        this[toPosition] = tmp
+        notifyItemMoved(toPosition, fromPosition)
 
-        val tmpOrder = this[fromPosition].order
-        this[fromPosition].order = this[toPosition].order
-        this[toPosition].order = tmpOrder
+        val beforeItem = getItem(fromPosition)
+        val afterItem = getItem(toPosition)
+
+        if (beforeItem != null && afterItem != null) {
+            items.add(beforeItem)
+            items.add(afterItem)
+
+            beforeItem.swapOrderWith(afterItem)
+        }
+        return items
+    }
+
+    private fun Board.Item.swapOrderWith(target: Board.Item) {
+        val tmpOrder = this.order
+        this.order = target.order
+        target.order = tmpOrder
     }
 
 }

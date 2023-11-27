@@ -8,8 +8,8 @@ import com.example.model.Board
 data class BoardEntity(
     @PrimaryKey
     val id: String,
-    val caption: String,
-    val mediaUrl: String,
+    val caption: String? = "",
+    val mediaUrl: String?,
     val order: Int = 0
 )
 

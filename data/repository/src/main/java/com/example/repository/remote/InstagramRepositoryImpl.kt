@@ -1,9 +1,13 @@
 package com.example.repository.remote
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.example.datasource.BoardLocalDataSource
+import com.example.datasource.BoardRemoteMediator
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
 import com.example.dto.toDomain
-import com.example.model.Board
 import com.example.model.Login
 import com.example.model.Token
 import com.example.repository.InstagramRepository
@@ -17,7 +21,8 @@ import javax.inject.Singleton
 @Singleton
 class InstagramRepositoryImpl @Inject constructor(
     private val instagramLoginDataSource: InstagramLoginDataSource,
-    private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
+    private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
+    private val boardLocalDataSource: BoardLocalDataSource,
 ) : InstagramRepository {
 
     override fun fetchToken(login: Login): Flow<Token> = flow {
@@ -32,8 +37,13 @@ class InstagramRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun fetchBoardInformation(accessToken: String): Flow<Board> = flow {
-        emit(graphInstagramApiServiceSource.getBoardInformation(accessToken).toDomain())
-    }.flowOn(Dispatchers.IO)
+
+  @OptIn(ExperimentalPagingApi::class)
+    override fun fetchBoardInformation(accessToken: String, after: String?) =
+        Pager(
+            config = PagingConfig(pageSize = 25, enablePlaceholders = false),
+            remoteMediator = BoardRemoteMediator(graphInstagramApiServiceSource, boardLocalDataSource, accessToken),
+            pagingSourceFactory = boardLocalDataSource::pagingSource
+        ).flow
 
 }

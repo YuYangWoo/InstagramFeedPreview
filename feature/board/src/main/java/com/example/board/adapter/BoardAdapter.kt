@@ -1,11 +1,9 @@
 package com.example.board.adapter
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -16,31 +14,27 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.FeedHolder>(
-    DiffFeed
-) {
+class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffFeed) {
 
-    private var onItemClick: ((Board.Item) -> Unit)? = null
+    private var onItemClick: ((Board.Item, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
         FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        holder.bind(getItem(position), onItemClick)
+        getItem(position)?.let { holder.bind(it, onItemClick) }
     }
 
-    fun setOnItemClickListener(listener: (Board.Item) -> Unit) {
+    fun setOnItemClickListener(listener: (Board.Item, Int) -> Unit) {
         onItemClick = listener
     }
 
     class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        var currentItem: Board.Item? = null
 
         fun bind(
             boardInformation: Board.Item,
-            onItemClick: ((Board.Item) -> Unit)?,
+            onItemClick: ((Board.Item, Int) -> Unit)?,
         ) {
-            currentItem = boardInformation
             binding.root.tag = false
             Glide.with(binding.feedImageview).load(boardInformation.mediaUrl).error(R.drawable.no_image).placeholder(
                 R.drawable.no_image
@@ -48,7 +42,7 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
                 DiskCacheStrategy.ALL).into(binding.feedImageview)
 
             binding.root.setOnClickListener {
-                onItemClick?.let { it -> it(boardInformation) }
+                onItemClick?.let { it -> it(boardInformation, bindingAdapterPosition) }
             }
 
         }
@@ -66,22 +60,26 @@ class BoardAdapter @Inject constructor(): ListAdapter<Board.Item, BoardAdapter.F
     }
 
     fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
-        val updatedList = currentList.toMutableList()
-        updatedList.swap(fromPosition, toPosition)
+        val items = arrayListOf<Board.Item>()
 
-        submitList(updatedList)
+        notifyItemMoved(toPosition, fromPosition)
 
-        return listOf(updatedList[fromPosition], updatedList[toPosition])
+        val beforeItem = getItem(fromPosition)
+        val afterItem = getItem(toPosition)
+
+        if (beforeItem != null && afterItem != null) {
+            items.add(beforeItem)
+            items.add(afterItem)
+
+            beforeItem.swapOrderWith(afterItem)
+        }
+        return items
     }
 
-    private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {
-        val tmp = this[fromPosition]
-        this[fromPosition] = this[toPosition]
-        this[toPosition] = tmp
-
-        val tmpOrder = this[fromPosition].order
-        this[fromPosition].order = this[toPosition].order
-        this[toPosition].order = tmpOrder
+    private fun Board.Item.swapOrderWith(target: Board.Item) {
+        val tmpOrder = this.order
+        this.order = target.order
+        target.order = tmpOrder
     }
 
 }

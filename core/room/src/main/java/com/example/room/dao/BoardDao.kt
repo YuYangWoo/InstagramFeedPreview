@@ -1,11 +1,13 @@
 package com.example.room.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.model.Board
 import com.example.room.entity.BoardEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +28,7 @@ interface BoardDao {
 
     @Delete
     suspend fun deleteBoard(boardEntity: BoardEntity)
+
+    @Query("Select * From BoardEntity ORDER BY `order` ASC")
+    fun pagingSource(): PagingSource<Int, Board.Item>
 }

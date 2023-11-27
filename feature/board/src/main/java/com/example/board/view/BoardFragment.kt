@@ -3,14 +3,12 @@ package com.example.board.view
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -24,8 +22,8 @@ import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
+import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
-import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,21 +40,22 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
+    private var token: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBoardBinding.inflate(inflater,container, false)
+        _binding = FragmentBoardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val token = arguments?.getString("accessToken")
+        token = arguments?.getString("accessToken")
+
         initRecyclerView()
-        requestBoardItems(token)
         initObserver()
         initSwipeRefreshLayout(token)
         initClickListener()
@@ -78,25 +77,27 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                lifecycleScope.launchWhenCreated {
-                    requestBoardItems(token)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        boardViewModel.requestBoardPagingItem(token)?.collectLatest {
+                            boardAdapter.submitData(it)
+                        }
+                    }
                 }
                 isRefreshing = false
             }
         }
     }
 
-    private fun requestBoardItems(token: String?) {
-        boardViewModel.requestBoardItem(token)
-    }
-
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-                setOnItemClickListener { board ->
+
+                setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
                             boardViewModel.requestBoardItemDeleteAndSelect(board)
+                            boardAdapter.notifyItemRemoved(position)
                         }
                         else -> {
                             boardViewModel.requestBoardChildItems(board.id)
@@ -109,12 +110,14 @@ class BoardFragment : Fragment(R.layout.fragment_board){
 
                 }
             }
+            adapter = boardAdapter.withLoadStateFooter(BoardLoadStateAdapter(boardAdapter::retry))
+
             layoutManager = GridLayoutManager(context, 3)
 
             val callback = ItemMoveCallback(
                 boardAdapter = boardAdapter,
                 onCompleteListener = {
-                    boardViewModel.requestBoardItemUpdate(Board(it))
+                    boardViewModel.requestBoardItemUpdate(Board(it, null))
                 },
                 onSelectedChangedListener = {
                     binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
@@ -130,22 +133,8 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.boardUiState.collectLatest { state ->
-                    when (state) {
-                        is BoardUiState.Success -> {
-                            binding.progressBar.isVisible = false
-                            boardAdapter.submitList(state.data)
-                        }
-                        is BoardUiState.Error -> {
-                            Log.d(TAG, "Error")
-                            binding.progressBar.isVisible = false
-                            Log.d(TAG, state.message)
-                        }
-                        is BoardUiState.Loading -> {
-                            Log.d(TAG, "loading")
-                            binding.progressBar.isVisible = true
-                        }
-                    }
+                boardViewModel.requestBoardPagingItem(token)?.collectLatest {
+                    boardAdapter.submitData(it)
                 }
             }
         }

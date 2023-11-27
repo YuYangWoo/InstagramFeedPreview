@@ -62,26 +62,22 @@ class BoardEditAdapter @Inject constructor(): ListAdapter<Board.Item, BoardEditA
     }
 
     fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
-        val items = arrayListOf<Board.Item>()
+        val updatedList = currentList.toMutableList()
+        updatedList.swap(fromPosition, toPosition)
 
-        notifyItemMoved(toPosition, fromPosition)
+        submitList(updatedList)
 
-        val beforeItem = getItem(fromPosition)
-        val afterItem = getItem(toPosition)
-
-        if (beforeItem != null && afterItem != null) {
-            items.add(beforeItem)
-            items.add(afterItem)
-
-            beforeItem.swapOrderWith(afterItem)
-        }
-        return items
+        return listOf(updatedList[fromPosition], updatedList[toPosition])
     }
 
-    private fun Board.Item.swapOrderWith(target: Board.Item) {
-        val tmpOrder = this.order
-        this.order = target.order
-        target.order = tmpOrder
+    private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {
+        val tmp = this[fromPosition]
+        this[fromPosition] = this[toPosition]
+        this[toPosition] = tmp
+
+        val tmpOrder = this[fromPosition].order
+        this[fromPosition].order = this[toPosition].order
+        this[toPosition].order = tmpOrder
     }
 
 }

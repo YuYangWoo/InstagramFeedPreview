@@ -12,11 +12,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.board.GridDividerItemDecoration
+import com.example.board.ItemMoveCallback
 import com.example.board.adapter.BoardEditAdapter
 import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
+import com.example.model.Board
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -81,8 +84,16 @@ class BoardEditFragment : BottomSheetDialogFragment() {
         binding.recyclerView.apply {
             adapter = boardEditAdapter
             layoutManager = GridLayoutManager(context, 3)
-            addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
 
+            val callback = ItemMoveCallback(
+                boardEditAdapter = boardEditAdapter,
+                onCompleteListener = {
+                    boardViewModel.requestBoardItemUpdate(Board(it, null))
+                })
+            val touchHelper = ItemTouchHelper(callback)
+            touchHelper.attachToRecyclerView(binding.recyclerView)
+
+            addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
     }
 

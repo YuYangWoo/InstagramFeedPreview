@@ -79,20 +79,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         initRecyclerView()
         initObserver()
         initSwipeRefreshLayout(token)
-        initClickListener()
-    }
-
-    private fun initClickListener() {
-        binding.trashCanImageView.setOnClickListener {
-            Toast.makeText(requireContext(), "삭제할 사진을 선택해주세요.", Toast.LENGTH_SHORT).show()
-            binding.trashCanImageView.tag = if (binding.trashCanImageView.tag == true) {
-                binding.trashCanImageView.isSelected = false
-                false
-            } else {
-                binding.trashCanImageView.isSelected = true
-                true
-            }
-        }
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
@@ -115,20 +101,11 @@ class BoardFragment : Fragment(R.layout.fragment_board){
             adapter = boardAdapter.apply {
 
                 setOnItemClickListener { board, position ->
-                    when (binding.trashCanImageView.tag) {
-                        true -> {
-                            boardViewModel.requestBoardItemDeleteAndSelect(board)
-                            boardAdapter.notifyItemRemoved(position)
-                        }
-                        else -> {
-                            boardViewModel.requestBoardChildItems(board.id)
-                            val request = NavDeepLinkRequest.Builder
-                                .fromUri("app://example.app/boardDetailFragment".toUri())
-                                .build()
-                            findNavController().navigate(request)
-                        }
-                    }
-
+                    boardViewModel.requestBoardChildItems(board.id)
+                    val request = NavDeepLinkRequest.Builder
+                        .fromUri("app://example.app/boardDetailFragment".toUri())
+                        .build()
+                    findNavController().navigate(request)
                 }
             }
             adapter = boardAdapter.withLoadStateFooter(BoardLoadStateAdapter(boardAdapter::retry))

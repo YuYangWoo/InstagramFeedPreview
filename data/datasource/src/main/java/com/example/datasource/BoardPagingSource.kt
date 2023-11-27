@@ -29,7 +29,7 @@ class BoardPagingSource @Inject constructor(
             LoadResult.Page(
                 data = storedBoard,
                 prevKey = null,
-                nextKey =  boardDTO.paging.cursors.after
+                nextKey =  boardDTO.paging?.cursors?.after
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)

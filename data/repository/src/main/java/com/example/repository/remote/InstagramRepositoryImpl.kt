@@ -37,13 +37,13 @@ class InstagramRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    @OptIn(ExperimentalPagingApi::class)
+
+  @OptIn(ExperimentalPagingApi::class)
     override fun fetchBoardInformation(accessToken: String, after: String?) =
         Pager(
             config = PagingConfig(pageSize = 25, enablePlaceholders = false),
-            remoteMediator = BoardRemoteMediator(graphInstagramApiServiceSource, boardLocalDataSource, accessToken)
-        ) {
-            boardLocalDataSource.pagingSource()
-        }.flow
+            remoteMediator = BoardRemoteMediator(graphInstagramApiServiceSource, boardLocalDataSource, accessToken),
+            pagingSourceFactory = boardLocalDataSource::pagingSource
+        ).flow
 
 }

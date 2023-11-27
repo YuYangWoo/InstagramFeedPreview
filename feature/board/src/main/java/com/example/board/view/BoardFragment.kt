@@ -22,6 +22,7 @@ import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
+import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
@@ -91,6 +92,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initRecyclerView() {
         with (binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
+
                 setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
@@ -108,6 +110,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
 
                 }
             }
+            adapter = boardAdapter.withLoadStateFooter(BoardLoadStateAdapter(boardAdapter::retry))
 
             layoutManager = GridLayoutManager(context, 3)
 

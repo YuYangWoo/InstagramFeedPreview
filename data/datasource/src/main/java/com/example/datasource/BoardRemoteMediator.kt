@@ -5,6 +5,8 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.model.Board
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,12 +35,14 @@ class BoardRemoteMediator @Inject constructor(
             }
 
             val response = graphInstagramApiServiceSource.getBoardInformation(accessToken, loadKey)
-            afterKey = response.paging.cursors.after
+            afterKey = response.paging?.cursors?.after
 
             boardLocalDataSource.insert(Board(response.items, response.paging))
 
-            MediatorResult.Success(endOfPaginationReached = response.paging.cursors.after.isEmpty())
-        } catch (e: Exception) {
+            MediatorResult.Success(endOfPaginationReached = response.paging?.cursors?.after.isNullOrEmpty())
+        } catch (e: IOException) {
+            MediatorResult.Error(e)
+        } catch (e: HttpException) {
             MediatorResult.Error(e)
         }
     }

@@ -20,15 +20,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.board.GridDividerItemDecoration
-import com.example.board.ItemMoveCallback
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
 import com.example.board.viewmodel.BoardViewModel
-import com.example.model.Board
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -137,18 +134,6 @@ class BoardFragment : Fragment(R.layout.fragment_board){
             adapter = boardAdapter.withLoadStateFooter(BoardLoadStateAdapter(boardAdapter::retry))
 
             layoutManager = GridLayoutManager(context, 3)
-
-            val callback = ItemMoveCallback(
-                boardAdapter = boardAdapter,
-                onCompleteListener = {
-                    boardViewModel.requestBoardItemUpdate(Board(it, null))
-                },
-                onSelectedChangedListener = {
-                    binding.swipeRefreshLayout.isEnabled = binding.swipeRefreshLayout.isEnabled.not()
-                }
-            )
-            val touchHelper = ItemTouchHelper(callback)
-            touchHelper.attachToRecyclerView(binding.feedRecyclerView)
 
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }

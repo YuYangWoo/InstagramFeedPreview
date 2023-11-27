@@ -59,27 +59,4 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
 
     }
 
-    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
-        val items = arrayListOf<Board.Item>()
-
-        notifyItemMoved(toPosition, fromPosition)
-
-        val beforeItem = getItem(fromPosition)
-        val afterItem = getItem(toPosition)
-
-        if (beforeItem != null && afterItem != null) {
-            items.add(beforeItem)
-            items.add(afterItem)
-
-            beforeItem.swapOrderWith(afterItem)
-        }
-        return items
-    }
-
-    private fun Board.Item.swapOrderWith(target: Board.Item) {
-        val tmpOrder = this.order
-        this.order = target.order
-        target.order = tmpOrder
-    }
-
 }

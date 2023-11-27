@@ -1,6 +1,5 @@
 package com.example.board.view
 
-import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,8 +20,6 @@ import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -127,15 +124,6 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bottomSheetDialog = BottomSheetDialog(requireContext(), theme).apply {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            behavior.isDraggable = false
-        }
-
-        return bottomSheetDialog
     }
 
     override fun onDestroyView() {

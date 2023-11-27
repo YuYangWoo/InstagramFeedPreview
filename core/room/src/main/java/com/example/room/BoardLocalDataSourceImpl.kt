@@ -1,5 +1,6 @@
 package com.example.room
 
+import androidx.paging.PagingSource
 import com.example.datasource.BoardLocalDataSource
 import com.example.model.Board
 import com.example.room.dao.BoardDao
@@ -32,6 +33,10 @@ class BoardLocalDataSourceImpl @Inject constructor(
 
     override suspend fun delete(boardItem: Board.Item) {
         boardDao.deleteBoard(BoardEntity(boardItem.id, boardItem.caption, boardItem.mediaUrl, boardItem.order))
+    }
+
+    override fun pagingSource(): PagingSource<Int, Board.Item> {
+        return boardDao.pagingSource()
     }
 
 }

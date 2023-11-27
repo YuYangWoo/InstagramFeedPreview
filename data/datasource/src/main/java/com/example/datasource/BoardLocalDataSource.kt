@@ -1,5 +1,6 @@
 package com.example.datasource
 
+import androidx.paging.PagingSource
 import com.example.model.Board
 
 interface BoardLocalDataSource {
@@ -11,4 +12,6 @@ interface BoardLocalDataSource {
     suspend fun update(board: Board)
 
     suspend fun delete(boardItem: Board.Item)
+
+    fun pagingSource(): PagingSource<Int, Board.Item>
 }

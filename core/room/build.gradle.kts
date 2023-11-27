@@ -24,7 +24,9 @@ dependencies {
     implementation(libs.room.ktx)
     annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
+    implementation(libs.room.paging)
     implementation(libs.retrofit.gson)
+    implementation(libs.paging.common)
 
     implementation(project(":data:datasource"))
     implementation(project(":domain:model"))

@@ -141,6 +141,7 @@ retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "re
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room"}
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 android-material = {group = "com.google.android.material", name = "material", version.ref = "material"}
 androidx-constraintLayout = {group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout"}

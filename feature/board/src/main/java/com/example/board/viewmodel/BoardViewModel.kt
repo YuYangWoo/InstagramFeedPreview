@@ -1,5 +1,6 @@
 package com.example.board.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -54,16 +55,22 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    fun requestBoardChildItems(mediaId: String) = viewModelScope.launch {
+    fun requestBoardChildItems(id: String, mediaUrl: String?) = viewModelScope.launch {
         manageUserInformationUseCase.get().also { accessToken ->
             if (!accessToken.isNullOrBlank()) {
                 _boardDetailUiState.value = BoardDetailUiState.Loading
                 runCatching {
-                    fetchBoardChildItemUseCase.invoke(mediaId, accessToken)
+                    fetchBoardChildItemUseCase.invoke(id, accessToken)
                 }.onFailure {
                     _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail fetch Error!!")
                 }.onSuccess { boardDetail ->
-                    _boardDetailUiState.value = boardDetail?.let { BoardDetailUiState.Success(it) } ?: BoardDetailUiState.Error(
+                    Log.d("1111", boardDetail.toString())
+                    _boardDetailUiState.value = boardDetail?.let {
+                        if (it.items.size == 0 && !id.isNullOrEmpty() && !mediaUrl.isNullOrEmpty()) {
+                            it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
+                        }
+                        BoardDetailUiState.Success(it)
+                    } ?: BoardDetailUiState.Error(
                         "boardDetail is Null!!"
                     )
                 }

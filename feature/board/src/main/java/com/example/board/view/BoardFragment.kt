@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoardFragment : Fragment(R.layout.fragment_board){
+class BoardFragment : Fragment(R.layout.fragment_board) {
     private val boardViewModel: BoardViewModel by activityViewModels()
     private var backKeyPressedTime: Long = 0
 
@@ -58,11 +58,13 @@ class BoardFragment : Fragment(R.layout.fragment_board){
                 BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
                 true
             }
+
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -97,14 +99,13 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     }
 
     private fun initRecyclerView() {
-        with (binding.feedRecyclerView) {
+        with(binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-
                 setOnItemClickListener { board, position ->
-                    boardViewModel.requestBoardChildItems(board.id)
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment".toUri())
-                        .build()
+                    boardViewModel.requestBoardChildItems(board.id, board.mediaUrl)
+                    val request =
+                        NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment".toUri())
+                            .build()
                     findNavController().navigate(request)
                 }
             }
@@ -129,19 +130,25 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() > backKeyPressedTime + LIMIT_TIME) {
-                    backKeyPressedTime = System.currentTimeMillis()
-                    Toast.makeText(requireContext(), "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
-                    return
-                }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() > backKeyPressedTime + LIMIT_TIME) {
+                        backKeyPressedTime = System.currentTimeMillis()
+                        Toast.makeText(
+                            requireContext(),
+                            "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
 
-                if (System.currentTimeMillis() <= backKeyPressedTime + LIMIT_TIME) {
-                    requireActivity().finish()
+                    if (System.currentTimeMillis() <= backKeyPressedTime + LIMIT_TIME) {
+                        requireActivity().finish()
+                    }
                 }
-            }
-        })
+            })
     }
 
     override fun onDestroyView() {

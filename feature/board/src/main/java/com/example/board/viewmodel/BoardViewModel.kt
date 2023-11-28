@@ -30,7 +30,7 @@ class BoardViewModel @Inject constructor(
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val deleteBoardUseCase: DeleteBoardUseCase
     ) : ViewModel() {
-    private val _boardUiState = MutableStateFlow<BoardUiState<PagingData<Board.Item>>>(BoardUiState.Loading)
+    private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
@@ -38,6 +38,20 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>>? {
         return token?.let { fetchInstagramBoardUseCase.invoke(it).cachedIn(viewModelScope) }
+    }
+
+    fun requestBoardLocalItem() = viewModelScope.launch {
+        _boardUiState.value = BoardUiState.Loading
+
+        runCatching {
+            requestBoardItemsFind()
+        }.onSuccess { items ->
+            _boardUiState.value = items?.let {
+                BoardUiState.Success(it)
+            } ?: BoardUiState.Error("items is Null or Empty")
+        }.onFailure {
+            _boardUiState.value = BoardUiState.Error("requestBoardItemsFind Fail")
+        }
     }
 
     fun requestBoardChildItems(mediaId: String) = viewModelScope.launch {

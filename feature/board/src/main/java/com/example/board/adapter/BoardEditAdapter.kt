@@ -2,8 +2,8 @@ package com.example.board.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -14,22 +14,24 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffFeed) {
+class BoardEditAdapter @Inject constructor(): ListAdapter<Board.Item, BoardEditAdapter.BoardHolder>(DiffFeed) {
 
     private var onItemClick: ((Board.Item, Int) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder =
-        FeedHolder(HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardEditAdapter.BoardHolder {
+        val binding = HolderFeedItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BoardHolder(binding)
+    }
 
-    override fun onBindViewHolder(holder: FeedHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it, onItemClick) }
+    override fun onBindViewHolder(holder: BoardEditAdapter.BoardHolder, position: Int) {
+        holder.bind(getItem(position), onItemClick)
     }
 
     fun setOnItemClickListener(listener: (Board.Item, Int) -> Unit) {
         onItemClick = listener
     }
 
-    class FeedHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class BoardHolder(private val binding: HolderFeedItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             boardInformation: Board.Item,
@@ -57,6 +59,25 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
             return oldItem.hashCode() == newItem.hashCode()
         }
 
+    }
+
+    fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {
+        val updatedList = currentList.toMutableList()
+        updatedList.swap(fromPosition, toPosition)
+
+        submitList(updatedList)
+
+        return listOf(updatedList[fromPosition], updatedList[toPosition])
+    }
+
+    private fun MutableList<Board.Item>.swap(fromPosition: Int, toPosition: Int) {
+        val tmp = this[fromPosition]
+        this[fromPosition] = this[toPosition]
+        this[toPosition] = tmp
+
+        val tmpOrder = this[fromPosition].order
+        this[fromPosition].order = this[toPosition].order
+        this[toPosition].order = tmpOrder
     }
 
 }

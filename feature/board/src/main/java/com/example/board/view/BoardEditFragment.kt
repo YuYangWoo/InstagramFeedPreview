@@ -84,12 +84,15 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private fun initClickListener() {
         binding.trashCanImageView.setOnClickListener {
-            Toast.makeText(requireContext(), "삭제할 사진을 선택해주세요.", Toast.LENGTH_SHORT).show()
             binding.trashCanImageView.tag = if (binding.trashCanImageView.tag == true) {
                 binding.trashCanImageView.isSelected = false
+                Toast.makeText(requireContext(), "삭제모드 취소", Toast.LENGTH_SHORT).show()
+
                 false
             } else {
                 binding.trashCanImageView.isSelected = true
+                Toast.makeText(requireContext(), "삭제할 사진을 선택해주세요.", Toast.LENGTH_SHORT).show()
+
                 true
             }
         }

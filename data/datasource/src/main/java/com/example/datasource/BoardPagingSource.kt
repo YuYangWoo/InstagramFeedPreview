@@ -24,10 +24,9 @@ class BoardPagingSource @Inject constructor(
         return try {
             val boardDTO = graphInstagramApiServiceSource.getBoardInformation(accessToken, page)
             boardLocalDataSource.insert(boardDTO.toDomain())
-            val storedBoard = boardLocalDataSource.select() ?: listOf()
 
             LoadResult.Page(
-                data = storedBoard,
+                data = boardDTO.items,
                 prevKey = null,
                 nextKey =  boardDTO.paging?.cursors?.after
             )

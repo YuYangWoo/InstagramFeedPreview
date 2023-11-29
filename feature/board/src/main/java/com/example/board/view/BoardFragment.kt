@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,7 @@ import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
+import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -81,18 +83,18 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         initRecyclerView()
         initObserver()
         initSwipeRefreshLayout(token)
+        initRequest()
+    }
+
+    private fun initRequest() {
+        boardViewModel.requestBoardPagingItem(token)
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        boardViewModel.requestBoardPagingItem(token)?.collectLatest {
-                            boardAdapter.submitData(it)
-                        }
-                    }
-                }
+                boardViewModel.requestBoardPagingItem(token)
+
                 isRefreshing = false
             }
         }
@@ -120,9 +122,21 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.requestBoardPagingItem(token)?.collectLatest {
-                    boardAdapter.submitData(it)
+                boardViewModel.boardUiState.collectLatest { state ->
+                    when (state) {
+                        is BoardUiState.Success -> {
+                            binding.progressBar.isVisible = false
+                            boardAdapter.submitData(lifecycle, state.data)
+                        }
+                        is BoardUiState.Error -> {
+                            binding.progressBar.isVisible = false
+                        }
+                        is BoardUiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                    }
                 }
+
             }
         }
     }

@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.usecase.DeleteBoardUseCase
@@ -15,7 +14,6 @@ import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,27 +29,46 @@ class BoardViewModel @Inject constructor(
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val deleteBoardUseCase: DeleteBoardUseCase
     ) : ViewModel() {
-    private val _boardUiState = MutableStateFlow<BoardUiState<List<Board.Item>>>(BoardUiState.Loading)
+
+    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<Board.Item>>>(BoardLocalUiState.Loading)
+    val boardLocalUiState = _boardLocalUiState.asStateFlow()
+
+    private val _boardUiState = MutableStateFlow<BoardUiState<PagingData<Board.Item>>>(BoardUiState.Loading)
     val boardUiState = _boardUiState.asStateFlow()
 
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>>? {
-        return token?.let { fetchInstagramBoardUseCase.invoke(it).cachedIn(viewModelScope) }
+    fun requestBoardPagingItem(token: String?) = viewModelScope.launch {
+        _boardUiState.value = BoardUiState.Loading
+        if (!token.isNullOrEmpty()) {
+            runCatching {
+                fetchInstagramBoardUseCase.invoke(token)
+            }.onSuccess { data ->
+                _boardUiState.value = data?.let {
+                    Log.d("11111", it.toString())
+                    BoardUiState.Success(it)
+                } ?: BoardUiState.Error("PaingData<Board.Item> 에러")
+            }.onFailure {
+                _boardUiState.value = BoardUiState.Error("fetchInstagramBoardUseCase.invoke 함수 실패")
+            }
+        } else {
+            _boardUiState.value = BoardUiState.Error("token is Null Or Empty!!")
+        }
+
     }
 
     fun requestBoardLocalItem() = viewModelScope.launch {
-        _boardUiState.value = BoardUiState.Loading
+        _boardLocalUiState.value = BoardLocalUiState.Loading
 
         runCatching {
             requestBoardItemsFind()
         }.onSuccess { items ->
-            _boardUiState.value = items?.let {
-                BoardUiState.Success(it)
-            } ?: BoardUiState.Error("items is Null or Empty")
+            _boardLocalUiState.value = items?.let {
+                BoardLocalUiState.Success(it)
+            } ?: BoardLocalUiState.Error("items is Null or Empty")
         }.onFailure {
-            _boardUiState.value = BoardUiState.Error("requestBoardItemsFind Fail")
+            _boardLocalUiState.value = BoardLocalUiState.Error("requestBoardItemsFind Fail")
         }
     }
 
@@ -110,6 +127,12 @@ sealed class BoardUiState<out T> {
     object Loading : BoardUiState<Nothing>()
     data class Success<T>(val data: T) : BoardUiState<T>()
     data class Error(val message: String) : BoardUiState<Nothing>()
+}
+
+sealed class BoardLocalUiState<out T> {
+    object Loading : BoardLocalUiState<Nothing>()
+    data class Success<T>(val data: T) : BoardLocalUiState<T>()
+    data class Error(val message: String) : BoardLocalUiState<Nothing>()
 }
 
 sealed class BoardDetailUiState<out T> {

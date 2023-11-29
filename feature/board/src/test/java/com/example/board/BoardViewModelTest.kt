@@ -40,7 +40,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Success를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Success(board)
             }
         }
@@ -52,7 +52,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Error를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Error("board fetch Error!!")
             }
         }
@@ -64,7 +64,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Error를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Error("board is Null!!")
             }
         }

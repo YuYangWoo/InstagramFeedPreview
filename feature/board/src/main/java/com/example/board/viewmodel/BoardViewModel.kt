@@ -16,6 +16,7 @@ import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,21 +42,17 @@ class BoardViewModel @Inject constructor(
 
     fun requestBoardPagingItem(token: String?) = viewModelScope.launch {
         _boardUiState.value = BoardUiState.Loading
+
         if (!token.isNullOrEmpty()) {
-            runCatching {
-                fetchInstagramBoardUseCase.invoke(token)
-            }.onSuccess { data ->
-                _boardUiState.value = data?.let {
-                    Log.d("11111", it.toString())
-                    BoardUiState.Success(it)
-                } ?: BoardUiState.Error("PaingData<Board.Item> 에러")
-            }.onFailure {
-                _boardUiState.value = BoardUiState.Error("fetchInstagramBoardUseCase.invoke 함수 실패")
-            }
+            fetchInstagramBoardUseCase.invoke( "")
+                .catch {
+                    _boardUiState.value = BoardUiState.Error(it.message ?: "fetchInstagramBoardUseCase.invoke 실패")
+                }.collect { item ->
+                    _boardUiState.value = BoardUiState.Success(item)
+                }
         } else {
             _boardUiState.value = BoardUiState.Error("token is Null Or Empty!!")
         }
-
     }
 
     fun requestBoardLocalItem() = viewModelScope.launch {
@@ -87,9 +84,7 @@ class BoardViewModel @Inject constructor(
                             it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
                         }
                         BoardDetailUiState.Success(it)
-                    } ?: BoardDetailUiState.Error(
-                        "boardDetail is Null!!"
-                    )
+                    } ?: BoardDetailUiState.Error("boardDetail is Null!!")
                 }
             } else {
                 _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
@@ -97,7 +92,7 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    private suspend fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
+    private fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
         insertBoardUseCase.invoke(board)
     }
 
@@ -105,7 +100,7 @@ class BoardViewModel @Inject constructor(
         updateBoardUseCase.invoke(board)
     }
 
-    suspend fun requestBoardItemsFind(): List<Board.Item>? {
+    private suspend fun requestBoardItemsFind(): List<Board.Item>? {
         return findBoardUseCase.invoke()
     }
 

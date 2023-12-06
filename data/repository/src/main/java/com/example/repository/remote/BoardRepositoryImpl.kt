@@ -13,7 +13,7 @@ import javax.inject.Inject
 class BoardRepositoryImpl @Inject constructor(
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
 ) : BoardRepository {
-    override fun fetchBoardChildItems(mediaId: String, accessToken: String): Flow<BoardDetail> = flow {
-        emit(graphInstagramApiServiceSource.getBoardChildInformation(mediaId, accessToken).toDomain())
+    override fun fetchBoardDetailItems(mediaId: String, accessToken: String): Flow<BoardDetail> = flow {
+        emit(graphInstagramApiServiceSource.getBoardDetailInformation(mediaId, accessToken).toDomain())
     }.flowOn(Dispatchers.IO)
 }

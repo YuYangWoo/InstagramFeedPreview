@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,7 @@ import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
+import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BoardFragment : Fragment(R.layout.fragment_board){
+class BoardFragment : Fragment(R.layout.fragment_board) {
     private val boardViewModel: BoardViewModel by activityViewModels()
     private var backKeyPressedTime: Long = 0
 
@@ -63,6 +65,7 @@ class BoardFragment : Fragment(R.layout.fragment_board){
             }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,32 +82,31 @@ class BoardFragment : Fragment(R.layout.fragment_board){
         initRecyclerView()
         initObserver()
         initSwipeRefreshLayout(token)
+        initRequest()
+    }
+
+    private fun initRequest() {
+        boardViewModel.requestBoardPagingItem(token)
     }
 
     private fun initSwipeRefreshLayout(token: String?) {
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        boardViewModel.requestBoardPagingItem(token)?.collectLatest {
-                            boardAdapter.submitData(it)
-                        }
-                    }
-                }
+                boardViewModel.requestBoardPagingItem(token)
+
                 isRefreshing = false
             }
         }
     }
 
     private fun initRecyclerView() {
-        with (binding.feedRecyclerView) {
+        with(binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
-
                 setOnItemClickListener { board, position ->
-                    boardViewModel.requestBoardChildItems(board.id)
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://example.app/boardDetailFragment".toUri())
-                        .build()
+                    boardViewModel.requestBoardDetailItem(board.id, board.mediaUrl)
+                    val request =
+                        NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment".toUri())
+                            .build()
                     findNavController().navigate(request)
                 }
             }
@@ -119,9 +121,21 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.requestBoardPagingItem(token)?.collectLatest {
-                    boardAdapter.submitData(it)
+                boardViewModel.boardUiState.collectLatest { state ->
+                    when (state) {
+                        is BoardUiState.Success -> {
+                            binding.progressBar.isVisible = false
+                            boardAdapter.submitData(lifecycle, state.data)
+                        }
+                        is BoardUiState.Error -> {
+                            binding.progressBar.isVisible = false
+                        }
+                        is BoardUiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                    }
                 }
+
             }
         }
     }
@@ -129,19 +143,25 @@ class BoardFragment : Fragment(R.layout.fragment_board){
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() > backKeyPressedTime + LIMIT_TIME) {
-                    backKeyPressedTime = System.currentTimeMillis()
-                    Toast.makeText(requireContext(), "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
-                    return
-                }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() > backKeyPressedTime + LIMIT_TIME) {
+                        backKeyPressedTime = System.currentTimeMillis()
+                        Toast.makeText(
+                            requireContext(),
+                            "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
 
-                if (System.currentTimeMillis() <= backKeyPressedTime + LIMIT_TIME) {
-                    requireActivity().finish()
+                    if (System.currentTimeMillis() <= backKeyPressedTime + LIMIT_TIME) {
+                        requireActivity().finish()
+                    }
                 }
-            }
-        })
+            })
     }
 
     override fun onDestroyView() {

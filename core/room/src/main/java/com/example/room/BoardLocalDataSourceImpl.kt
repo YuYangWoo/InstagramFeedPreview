@@ -6,7 +6,8 @@ import com.example.model.Board
 import com.example.room.dao.BoardDao
 import com.example.room.entity.BoardEntity
 import com.example.room.entity.toDomain
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.lang.Integer.max
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +24,9 @@ class BoardLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun select(): List<Board.Item>? = boardDao.findBoardItems().firstOrNull()?.toDomain()
+    override fun select(): Flow<List<Board.Item>> = boardDao.findBoardItems().map {
+            it.toDomain()
+        }
 
     override suspend fun update(board: Board) {
         board.items.forEach { item ->

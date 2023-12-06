@@ -17,7 +17,7 @@ import com.example.board.GridDividerItemDecoration
 import com.example.board.ItemMoveCallback
 import com.example.board.adapter.BoardEditAdapter
 import com.example.board.databinding.FragmentBoardEditBinding
-import com.example.board.viewmodel.BoardUiState
+import com.example.board.viewmodel.BoardLocalUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -64,16 +64,16 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.boardUiState.collectLatest { state ->
+                boardViewModel.boardLocalUiState.collectLatest { state ->
                     when (state) {
-                        is BoardUiState.Success -> {
+                        is BoardLocalUiState.Success -> {
                             binding.progressBar.isVisible = false
                             boardEditAdapter.submitList(state.data)
                         }
-                        is BoardUiState.Loading -> {
+                        is BoardLocalUiState.Loading -> {
                             binding.progressBar.isVisible = true
                         }
-                        is BoardUiState.Error -> {
+                        is BoardLocalUiState.Error -> {
                             binding.progressBar.isVisible = false
                         }
                     }
@@ -104,8 +104,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                 setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
-                            boardViewModel.requestBoardItemDeleteAndSelect(board)
-                            boardEditAdapter.notifyItemRemoved(position)
+                            boardViewModel.deleteBoardItem(board)
                         }
                         else -> {
                            // Nothing
@@ -120,7 +119,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
-                    boardViewModel.requestBoardItemUpdate(Board(it, null))
+                    boardViewModel.updateBoardItem(Board(it, null))
                 })
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.recyclerView)

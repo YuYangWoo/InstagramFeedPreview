@@ -40,7 +40,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Success를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Success(board)
             }
         }
@@ -52,7 +52,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Error를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Error("board fetch Error!!")
             }
         }
@@ -64,7 +64,7 @@ class BoardViewModelTest : BehaviorSpec({
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Error를 반환한다") {
-                val boardUiState = boardViewModel.boardUiState.value
+                val boardUiState = boardViewModel.boardLocalUiState.value
                 boardUiState shouldBe BoardUiState.Error("board is Null!!")
             }
         }
@@ -91,7 +91,7 @@ class BoardViewModelTest : BehaviorSpec({
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
             coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns boardDetail
 
-            boardViewModel.requestBoardChildItems(fakeMediaId)
+            boardViewModel.requestBoardDetailItem(fakeMediaId)
 
             Then("UiState는 UiState.Success를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
@@ -103,7 +103,7 @@ class BoardViewModelTest : BehaviorSpec({
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
             coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } throws Exception("boardDetail fetch Error!!")
 
-            boardViewModel.requestBoardChildItems(fakeMediaId)
+            boardViewModel.requestBoardDetailItem(fakeMediaId)
 
             Then("UiState는 UiState.Error를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
@@ -115,7 +115,7 @@ class BoardViewModelTest : BehaviorSpec({
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
             coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns null
 
-            boardViewModel.requestBoardChildItems(fakeMediaId)
+            boardViewModel.requestBoardDetailItem(fakeMediaId)
 
             Then("UiState는 UiState.Error를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
@@ -126,7 +126,7 @@ class BoardViewModelTest : BehaviorSpec({
         When("requestBoardChildItems를 호출하고 accessToken이 null일 때") {
             coEvery { manageUserInformationUseCase.get() } returns null
 
-            boardViewModel.requestBoardChildItems(fakeMediaId)
+            boardViewModel.requestBoardDetailItem(fakeMediaId)
             Then("UiState는 UiState.Error를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
                 boardDetailUiState shouldBe BoardDetailUiState.Error("accessToken is Error!!")
@@ -136,7 +136,7 @@ class BoardViewModelTest : BehaviorSpec({
         When("requestBoardChildItems를 호출하고 accessToken이 Blank일 때") {
             coEvery { manageUserInformationUseCase.get() } returns ""
 
-            boardViewModel.requestBoardChildItems(fakeMediaId)
+            boardViewModel.requestBoardDetailItem(fakeMediaId)
             Then("UiState는 UiState.Error를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
                 boardDetailUiState shouldBe BoardDetailUiState.Error("accessToken is Error!!")

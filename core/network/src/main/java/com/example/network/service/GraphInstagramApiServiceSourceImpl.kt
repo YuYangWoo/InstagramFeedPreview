@@ -12,5 +12,5 @@ interface GraphInstagramApiServiceSourceImpl : GraphInstagramApiServiceSource {
     override suspend fun getBoardInformation(@Query("access_token") accessToken: String, @Query("after") after: String?): BoardDTO
 
     @GET("/{mediaId}/children?fields=media_url")
-    override suspend fun getBoardChildInformation(@Path("mediaId") mediaId: String, @Query("access_token") accessToken: String): BoardDetailDTO
+    override suspend fun getBoardDetailInformation(@Path("mediaId") mediaId: String, @Query("access_token") accessToken: String): BoardDetailDTO
 }

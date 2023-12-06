@@ -3,6 +3,7 @@ package com.example.repository.local
 import com.example.datasource.BoardLocalDataSource
 import com.example.model.Board
 import com.example.repository.BoardLocalRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,7 +15,7 @@ class BoardLocalRepositoryImpl @Inject constructor(
         boardLocalDataSource.insert(board)
     }
 
-    override suspend fun findBoardItems(): List<Board.Item>? {
+    override fun findBoardItems(): Flow<List<Board.Item>> {
         return boardLocalDataSource.select()
     }
 

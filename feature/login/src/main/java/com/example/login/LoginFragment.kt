@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
-import com.example.login.databinding.FragmentInstagramBinding
+import com.example.login.databinding.FragmentLoginBinding
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -25,9 +25,9 @@ import kotlinx.coroutines.launch
 import java.net.URLDecoder
 
 @AndroidEntryPoint
-class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
-    private val instagramViewModel by activityViewModels<InstagramViewModel>()
-    private var _binding: FragmentInstagramBinding? = null
+class LoginFragment : Fragment(R.layout.fragment_login) {
+    private val loginViewModel by activityViewModels<LoginViewModel>()
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -35,7 +35,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentInstagramBinding.inflate(inflater,container, false)
+        _binding = FragmentLoginBinding.inflate(inflater,container, false)
         return binding.root
     }
 
@@ -51,6 +51,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
                         val decodedUrl = URLDecoder.decode(url, "utf-8")
                         if (decodedUrl.contains("code=")) {
                             try {
+                                // TODO 길이체크 및 함수화
                                 val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
                                 val login = Login(
                                     "520355146868539",
@@ -60,7 +61,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                instagramViewModel.requestAccessToken(login)
+                                loginViewModel.requestAccessToken(login)
                                 return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
@@ -79,7 +80,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
     private fun initObserver() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                instagramViewModel.uiState.collectLatest { state ->
+                loginViewModel.uiState.collectLatest { state ->
                     when (state) {
                         is UiState.Loading -> {
                             binding.progressBar.isVisible = true
@@ -109,7 +110,7 @@ class InstagramWebViewFragment : Fragment(R.layout.fragment_instagram) {
     }
 
     companion object {
-        private const val TAG = "InstagramFragment"
+        private const val TAG = "LoginFragment"
     }
 
 }

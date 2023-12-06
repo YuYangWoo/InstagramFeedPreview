@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/instagramFragment"
-        android:name="com.example.login.InstagramWebViewFragment"
+        android:name="com.example.login.LoginFragment"
         android:label="InstagramFragment"
-        tools:layout="@layout/fragment_instagram">
+        tools:layout="@layout/fragment_login">
         <deepLink app:uri="app://login"/>
     </fragment>
 

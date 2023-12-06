@@ -14,12 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 
-class InstagramViewModelTest : BehaviorSpec({
+class LoginViewModelTest : BehaviorSpec({
 
     Given("InstagramViewModel 이 주어졌을 때") {
         val fetchInstagramTokenUseCase = mockk<FetchInstagramTokenUseCase>()
         val manageUserInformationUseCase = mockk<ManageUserInformationUseCase>()
-        val instagramViewModel = InstagramViewModel(fetchInstagramTokenUseCase, manageUserInformationUseCase)
+        val loginViewModel = LoginViewModel(fetchInstagramTokenUseCase, manageUserInformationUseCase)
 
         val login = Login("username", "password", "grantType", "redirectUri", "code")
         val token = Token("fakeAccessToken", "fakeUserId")
@@ -35,30 +35,30 @@ class InstagramViewModelTest : BehaviorSpec({
 
         When("requestAccessToken 호출 후 결과가 성공적일 때") {
             coEvery { fetchInstagramTokenUseCase.invoke(login) } returns token
-            instagramViewModel.requestAccessToken(login)
+            loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 Success로 되어야 한다") {
-                val uiState = instagramViewModel.uiState.value
+                val uiState = loginViewModel.uiState.value
                 uiState shouldBe UiState.Success(token)
             }
         }
 
         When("requestAccessToken 호출 후 결과가 실패했을 때") {
             coEvery { fetchInstagramTokenUseCase.invoke(login)} throws Exception("token fetch Error!!")
-            instagramViewModel.requestAccessToken(login)
+            loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
-                val uiState = instagramViewModel.uiState.value
+                val uiState = loginViewModel.uiState.value
                 uiState shouldBe UiState.Error("token fetch Error!!")
             }
         }
 
         When("requestAccessToken 호출 후 null을 반환할 때") {
             coEvery { fetchInstagramTokenUseCase.invoke(login) } returns null
-            instagramViewModel.requestAccessToken(login)
+            loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
-                val uiState = instagramViewModel.uiState.value
+                val uiState = loginViewModel.uiState.value
                 uiState shouldBe UiState.Error("token is Null!!")
             }
         }

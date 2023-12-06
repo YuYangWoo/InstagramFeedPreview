@@ -2,12 +2,13 @@ package com.example.datasource
 
 import androidx.paging.PagingSource
 import com.example.model.Board
+import kotlinx.coroutines.flow.Flow
 
 interface BoardLocalDataSource {
 
     suspend fun insert(board: Board)
 
-    suspend fun select(): List<Board.Item>?
+    fun select(): Flow<List<Board.Item>>
 
     suspend fun update(board: Board)
 

@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InstagramViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
@@ -43,7 +43,7 @@ class InstagramViewModel @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "InstagramViewModel"
+        private const val TAG = "LoginViewModel"
     }
 }
 

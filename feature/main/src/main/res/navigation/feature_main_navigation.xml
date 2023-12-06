@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.login.InstagramWebViewFragment"
+        android:name="com.example.login.LoginFragment"
         android:label="InstagramWebViewFragment">
 
         <deepLink app:uri="app://example.app/loginFragment" />

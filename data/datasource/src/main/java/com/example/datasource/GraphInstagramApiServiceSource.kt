@@ -5,5 +5,5 @@ import com.example.dto.BoardDetailDTO
 
 interface GraphInstagramApiServiceSource  {
     suspend fun getBoardInformation(accessToken: String, after: String?): BoardDTO
-    suspend fun getBoardChildInformation(mediaId: String, accessToken: String): BoardDetailDTO
+    suspend fun getBoardDetailInformation(mediaId: String, accessToken: String): BoardDetailDTO
 }

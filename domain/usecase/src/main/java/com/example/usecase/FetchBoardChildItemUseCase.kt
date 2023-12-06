@@ -11,6 +11,6 @@ class FetchBoardChildItemUseCase @Inject constructor(
     private val boardRepository: BoardRepository
 ) {
     operator fun invoke(mediaId: String, accessToken: String): Flow<BoardDetail> {
-        return boardRepository.fetchBoardChildItems(mediaId, accessToken)
+        return boardRepository.fetchBoardDetailItems(mediaId, accessToken)
     }
 }

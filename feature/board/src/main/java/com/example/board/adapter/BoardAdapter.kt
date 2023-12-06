@@ -3,7 +3,6 @@ package com.example.board.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -14,7 +13,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffFeed) {
+class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAdapter.FeedHolder>(DiffBoard) {
 
     private var onItemClick: ((Board.Item, Int) -> Unit)? = null
 
@@ -46,17 +45,6 @@ class BoardAdapter @Inject constructor(): PagingDataAdapter<Board.Item, BoardAda
             }
 
         }
-    }
-
-    object DiffFeed : DiffUtil.ItemCallback<Board.Item>() {
-        override fun areItemsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
-        }
-
     }
 
 }

@@ -2,7 +2,6 @@ package com.example.board.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,7 +13,7 @@ import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @FragmentScoped
-class BoardEditAdapter @Inject constructor(): ListAdapter<Board.Item, BoardEditAdapter.BoardHolder>(DiffFeed) {
+class BoardEditAdapter @Inject constructor(): ListAdapter<Board.Item, BoardEditAdapter.BoardHolder>(DiffBoard) {
 
     private var onItemClick: ((Board.Item, Int) -> Unit)? = null
 
@@ -48,17 +47,6 @@ class BoardEditAdapter @Inject constructor(): ListAdapter<Board.Item, BoardEditA
             }
 
         }
-    }
-
-    object DiffFeed : DiffUtil.ItemCallback<Board.Item>() {
-        override fun areItemsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
-        }
-
     }
 
     fun onItemMove(fromPosition: Int, toPosition: Int): List<Board.Item> {

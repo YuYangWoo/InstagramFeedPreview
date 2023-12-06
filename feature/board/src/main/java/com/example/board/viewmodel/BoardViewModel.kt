@@ -1,6 +1,5 @@
 package com.example.board.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -17,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,11 +44,11 @@ class BoardViewModel @Inject constructor(
         _boardUiState.value = BoardUiState.Loading
 
         if (!token.isNullOrEmpty()) {
-            fetchInstagramBoardUseCase.invoke( "")
+            fetchInstagramBoardUseCase(token)
                 .catch {
-                    _boardUiState.value = BoardUiState.Error(it.message ?: "fetchInstagramBoardUseCase.invoke 실패")
-                }.collect { item ->
-                    _boardUiState.value = BoardUiState.Success(item)
+                    _boardUiState.value = BoardUiState.Error(it.message ?: "fetchInstagramBoardUseCase 실패")
+                }.collectLatest { items ->
+                    _boardUiState.value = BoardUiState.Success(items)
                 }
         } else {
             _boardUiState.value = BoardUiState.Error("token is Null Or Empty!!")
@@ -58,33 +58,27 @@ class BoardViewModel @Inject constructor(
     fun requestBoardLocalItem() = viewModelScope.launch {
         _boardLocalUiState.value = BoardLocalUiState.Loading
 
-        runCatching {
-            requestBoardItemsFind()
-        }.onSuccess { items ->
-            _boardLocalUiState.value = items?.let {
-                BoardLocalUiState.Success(it)
-            } ?: BoardLocalUiState.Error("items is Null or Empty")
-        }.onFailure {
+        findBoardUseCase().catch {
             _boardLocalUiState.value = BoardLocalUiState.Error("requestBoardItemsFind Fail")
+        }.collectLatest { items ->
+            _boardLocalUiState.value = BoardLocalUiState.Success(items)
         }
     }
 
     fun requestBoardChildItems(id: String, mediaUrl: String?) = viewModelScope.launch {
+        _boardDetailUiState.value = BoardDetailUiState.Loading
+
         manageUserInformationUseCase.get().also { accessToken ->
             if (!accessToken.isNullOrBlank()) {
-                _boardDetailUiState.value = BoardDetailUiState.Loading
-                runCatching {
-                    fetchBoardChildItemUseCase.invoke(id, accessToken)
-                }.onFailure {
-                    _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail fetch Error!!")
-                }.onSuccess { boardDetail ->
-                    Log.d("1111", boardDetail.toString())
-                    _boardDetailUiState.value = boardDetail?.let {
+                fetchBoardChildItemUseCase(id, accessToken).catch {
+                    _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")
+                }.collectLatest { boardDetail ->
+                    _boardDetailUiState.value = boardDetail.let {
                         if (it.items.size == 0 && !id.isNullOrEmpty() && !mediaUrl.isNullOrEmpty()) {
                             it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
                         }
                         BoardDetailUiState.Success(it)
-                    } ?: BoardDetailUiState.Error("boardDetail is Null!!")
+                    }
                 }
             } else {
                 _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
@@ -93,24 +87,15 @@ class BoardViewModel @Inject constructor(
     }
 
     private fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
-        insertBoardUseCase.invoke(board)
+        insertBoardUseCase(board)
     }
 
     fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
-        updateBoardUseCase.invoke(board)
+        updateBoardUseCase(board)
     }
 
-    private suspend fun requestBoardItemsFind(): List<Board.Item>? {
-        return findBoardUseCase.invoke()
-    }
-
-    private fun requestBoardItemDelete(item: Board.Item) = viewModelScope.launch {
-        deleteBoardUseCase.invoke(item)
-    }
-
-    fun requestBoardItemDeleteAndSelect(item: Board.Item) = viewModelScope.launch {
-        requestBoardItemDelete(item)
-        requestBoardItemsFind()
+    fun requestBoardItemDelete(item: Board.Item) = viewModelScope.launch {
+        deleteBoardUseCase(item)
     }
 
     companion object {

@@ -104,8 +104,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                 setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
-                            boardViewModel.requestBoardItemDeleteAndSelect(board)
-                            boardEditAdapter.notifyItemRemoved(position)
+                            boardViewModel.requestBoardItemDelete(board)
                         }
                         else -> {
                            // Nothing

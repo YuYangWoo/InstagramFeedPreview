@@ -60,7 +60,6 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
                 BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
                 true
             }
-
             else -> {
                 super.onOptionsItemSelected(item)
             }
@@ -104,7 +103,7 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         with(binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
                 setOnItemClickListener { board, position ->
-                    boardViewModel.requestBoardChildItems(board.id, board.mediaUrl)
+                    boardViewModel.requestBoardDetailItem(board.id, board.mediaUrl)
                     val request =
                         NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment".toUri())
                             .build()

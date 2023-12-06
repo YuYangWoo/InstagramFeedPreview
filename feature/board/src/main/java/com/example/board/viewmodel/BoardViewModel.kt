@@ -65,7 +65,7 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    fun requestBoardChildItems(id: String, mediaUrl: String?) = viewModelScope.launch {
+    fun requestBoardDetailItem(id: String, mediaUrl: String?) = viewModelScope.launch {
         _boardDetailUiState.value = BoardDetailUiState.Loading
 
         manageUserInformationUseCase.get().also { accessToken ->
@@ -86,15 +86,15 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    private fun requestBoardItemInsert(board: Board) = viewModelScope.launch {
+    private fun insertBoardItem(board: Board) = viewModelScope.launch {
         insertBoardUseCase(board)
     }
 
-    fun requestBoardItemUpdate(board: Board) = viewModelScope.launch {
+    fun updateBoardItem(board: Board) = viewModelScope.launch {
         updateBoardUseCase(board)
     }
 
-    fun requestBoardItemDelete(item: Board.Item) = viewModelScope.launch {
+    fun deleteBoardItem(item: Board.Item) = viewModelScope.launch {
         deleteBoardUseCase(item)
     }
 

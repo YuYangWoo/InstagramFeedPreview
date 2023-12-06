@@ -104,7 +104,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                 setOnItemClickListener { board, position ->
                     when (binding.trashCanImageView.tag) {
                         true -> {
-                            boardViewModel.requestBoardItemDelete(board)
+                            boardViewModel.deleteBoardItem(board)
                         }
                         else -> {
                            // Nothing
@@ -119,7 +119,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
-                    boardViewModel.requestBoardItemUpdate(Board(it, null))
+                    boardViewModel.updateBoardItem(Board(it, null))
                 })
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.recyclerView)

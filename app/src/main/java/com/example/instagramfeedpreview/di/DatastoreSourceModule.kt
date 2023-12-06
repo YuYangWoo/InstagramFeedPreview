@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DatastoreModule {
+interface DatastoreSourceModule {
     @Binds
     @Singleton
     fun provideDataStoreModule(userDataStoreSourceImpl: UserDataStoreSourceImpl): UserDataStoreSource

@@ -30,5 +30,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/selector_src"/>
 
+        <ImageView
+            android:id="@+id/addPhotoImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/ic_add"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

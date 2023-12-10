@@ -34,13 +34,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLoginBinding.inflate(inflater,container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setLogin()
+        initObserver()
+    }
+
+    private fun setLogin() {
         binding.webView.apply {
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -51,8 +56,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         val decodedUrl = URLDecoder.decode(url, "utf-8")
                         if (decodedUrl.contains("code=")) {
                             try {
-                                // TODO 길이체크 및 함수화
-                                val accessToken = decodedUrl.split("code=")[1].split("#_")[0]
+                                val accessToken = decodedUrl.split("code=").getOrNull(1)?.split("#_")?.getOrNull(0) ?: ""
                                 val login = Login(
                                     "520355146868539",
                                     "cd3590d3a75b81c5156a67034b1d6280",
@@ -74,7 +78,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             settings.javaScriptEnabled = true
             loadUrl("https://api.instagram.com/oauth/authorize?client_id=520355146868539&redirect_uri=https://yang-droid.tistory.com/&scope=user_profile,user_media&response_type=code")
         }
-        initObserver()
     }
 
     private fun initObserver() {

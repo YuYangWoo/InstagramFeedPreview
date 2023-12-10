@@ -3,6 +3,7 @@ package com.example.board.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.usecase.DeleteBoardUseCase
@@ -13,6 +14,7 @@ import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -40,19 +42,8 @@ class BoardViewModel @Inject constructor(
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardPagingItem(token: String?) = viewModelScope.launch {
-        _boardUiState.value = BoardUiState.Loading
-
-        if (!token.isNullOrEmpty()) {
-            fetchInstagramBoardUseCase(token)
-                .catch {
-                    _boardUiState.value = BoardUiState.Error(it.message ?: "fetchInstagramBoardUseCase 실패")
-                }.collectLatest { items ->
-                    _boardUiState.value = BoardUiState.Success(items)
-                }
-        } else {
-            _boardUiState.value = BoardUiState.Error("token is Null Or Empty!!")
-        }
+    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>>? {
+        return token?.let { fetchInstagramBoardUseCase.invoke(it).cachedIn(viewModelScope) }
     }
 
     fun requestBoardLocalItem() = viewModelScope.launch {

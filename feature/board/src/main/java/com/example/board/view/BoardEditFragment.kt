@@ -24,7 +24,6 @@ import com.example.board.adapter.BoardEditAdapter
 import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardLocalUiState
 import com.example.board.viewmodel.BoardViewModel
-import com.example.model.Board
 import com.example.model.LocalBoard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,11 +41,9 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     lateinit var boardEditAdapter: BoardEditAdapter
 
     private val boardViewModel: BoardViewModel by activityViewModels()
-    private var localBoardItems = ArrayList<Board.Item>()
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { selectedImageUri ->
-//            localBoardItems.add(Board.Item("1", "dd", selectedImageUri.toString(), localBoardItems.last().order + 1))
-//            boardViewModel.insertBoardItem(Board(localBoardItems, null))
+            boardViewModel.insertBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
         }
     }
 
@@ -81,7 +78,6 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                     when (state) {
                         is BoardLocalUiState.Success -> {
                             binding.progressBar.isVisible = false
-                            localBoardItems = state.data as ArrayList<Board.Item>
                             boardEditAdapter.submitList(state.data)
                         }
                         is BoardLocalUiState.Loading -> {

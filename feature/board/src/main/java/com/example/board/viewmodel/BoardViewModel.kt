@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.model.Board
 import com.example.model.BoardDetail
+import com.example.model.LocalBoard
 import com.example.usecase.DeleteBoardUseCase
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
@@ -33,7 +34,7 @@ class BoardViewModel @Inject constructor(
     private val deleteBoardUseCase: DeleteBoardUseCase
     ) : ViewModel() {
 
-    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<Board.Item>>>(BoardLocalUiState.Loading)
+    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
     val boardLocalUiState = _boardLocalUiState.asStateFlow()
 
     private val _boardUiState = MutableStateFlow<BoardUiState<PagingData<Board.Item>>>(BoardUiState.Loading)
@@ -77,16 +78,16 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    fun insertBoardItem(board: Board) = viewModelScope.launch {
-        insertBoardUseCase(board)
+    fun insertBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        insertBoardUseCase(localBoard)
     }
 
-    fun updateBoardItem(board: Board) = viewModelScope.launch {
-        updateBoardUseCase(board)
+    fun updateBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        updateBoardUseCase(localBoard)
     }
 
-    fun deleteBoardItem(item: Board.Item) = viewModelScope.launch {
-        deleteBoardUseCase(item)
+    fun deleteBoardItem(localBoardItem: LocalBoard.Item) = viewModelScope.launch {
+        deleteBoardUseCase(localBoardItem)
     }
 
     companion object {

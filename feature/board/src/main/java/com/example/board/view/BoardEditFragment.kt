@@ -25,6 +25,7 @@ import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardLocalUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
+import com.example.model.LocalBoard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -44,8 +45,8 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     private var localBoardItems = ArrayList<Board.Item>()
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { selectedImageUri ->
-            localBoardItems.add(Board.Item("1", "dd", selectedImageUri.toString(), localBoardItems.last().order + 1))
-            boardViewModel.insertBoardItem(Board(localBoardItems, null))
+//            localBoardItems.add(Board.Item("1", "dd", selectedImageUri.toString(), localBoardItems.last().order + 1))
+//            boardViewModel.insertBoardItem(Board(localBoardItems, null))
         }
     }
 
@@ -144,7 +145,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
-                    boardViewModel.updateBoardItem(Board(it, null))
+                    boardViewModel.updateBoardItem(LocalBoard(it))
                 })
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.recyclerView)

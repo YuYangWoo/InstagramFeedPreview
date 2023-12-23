@@ -2,7 +2,7 @@ package com.example.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.dto.toDomain
+import com.example.dto.toLocalBoard
 import com.example.model.Board
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +23,8 @@ class BoardPagingSource @Inject constructor(
 
         return try {
             val boardDTO = graphInstagramApiServiceSource.getBoardInformation(accessToken, page)
-            boardLocalDataSource.insert(boardDTO.toDomain())
+
+            boardLocalDataSource.insert(boardDTO.toLocalBoard())
 
             LoadResult.Page(
                 data = boardDTO.items,

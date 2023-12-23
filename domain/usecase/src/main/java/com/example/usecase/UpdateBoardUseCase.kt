@@ -1,6 +1,6 @@
 package com.example.usecase
 
-import com.example.model.Board
+import com.example.model.LocalBoard
 import com.example.repository.BoardLocalRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class UpdateBoardUseCase @Inject constructor(
     private val boardLocalRepository: BoardLocalRepository
 ) {
-    suspend operator fun invoke(board: Board) {
-        boardLocalRepository.updateBoardItems(board)
+    suspend operator fun invoke(localBoard: LocalBoard) {
+        boardLocalRepository.updateBoardItems(localBoard)
     }
 }

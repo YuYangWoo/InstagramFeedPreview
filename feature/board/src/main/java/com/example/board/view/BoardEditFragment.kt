@@ -3,7 +3,6 @@ package com.example.board.view
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,11 +40,21 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     lateinit var boardEditAdapter: BoardEditAdapter
 
     private val boardViewModel: BoardViewModel by activityViewModels()
+
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { selectedImageUri ->
             boardViewModel.insertBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
         }
     }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                openGallery()
+            } else {
+                Toast.makeText(requireContext(), "권한이 없으면 실행할 수 없습니다.\n권한을 추가해주세요", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -111,7 +120,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
             if (hasStoragePermission()) {
                 openGallery()
             } else {
-                requestStoragePermission()
+                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
         }
     }
@@ -151,42 +160,13 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     }
 
     private fun hasStoragePermission(): Boolean {
-        // 권한이 이미 부여되어 있는지 확인
         return ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestStoragePermission() {
-        // 권한 요청
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                REQUEST_STORAGE_PERMISSION
-            )
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_STORAGE_PERMISSION) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 권한이 부여되면 갤러리 열기
-                openGallery()
-            } else {
-                // 권한이 부여되지 않았을 때 처리
-                // 사용자에게 권한이 필요하다고 알릴 수 있습니다.
-            }
-        }
-    }
-
     companion object {
-        private const val REQUEST_STORAGE_PERMISSION = 123
         private const val TAG = "BoardEditFragment"
     }
 

@@ -77,7 +77,7 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    private fun insertBoardItem(board: Board) = viewModelScope.launch {
+    fun insertBoardItem(board: Board) = viewModelScope.launch {
         insertBoardUseCase(board)
     }
 

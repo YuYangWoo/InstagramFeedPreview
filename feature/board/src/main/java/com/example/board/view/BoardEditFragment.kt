@@ -1,15 +1,13 @@
 package com.example.board.view
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -30,6 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class BoardEditFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentBoardEditBinding? = null
@@ -41,20 +40,11 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private val boardViewModel: BoardViewModel by activityViewModels()
 
-    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+    private val pickerMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { selectedImageUri ->
             boardViewModel.insertBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
         }
     }
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                openGallery()
-            } else {
-                Toast.makeText(requireContext(), "권한이 없으면 실행할 수 없습니다.\n권한을 추가해주세요", Toast.LENGTH_SHORT).show()
-            }
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -117,16 +107,8 @@ class BoardEditFragment : BottomSheetDialogFragment() {
         }
 
         binding.addPhotoImageView.setOnClickListener {
-            if (hasStoragePermission()) {
-                openGallery()
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+            pickerMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-    }
-
-    private fun openGallery() {
-        getContent.launch("image/*")
     }
 
     private fun initRecyclerView() {
@@ -157,13 +139,6 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
-    }
-
-    private fun hasStoragePermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {

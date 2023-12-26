@@ -42,7 +42,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private val pickerMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { selectedImageUri ->
-            boardViewModel.insertBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
+            boardViewModel.insertAdditionalBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
         }
     }
 

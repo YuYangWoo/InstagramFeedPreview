@@ -7,6 +7,8 @@ interface BoardLocalDataSource {
 
     suspend fun insert(localBoard: LocalBoard)
 
+    suspend fun insertAdditional(localBoard: LocalBoard)
+
     fun select(): Flow<List<LocalBoard.Item>>
 
     suspend fun update(localBoard: LocalBoard)

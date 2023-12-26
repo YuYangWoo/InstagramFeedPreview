@@ -13,4 +13,7 @@ class InsertBoardUseCase @Inject constructor(
     suspend operator fun invoke(localBoard: LocalBoard) {
         boardLocalRepository.insertBoardItems(localBoard)
     }
+    suspend fun invokeAdditional(localBoard: LocalBoard) {
+        boardLocalRepository.insertBoardItem(localBoard)
+    }
 }

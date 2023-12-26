@@ -24,6 +24,9 @@ interface BoardDao {
     @Query("SELECT MAX(`order`) FROM BoardEntity")
     suspend fun getMaxOrder(): Int
 
+    @Query("SELECT MIN(`order`) FROM BoardEntity")
+    suspend fun getMinOrder(): Int
+
     @Delete
     suspend fun deleteBoard(boardEntity: BoardEntity)
 }

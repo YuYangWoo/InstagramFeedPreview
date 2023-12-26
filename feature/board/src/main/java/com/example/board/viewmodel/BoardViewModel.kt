@@ -81,6 +81,9 @@ class BoardViewModel @Inject constructor(
     fun insertBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
         insertBoardUseCase(localBoard)
     }
+    fun insertAdditionalBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        insertBoardUseCase.invokeAdditional(localBoard)
+    }
 
     fun updateBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
         updateBoardUseCase(localBoard)

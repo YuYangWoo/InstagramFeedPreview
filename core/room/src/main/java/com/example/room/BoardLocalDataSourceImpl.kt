@@ -8,6 +8,7 @@ import com.example.room.entity.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.lang.Integer.max
+import java.lang.Integer.min
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +21,13 @@ class BoardLocalDataSourceImpl @Inject constructor(
         localBoard.items.forEach { item ->
             val maxOrder = boardDao.getMaxOrder()
             boardDao.insertBoard(BoardEntity(item.id, item.mediaUrl, max(item.order, maxOrder) + 1))
+        }
+    }
+
+    override suspend fun insertAdditional(localBoard: LocalBoard) {
+        localBoard.items.forEach { item ->
+            val minOrder = boardDao.getMinOrder()
+            boardDao.insertBoard(BoardEntity(item.id, item.mediaUrl, min(item.order, minOrder) - 1))
         }
     }
 

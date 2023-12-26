@@ -15,6 +15,10 @@ class BoardLocalRepositoryImpl @Inject constructor(
         boardLocalDataSource.insert(localBoard)
     }
 
+    override suspend fun insertBoardItem(localBoard: LocalBoard) {
+        boardLocalDataSource.insertAdditional(localBoard)
+    }
+
     override fun findBoardItems(): Flow<List<LocalBoard.Item>> {
         return boardLocalDataSource.select()
     }

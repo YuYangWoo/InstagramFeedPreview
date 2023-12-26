@@ -40,9 +40,12 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private val boardViewModel: BoardViewModel by activityViewModels()
 
+    private var dbTransactionStatus = ""
+
     private val pickerMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { selectedImageUri ->
             boardViewModel.insertAdditionalBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
+            dbTransactionStatus = "INSERT"
         }
     }
 
@@ -77,7 +80,12 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                     when (state) {
                         is BoardLocalUiState.Success -> {
                             binding.progressBar.isVisible = false
+
                             boardEditAdapter.submitList(state.data)
+
+                            if (dbTransactionStatus == "INSERT") {
+                                binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
+                            }
                         }
                         is BoardLocalUiState.Loading -> {
                             binding.progressBar.isVisible = true
@@ -118,6 +126,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                     when (binding.trashCanImageView.tag) {
                         true -> {
                             boardViewModel.deleteBoardItem(board)
+                            dbTransactionStatus = "DELETE"
                         }
                         else -> {
                            // Nothing
@@ -126,13 +135,13 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
                 }
             }
-
             layoutManager = GridLayoutManager(context, 3)
 
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
                     boardViewModel.updateBoardItem(LocalBoard(it))
+                    dbTransactionStatus = "UPDATE"
                 })
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.recyclerView)

@@ -84,7 +84,9 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                             boardEditAdapter.submitList(state.data)
 
                             if (dbTransactionStatus == "INSERT") {
-                                binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
+                                binding.recyclerView.post {
+                                    binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
+                                }
                             }
                         }
                         is BoardLocalUiState.Loading -> {

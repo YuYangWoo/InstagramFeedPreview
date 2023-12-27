@@ -2,11 +2,14 @@ package com.example.repository.remote
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.datasource.BoardLocalDataSource
 import com.example.datasource.BoardPagingSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
+import com.example.datasource.UserDataStoreSource
 import com.example.dto.toDomain
+import com.example.model.Board
 import com.example.model.Login
 import com.example.model.Token
 import com.example.repository.InstagramRepository
@@ -22,6 +25,7 @@ class InstagramRepositoryImpl @Inject constructor(
     private val instagramLoginDataSource: InstagramLoginDataSource,
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
     private val boardLocalDataSource: BoardLocalDataSource,
+    private val userDataStoreSource: UserDataStoreSource
 ) : InstagramRepository {
 
     override fun fetchToken(login: Login): Flow<Token> = flow {
@@ -36,10 +40,11 @@ class InstagramRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun fetchBoardInformation(accessToken: String, after: String?) =
-        Pager(
-            config = PagingConfig(pageSize = 25, enablePlaceholders = false),
-            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, accessToken) }
+    override fun fetchBoardInformation(): Flow<PagingData<Board.Item>> {
+        return Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, userDataStoreSource) }
         ).flow
+    }
 
 }

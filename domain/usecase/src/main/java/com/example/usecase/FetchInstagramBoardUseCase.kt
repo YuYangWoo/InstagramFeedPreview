@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class FetchInstagramBoardUseCase @Inject constructor(private val instagramRepository: InstagramRepository) {
 
-    operator fun invoke(accessToken: String, after: String? = null): Flow<PagingData<Board.Item>> {
-        return instagramRepository.fetchBoardInformation(accessToken, after)
+    operator fun invoke(): Flow<PagingData<Board.Item>> {
+        return instagramRepository.fetchBoardInformation()
     }
 }

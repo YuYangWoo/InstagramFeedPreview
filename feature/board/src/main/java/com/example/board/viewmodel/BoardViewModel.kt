@@ -15,7 +15,6 @@ import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -31,7 +30,7 @@ class BoardViewModel @Inject constructor(
     private val insertBoardUseCase: InsertBoardUseCase,
     private val findBoardUseCase: FindBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
-    private val deleteBoardUseCase: DeleteBoardUseCase
+    private val deleteBoardUseCase: DeleteBoardUseCase,
     ) : ViewModel() {
 
     private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
@@ -43,9 +42,11 @@ class BoardViewModel @Inject constructor(
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-    fun requestBoardPagingItem(token: String?): Flow<PagingData<Board.Item>>? {
-        return token?.let { fetchInstagramBoardUseCase.invoke(it).cachedIn(viewModelScope) }
-    }
+//    val pagingData = Pager(
+//        config = PagingConfig(pageSize = 25),
+//        pagingSourceFactory = {BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, userDataStoreSource)}
+//    ).flow.cachedIn(viewModelScope)
+    val pagingData = fetchInstagramBoardUseCase().cachedIn(viewModelScope)
 
     fun requestBoardLocalItem() = viewModelScope.launch {
         _boardLocalUiState.value = BoardLocalUiState.Loading

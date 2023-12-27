@@ -77,7 +77,7 @@ object DiffLocalBoard : DiffUtil.ItemCallback<LocalBoard.Item>() {
     }
 
     override fun areContentsTheSame(oldItem: LocalBoard.Item, newItem: LocalBoard.Item): Boolean {
-        return oldItem.hashCode() == newItem.hashCode()
+        return oldItem == newItem
     }
 
 }

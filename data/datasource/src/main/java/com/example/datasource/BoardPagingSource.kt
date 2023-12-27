@@ -24,7 +24,8 @@ class BoardPagingSource @Inject constructor(
 
         return try {
             val token = userDataStoreSource.getUserAccessToken().firstOrNull()
-            val boardDTO = graphInstagramApiServiceSource.getBoardInformation(token!!, page)
+            val boardDTO = token?.let { graphInstagramApiServiceSource.getBoardInformation(it, page) }
+                ?: return LoadResult.Error(Exception("token is Null"))
 
             boardLocalDataSource.insert(boardDTO.toLocalBoard())
 

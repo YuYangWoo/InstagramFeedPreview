@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -40,29 +41,6 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
     lateinit var boardAdapter: BoardAdapter
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
-    private var token: String? = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.editButton -> {
-                BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
-                true
-            }
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,12 +48,34 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentBoardBinding.inflate(inflater, container, false)
+
+        initMenu()
+
         return binding.root
+    }
+
+    private fun initMenu() {
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.editButton -> {
+                        BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
+                        true
+                    }
+                    else -> {
+                        false
+                    }
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        token = arguments?.getString("accessToken")
 
         initRecyclerView()
         initObserver()

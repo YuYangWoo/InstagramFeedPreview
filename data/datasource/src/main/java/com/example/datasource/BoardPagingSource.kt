@@ -2,8 +2,9 @@ package com.example.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.dto.toDomain
+import com.example.dto.toLocalBoard
 import com.example.model.Board
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 class BoardPagingSource @Inject constructor(
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
     private val boardLocalDataSource: BoardLocalDataSource,
-    private val accessToken: String
+    private val userDataStoreSource: UserDataStoreSource
     ) : PagingSource<String, Board.Item>() {
 
     override fun getRefreshKey(state: PagingState<String, Board.Item>): String? {
@@ -22,8 +23,11 @@ class BoardPagingSource @Inject constructor(
         val page = params.key
 
         return try {
-            val boardDTO = graphInstagramApiServiceSource.getBoardInformation(accessToken, page)
-            boardLocalDataSource.insert(boardDTO.toDomain())
+            val token = userDataStoreSource.getUserAccessToken().firstOrNull()
+            val boardDTO = token?.let { graphInstagramApiServiceSource.getBoardInformation(it, page) }
+                ?: return LoadResult.Error(Exception("token is Null"))
+
+            boardLocalDataSource.insert(boardDTO.toLocalBoard())
 
             LoadResult.Page(
                 data = boardDTO.items,

@@ -9,7 +9,7 @@ object DiffBoard : DiffUtil.ItemCallback<Board.Item>() {
     }
 
     override fun areContentsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
-        return oldItem.hashCode() == newItem.hashCode()
+        return oldItem == newItem
     }
 
 }

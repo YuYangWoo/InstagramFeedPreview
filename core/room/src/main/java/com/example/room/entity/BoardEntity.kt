@@ -2,16 +2,15 @@ package com.example.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.model.Board
+import com.example.model.LocalBoard
 
 @Entity
 data class BoardEntity(
-    @PrimaryKey
-    val id: String,
-    val caption: String? = "",
+    @PrimaryKey(autoGenerate = true)
+    val id: Long,
     val mediaUrl: String?,
     val order: Int = 0
 )
 
-fun List<BoardEntity>.toDomain(): List<Board.Item> = this.map { Board.Item(it.id, it.caption, it.mediaUrl, it.order) }
+fun List<BoardEntity>.toDomain(): List<LocalBoard.Item> = this.map { LocalBoard.Item(it.id, it.mediaUrl, it.order) }
 

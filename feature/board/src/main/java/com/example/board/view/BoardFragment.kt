@@ -78,7 +78,7 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         token = arguments?.getString("accessToken")
 
         initRecyclerView()
-        initObserver(token)
+        initObserver()
     }
 
     private fun initRecyclerView() {
@@ -100,10 +100,10 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         }
     }
 
-    private fun initObserver(token: String?) {
+    private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.requestBoardPagingItem(token)?.collectLatest {
+                boardViewModel.pagingData.collectLatest {
                     boardAdapter.submitData(it)
                 }
             }

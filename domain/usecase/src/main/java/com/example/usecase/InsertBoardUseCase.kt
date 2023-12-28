@@ -1,6 +1,6 @@
 package com.example.usecase
 
-import com.example.model.Board
+import com.example.model.LocalBoard
 import com.example.repository.BoardLocalRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,7 +10,10 @@ class InsertBoardUseCase @Inject constructor(
     private val boardLocalRepository: BoardLocalRepository
 ) {
 
-    suspend operator fun invoke(board: Board) {
-        boardLocalRepository.insertBoardItems(board)
+    suspend operator fun invoke(localBoard: LocalBoard) {
+        boardLocalRepository.insertBoardItems(localBoard)
+    }
+    suspend fun invokeAdditional(localBoard: LocalBoard) {
+        boardLocalRepository.insertBoardItem(localBoard)
     }
 }

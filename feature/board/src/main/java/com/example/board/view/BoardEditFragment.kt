@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -19,12 +21,13 @@ import com.example.board.adapter.BoardEditAdapter
 import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardLocalUiState
 import com.example.board.viewmodel.BoardViewModel
-import com.example.model.Board
+import com.example.model.LocalBoard
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class BoardEditFragment : BottomSheetDialogFragment() {
@@ -36,6 +39,15 @@ class BoardEditFragment : BottomSheetDialogFragment() {
     lateinit var boardEditAdapter: BoardEditAdapter
 
     private val boardViewModel: BoardViewModel by activityViewModels()
+
+    private var dbTransactionStatus = ""
+
+    private val pickerMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        uri?.let { selectedImageUri ->
+            boardViewModel.insertAdditionalBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
+            dbTransactionStatus = "INSERT"
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,7 +80,14 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                     when (state) {
                         is BoardLocalUiState.Success -> {
                             binding.progressBar.isVisible = false
+
                             boardEditAdapter.submitList(state.data)
+
+                            if (dbTransactionStatus == "INSERT") {
+                                binding.recyclerView.post {
+                                    binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
+                                }
+                            }
                         }
                         is BoardLocalUiState.Loading -> {
                             binding.progressBar.isVisible = true
@@ -96,6 +115,10 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                 true
             }
         }
+
+        binding.addPhotoImageView.setOnClickListener {
+            pickerMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     }
 
     private fun initRecyclerView() {
@@ -105,6 +128,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
                     when (binding.trashCanImageView.tag) {
                         true -> {
                             boardViewModel.deleteBoardItem(board)
+                            dbTransactionStatus = "DELETE"
                         }
                         else -> {
                            // Nothing
@@ -113,19 +137,23 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
                 }
             }
-
             layoutManager = GridLayoutManager(context, 3)
 
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
-                    boardViewModel.updateBoardItem(Board(it, null))
+                    boardViewModel.updateBoardItem(LocalBoard(it))
+                    dbTransactionStatus = "UPDATE"
                 })
             val touchHelper = ItemTouchHelper(callback)
             touchHelper.attachToRecyclerView(binding.recyclerView)
 
             addItemDecoration(GridDividerItemDecoration(4, Color.parseColor("#000000")))
         }
+    }
+
+    companion object {
+        private const val TAG = "BoardEditFragment"
     }
 
     override fun onDestroyView() {

@@ -1,10 +1,9 @@
 package com.example.board.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.model.Board
 import com.example.model.BoardDetail
 import com.example.model.LocalBoard
 import com.example.usecase.DeleteBoardUseCase
@@ -15,10 +14,13 @@ import com.example.usecase.InsertBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,22 +33,23 @@ class BoardViewModel @Inject constructor(
     private val findBoardUseCase: FindBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
     private val deleteBoardUseCase: DeleteBoardUseCase,
+    private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
 
     private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
     val boardLocalUiState = _boardLocalUiState.asStateFlow()
 
-    private val _boardUiState = MutableStateFlow<BoardUiState<PagingData<Board.Item>>>(BoardUiState.Loading)
-    val boardUiState = _boardUiState.asStateFlow()
-
     private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
-//    val pagingData = Pager(
-//        config = PagingConfig(pageSize = 25),
-//        pagingSourceFactory = {BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, userDataStoreSource)}
-//    ).flow.cachedIn(viewModelScope)
-    val pagingData = fetchInstagramBoardUseCase().cachedIn(viewModelScope)
+    private val token = savedStateHandle.getStateFlow("token", "")
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val pagingData = token.mapLatest {
+        fetchInstagramBoardUseCase(it)
+    }.flatMapLatest {
+        it
+    }.cachedIn(viewModelScope)
 
     fun requestBoardLocalItem() = viewModelScope.launch {
         _boardLocalUiState.value = BoardLocalUiState.Loading
@@ -82,6 +85,7 @@ class BoardViewModel @Inject constructor(
     fun insertBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
         insertBoardUseCase(localBoard)
     }
+
     fun insertAdditionalBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
         insertBoardUseCase.invokeAdditional(localBoard)
     }
@@ -92,6 +96,10 @@ class BoardViewModel @Inject constructor(
 
     fun deleteBoardItem(localBoardItem: LocalBoard.Item) = viewModelScope.launch {
         deleteBoardUseCase(localBoardItem)
+    }
+
+    fun setToken(token: String) {
+        savedStateHandle["token"] = token
     }
 
     companion object {

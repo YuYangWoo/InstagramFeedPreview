@@ -76,6 +76,8 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val token = arguments?.getString("accessToken")
+        boardViewModel.setToken(token ?: "")
 
         initRecyclerView()
         initObserver()

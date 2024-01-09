@@ -10,7 +10,7 @@ interface InstagramRepository {
 
     fun fetchToken(login: Login): Flow<Token>
 
-    fun fetchBoardInformation(): Flow<PagingData<Board.Item>>
+    fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>>
 
 }
 

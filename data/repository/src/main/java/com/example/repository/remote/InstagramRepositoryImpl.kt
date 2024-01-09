@@ -40,10 +40,10 @@ class InstagramRepositoryImpl @Inject constructor(
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun fetchBoardInformation(): Flow<PagingData<Board.Item>> {
+    override fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>> {
         return Pager(
             config = PagingConfig(pageSize = 25),
-            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, userDataStoreSource) }
+            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, token) }
         ).flow
     }
 

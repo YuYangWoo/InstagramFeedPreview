@@ -8,13 +8,13 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.main.MainFragment"
-        android:label="MainFragment"
+        android:label="메인화면"
         tools:layout="@layout/fragment_main"></fragment>
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.login.LoginFragment"
-        android:label="InstagramWebViewFragment">
+        android:label="로그인">
 
         <deepLink app:uri="app://example.app/loginFragment" />
     </fragment>
@@ -26,16 +26,15 @@
 
         <argument
             android:name="accessToken"
-            app:argType="string"
-            android:defaultValue=""/>
+            android:defaultValue=""
+            app:argType="string" />
         <deepLink app:uri="app://example.app/boardFragment/{accessToken}" />
     </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"
         android:name="com.example.board.view.BoardDetailFragment"
         android:label="상세보기">
-        <deepLink
-            app:uri="app://example.app/boardDetailFragment" />
+        <deepLink app:uri="app://example.app/boardDetailFragment" />
 
     </fragment>
 </navigation>

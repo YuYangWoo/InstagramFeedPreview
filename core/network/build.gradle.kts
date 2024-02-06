@@ -12,5 +12,5 @@ dependencies {
     implementation(libs.okhttp.logging)
 
     implementation(project(":data:datasource"))
-    implementation(project(":data:dto"))
+    implementation(project(":data:models"))
 }

@@ -9,6 +9,6 @@ dependencies {
 
     implementation(project(":domain:repository"))
     implementation(project(":domain:model"))
-    implementation(project(":data:dto"))
+    implementation(project(":data:models"))
     implementation(project(":data:datasource"))
 }

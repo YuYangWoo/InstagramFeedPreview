@@ -1,6 +1,6 @@
 package com.example.model
 
-data class Token(
+data class ShortTokenEntity(
     val accessToken: String,
     val userId: String
 )

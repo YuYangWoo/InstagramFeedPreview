@@ -10,7 +10,8 @@ import com.example.datasource.InstagramLoginDataSource
 import com.example.datasource.UserDataStoreSource
 import com.example.model.Board
 import com.example.model.Login
-import com.example.model.Token
+import com.example.model.LongTokenEntity
+import com.example.model.ShortTokenEntity
 import com.example.models.response.toDomain
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ class InstagramRepositoryImpl @Inject constructor(
     private val userDataStoreSource: UserDataStoreSource
 ) : InstagramRepository {
 
-    override fun fetchToken(login: Login): Flow<Token> = flow {
+    override fun fetchShortToken(login: Login): Flow<ShortTokenEntity> = flow {
         emit(
             instagramLoginDataSource.getAccessToken(
                 login.clientId,
@@ -39,6 +40,16 @@ class InstagramRepositoryImpl @Inject constructor(
             ).toDomain()
         )
     }.flowOn(Dispatchers.IO)
+
+    override fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): Flow<LongTokenEntity> = flow {
+        emit(
+            graphInstagramApiServiceSource.getAccessLongToken(
+                grantType,
+                clientSecret,
+                accessToken,
+            ).toDomain()
+        )
+    }
 
     override fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>> {
         return Pager(

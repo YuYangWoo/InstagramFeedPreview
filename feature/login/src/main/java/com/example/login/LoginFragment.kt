@@ -58,8 +58,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             try {
                                 val accessToken = decodedUrl.split("code=").getOrNull(1)?.split("#_")?.getOrNull(0) ?: ""
                                 val login = Login(
-                                    "520355146868539",
-                                    "cd3590d3a75b81c5156a67034b1d6280",
+                                    BuildConfig.CLIENT_ID,
+                                    BuildConfig.CLIENT_SECRET,
                                     "authorization_code",
                                     "https://yang-droid.tistory.com/",
                                     accessToken
@@ -76,7 +76,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
             settings.javaScriptEnabled = true
-            loadUrl("https://api.instagram.com/oauth/authorize?client_id=520355146868539&redirect_uri=https://yang-droid.tistory.com/&scope=user_profile,user_media&response_type=code")
+            loadUrl("https://api.instagram.com/oauth/authorize?client_id=${BuildConfig.CLIENT_ID}&redirect_uri=https://yang-droid.tistory.com/&scope=user_profile,user_media&response_type=code")
         }
     }
 

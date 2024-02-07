@@ -18,7 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.example.login.databinding.FragmentLoginBinding
-import com.example.model.Login
+import com.example.model.LoginEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -57,7 +57,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=").getOrNull(1)?.split("#_")?.getOrNull(0) ?: ""
-                                val login = Login(
+                                val loginEntity = LoginEntity(
                                     BuildConfig.CLIENT_ID,
                                     BuildConfig.CLIENT_SECRET,
                                     "authorization_code",
@@ -65,7 +65,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                loginViewModel.requestAccessToken(login)
+                                loginViewModel.requestAccessToken(loginEntity)
                                 return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())

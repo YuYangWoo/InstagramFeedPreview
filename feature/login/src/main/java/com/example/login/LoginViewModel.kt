@@ -2,7 +2,7 @@ package com.example.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.model.Login
+import com.example.model.LoginEntity
 import com.example.model.LongTokenEntity
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
@@ -24,11 +24,11 @@ class LoginViewModel @Inject constructor(
     val uiState: StateFlow<UiState<LongTokenEntity>> = _uiState.asStateFlow()
 
     fun requestAccessToken(
-        login: Login
+        loginEntity: LoginEntity
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        fetchInstagramTokenUseCase(login).catch {
+        fetchInstagramTokenUseCase(loginEntity).catch {
             _uiState.value = UiState.Error("token fetch Error!!${it.message.toString()}")
         }.collectLatest { longTokenEntity ->
             _uiState.value = longTokenEntity.let {

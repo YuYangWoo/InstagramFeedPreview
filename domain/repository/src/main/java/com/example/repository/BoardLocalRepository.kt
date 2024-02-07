@@ -1,16 +1,16 @@
 package com.example.repository
 
-import com.example.model.LocalBoard
+import com.example.model.LocalBoardEntity
 import kotlinx.coroutines.flow.Flow
 
 interface BoardLocalRepository {
-    suspend fun insertBoardItems(localBoard: LocalBoard)
+    suspend fun insertBoardItems(localBoardEntity: LocalBoardEntity)
 
-    suspend fun insertBoardItem(localBoard: LocalBoard)
+    suspend fun insertBoardItem(localBoardEntity: LocalBoardEntity)
 
-    fun findBoardItems(): Flow<List<LocalBoard.Item>>
+    fun findBoardItems(): Flow<List<LocalBoardEntity.Item>>
 
-    suspend fun updateBoardItems(localBoard: LocalBoard)
+    suspend fun updateBoardItems(localBoardEntity: LocalBoardEntity)
 
-    suspend fun deleteBoardItem(localBoardItem: LocalBoard.Item)
+    suspend fun deleteBoardItem(localBoardEntityItem: LocalBoardEntity.Item)
 }

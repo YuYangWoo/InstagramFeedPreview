@@ -2,7 +2,7 @@ package com.example.repository.remote
 
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.models.response.toDomain
-import com.example.model.BoardDetail
+import com.example.model.BoardDetailEntity
 import com.example.repository.BoardRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class BoardRepositoryImpl @Inject constructor(
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource
 ) : BoardRepository {
-    override fun fetchBoardDetailItems(mediaId: String, accessToken: String): Flow<BoardDetail> = flow {
+    override fun fetchBoardDetailItems(mediaId: String, accessToken: String): Flow<BoardDetailEntity> = flow {
         emit(graphInstagramApiServiceSource.getBoardDetailInformation(mediaId, accessToken).toDomain())
     }.flowOn(Dispatchers.IO)
 }

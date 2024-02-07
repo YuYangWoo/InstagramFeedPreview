@@ -1,6 +1,6 @@
 package com.example.usecase
 
-import com.example.model.Login
+import com.example.model.LoginEntity
 import com.example.model.LongTokenEntity
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,12 +13,12 @@ import javax.inject.Singleton
 class FetchInstagramTokenUseCase @Inject constructor(
     private val instagramRepository: InstagramRepository
 ) {
-    operator fun invoke(login: Login): Flow<LongTokenEntity> {
-        return instagramRepository.fetchShortToken(login)
+    operator fun invoke(loginEntity: LoginEntity): Flow<LongTokenEntity> {
+        return instagramRepository.fetchShortToken(loginEntity)
             .map {
                 instagramRepository.fetchLongToken(
                     "ig_exchange_token",
-                    login.clientSecret,
+                    loginEntity.clientSecret,
                     it.accessToken,
                 )
             }

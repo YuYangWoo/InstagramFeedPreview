@@ -8,10 +8,10 @@ import com.example.datasource.BoardPagingSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
 import com.example.datasource.UserDataStoreSource
-import com.example.dto.toDomain
 import com.example.model.Board
 import com.example.model.Login
 import com.example.model.Token
+import com.example.models.response.toDomain
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

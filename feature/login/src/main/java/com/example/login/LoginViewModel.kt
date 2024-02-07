@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
 
         runCatching { fetchInstagramTokenUseCase.invoke(login) }
             .onFailure {
-                _uiState.value = UiState.Error("token fetch Error!!")
+                _uiState.value = UiState.Error("token fetch Error!!${it.message.toString()}")
             }
             .onSuccess { token ->
                 _uiState.value = token?.let {

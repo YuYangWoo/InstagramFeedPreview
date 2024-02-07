@@ -2,7 +2,7 @@ package com.example.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.dto.toLocalBoard
+import com.example.models.response.toLocalBoard
 import com.example.model.Board
 import javax.inject.Inject
 import javax.inject.Singleton

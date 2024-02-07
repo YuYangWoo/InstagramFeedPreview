@@ -1,7 +1,7 @@
 package com.example.repository.remote
 
 import com.example.datasource.GraphInstagramApiServiceSource
-import com.example.dto.toDomain
+import com.example.models.response.toDomain
 import com.example.model.BoardDetail
 import com.example.repository.BoardRepository
 import kotlinx.coroutines.Dispatchers

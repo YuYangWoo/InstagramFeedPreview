@@ -6,6 +6,8 @@ import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,21 +18,19 @@ class MainViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<String>>(UiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun getUserAccessToken() =
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
+    fun getUserAccessToken() = viewModelScope.launch {
+        _uiState.value = UiState.Loading
 
-            runCatching {
-                manageUserInformationUseCase.get()
-            }.onFailure { _uiState.value = UiState.Error("getUserAccessToken method is Fail!!") }
-                .onSuccess {
-                    _uiState.value = if (!it.isNullOrBlank()) {
-                        UiState.Success(it)
-                    } else {
-                        UiState.Error("userToken is nullOrBlank!!")
-                    }
-                }
+        manageUserInformationUseCase.get().catch {
+            _uiState.value = UiState.Error("getUserAccessToken method is Fail!!")
+        }.collectLatest {
+            _uiState.value = if (!it.isNullOrBlank()) {
+                UiState.Success(it)
+            } else {
+                UiState.Error("userToken is NullOrBlank!!")
+            }
         }
+    }
 }
 
 sealed class UiState<out T> {

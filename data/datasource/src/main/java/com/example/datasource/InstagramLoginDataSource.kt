@@ -1,12 +1,7 @@
 package com.example.datasource
 
-import com.example.dto.TokenDTO
+import com.example.models.response.ShortTokenResponse
 
-/**
- * 이 DataSource와 DataSourceImpl을 나눈 이유는
- * data layer는 순수 kotlin 코드로 이루어져야한다고 생각을 했다
- * 그래서 Room 이라는 Android의 종속적인 library를 모르게 하기 위해 이렇게 한 것
- */
 interface InstagramLoginDataSource {
     suspend fun getAccessToken(
         clientId: String,
@@ -14,6 +9,6 @@ interface InstagramLoginDataSource {
         grantType: String,
         redirectUri: String,
         code: String
-    ): TokenDTO
+    ): ShortTokenResponse
 
 }

@@ -9,5 +9,5 @@ dependencies {
     implementation(libs.retrofit.core)
 
     implementation(project(":domain:model"))
-    implementation(project(":data:dto"))
+    implementation(project(":data:models"))
 }

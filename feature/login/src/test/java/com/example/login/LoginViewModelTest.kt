@@ -1,7 +1,7 @@
 package com.example.login
 
-import com.example.model.Login
-import com.example.model.Token
+import com.example.model.LoginEntity
+import com.example.model.ShortTokenEntity
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import io.kotest.core.spec.style.BehaviorSpec
@@ -21,8 +21,8 @@ class LoginViewModelTest : BehaviorSpec({
         val manageUserInformationUseCase = mockk<ManageUserInformationUseCase>()
         val loginViewModel = LoginViewModel(fetchInstagramTokenUseCase, manageUserInformationUseCase)
 
-        val login = Login("username", "password", "grantType", "redirectUri", "code")
-        val token = Token("fakeAccessToken", "fakeUserId")
+        val loginEntity = LoginEntity("username", "password", "grantType", "redirectUri", "code")
+        val shortTokenEntity = ShortTokenEntity("fakeAccessToken", "fakeUserId")
 
         beforeTest {
             Dispatchers.setMain(Dispatchers.Default)
@@ -34,18 +34,18 @@ class LoginViewModelTest : BehaviorSpec({
         coEvery { manageUserInformationUseCase.save(any()) } just Runs
 
         When("requestAccessToken 호출 후 결과가 성공적일 때") {
-            coEvery { fetchInstagramTokenUseCase.invoke(login) } returns token
-            loginViewModel.requestAccessToken(login)
+            coEvery { fetchInstagramTokenUseCase.invoke(loginEntity) } returns shortTokenEntity
+            loginViewModel.requestAccessToken(loginEntity)
 
             Then("UiState 가 Success로 되어야 한다") {
                 val uiState = loginViewModel.uiState.value
-                uiState shouldBe UiState.Success(token)
+                uiState shouldBe UiState.Success(shortTokenEntity)
             }
         }
 
         When("requestAccessToken 호출 후 결과가 실패했을 때") {
-            coEvery { fetchInstagramTokenUseCase.invoke(login)} throws Exception("token fetch Error!!")
-            loginViewModel.requestAccessToken(login)
+            coEvery { fetchInstagramTokenUseCase.invoke(loginEntity)} throws Exception("token fetch Error!!")
+            loginViewModel.requestAccessToken(loginEntity)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
                 val uiState = loginViewModel.uiState.value
@@ -54,8 +54,8 @@ class LoginViewModelTest : BehaviorSpec({
         }
 
         When("requestAccessToken 호출 후 null을 반환할 때") {
-            coEvery { fetchInstagramTokenUseCase.invoke(login) } returns null
-            loginViewModel.requestAccessToken(login)
+            coEvery { fetchInstagramTokenUseCase.invoke(loginEntity) } returns null
+            loginViewModel.requestAccessToken(loginEntity)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
                 val uiState = loginViewModel.uiState.value

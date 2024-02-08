@@ -2,14 +2,16 @@ package com.example.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.model.Login
-import com.example.model.Token
+import com.example.model.LoginEntity
+import com.example.model.LongTokenEntity
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,24 +20,22 @@ class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<Token>>(UiState.Empty)
-    val uiState: StateFlow<UiState<Token>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<LongTokenEntity>>(UiState.Empty)
+    val uiState: StateFlow<UiState<LongTokenEntity>> = _uiState.asStateFlow()
 
     fun requestAccessToken(
-        login: Login
+        loginEntity: LoginEntity
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        runCatching { fetchInstagramTokenUseCase.invoke(login) }
-            .onFailure {
-                _uiState.value = UiState.Error("token fetch Error!!")
+        fetchInstagramTokenUseCase(loginEntity).catch {
+            _uiState.value = UiState.Error("token fetch Error!!${it.message.toString()}")
+        }.collectLatest { longTokenEntity ->
+            _uiState.value = longTokenEntity.let {
+                saveUserAccessToken(it.accessToken)
+                UiState.Success(it)
             }
-            .onSuccess { token ->
-                _uiState.value = token?.let {
-                    saveUserAccessToken(it.accessToken)
-                    UiState.Success(it)
-                } ?: UiState.Error("token is Null!!")
-            }
+        }
     }
 
     private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {

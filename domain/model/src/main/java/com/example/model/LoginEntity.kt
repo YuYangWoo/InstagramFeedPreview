@@ -1,6 +1,6 @@
 package com.example.model
 
-data class Login(
+data class LoginEntity(
     val clientId: String,
     val clientSecret: String,
     val grantType: String,

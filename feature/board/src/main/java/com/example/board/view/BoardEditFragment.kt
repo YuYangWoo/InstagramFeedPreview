@@ -21,7 +21,7 @@ import com.example.board.adapter.BoardEditAdapter
 import com.example.board.databinding.FragmentBoardEditBinding
 import com.example.board.viewmodel.BoardLocalUiState
 import com.example.board.viewmodel.BoardViewModel
-import com.example.model.LocalBoard
+import com.example.model.LocalBoardEntity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +44,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private val pickerMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let { selectedImageUri ->
-            boardViewModel.insertAdditionalBoardItem(LocalBoard(arrayListOf(LocalBoard.Item(0L, selectedImageUri.toString()))))
+            boardViewModel.insertAdditionalBoardItem(LocalBoardEntity(arrayListOf(LocalBoardEntity.Item(0L, selectedImageUri.toString()))))
             dbTransactionStatus = "INSERT"
         }
     }
@@ -142,7 +142,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
             val callback = ItemMoveCallback(
                 boardEditAdapter = boardEditAdapter,
                 onCompleteListener = {
-                    boardViewModel.updateBoardItem(LocalBoard(it))
+                    boardViewModel.updateBoardItem(LocalBoardEntity(it))
                     dbTransactionStatus = "UPDATE"
                 })
             val touchHelper = ItemTouchHelper(callback)

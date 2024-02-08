@@ -8,10 +8,11 @@ import com.example.datasource.BoardPagingSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
 import com.example.datasource.UserDataStoreSource
-import com.example.dto.toDomain
-import com.example.model.Board
-import com.example.model.Login
-import com.example.model.Token
+import com.example.model.BoardEntity
+import com.example.model.LoginEntity
+import com.example.model.LongTokenEntity
+import com.example.model.ShortTokenEntity
+import com.example.models.response.toDomain
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,19 +29,29 @@ class InstagramRepositoryImpl @Inject constructor(
     private val userDataStoreSource: UserDataStoreSource
 ) : InstagramRepository {
 
-    override fun fetchToken(login: Login): Flow<Token> = flow {
+    override fun fetchShortToken(loginEntity: LoginEntity): Flow<ShortTokenEntity> = flow {
         emit(
             instagramLoginDataSource.getAccessToken(
-                login.clientId,
-                login.clientSecret,
-                login.grantType,
-                login.redirectUri,
-                login.code
+                loginEntity.clientId,
+                loginEntity.clientSecret,
+                loginEntity.grantType,
+                loginEntity.redirectUri,
+                loginEntity.code
             ).toDomain()
         )
     }.flowOn(Dispatchers.IO)
 
-    override fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>> {
+    override fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): Flow<LongTokenEntity> = flow {
+        emit(
+            graphInstagramApiServiceSource.getAccessLongToken(
+                grantType,
+                clientSecret,
+                accessToken,
+            ).toDomain()
+        )
+    }
+
+    override fun fetchBoardInformation(token: String): Flow<PagingData<BoardEntity.Item>> {
         return Pager(
             config = PagingConfig(pageSize = 25),
             pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, token) }

@@ -3,8 +3,8 @@ package com.example.board
 import com.example.board.viewmodel.BoardDetailUiState
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
-import com.example.model.Board
-import com.example.model.BoardDetail
+import com.example.model.BoardEntity
+import com.example.model.BoardDetailEntity
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
@@ -24,7 +24,7 @@ class BoardViewModelTest : BehaviorSpec({
         val boardViewModel = BoardViewModel(manageUserInformationUseCase, fetchInstagramBoardUseCase, fetchBoardChildItemUseCase)
 
         val fakeAccessToken = "fakeAccessToken"
-        val board = Board(arrayListOf(Board.Item("id","caption", "mediaUrl")))
+        val boardEntity = BoardEntity(arrayListOf(BoardEntity.Item("id","caption", "mediaUrl")))
 
         beforeTest {
             Dispatchers.setMain(Dispatchers.Default)
@@ -35,13 +35,13 @@ class BoardViewModelTest : BehaviorSpec({
 
         When("requestBoardItem이 호출되고 결과가 성공일 때") {
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
-            coEvery { fetchInstagramBoardUseCase.invoke(fakeAccessToken) } returns board
+            coEvery { fetchInstagramBoardUseCase.invoke(fakeAccessToken) } returns boardEntity
 
             boardViewModel.requestBoardItem()
 
             Then("UiState는 UiState.Success를 반환한다") {
                 val boardUiState = boardViewModel.boardLocalUiState.value
-                boardUiState shouldBe BoardUiState.Success(board)
+                boardUiState shouldBe BoardUiState.Success(boardEntity)
             }
         }
 
@@ -78,7 +78,7 @@ class BoardViewModelTest : BehaviorSpec({
 
         val fakeAccessToken = "fakeAccessToken"
         val fakeMediaId = "fakeMediaId"
-        val boardDetail = BoardDetail(arrayListOf(BoardDetail.Item("id","mediaUrl")))
+        val boardDetailEntity = BoardDetailEntity(arrayListOf(BoardDetailEntity.Item("id","mediaUrl")))
 
         beforeTest {
             Dispatchers.setMain(Dispatchers.Default)
@@ -89,13 +89,13 @@ class BoardViewModelTest : BehaviorSpec({
 
         When("requestBoardChildItems를 호출하고 성공할 때") {
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
-            coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns boardDetail
+            coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns boardDetailEntity
 
             boardViewModel.requestBoardDetailItem(fakeMediaId)
 
             Then("UiState는 UiState.Success를 반환한다") {
                 val boardDetailUiState = boardViewModel.boardDetailUiState.value
-                boardDetailUiState shouldBe BoardDetailUiState.Success(boardDetail)
+                boardDetailUiState shouldBe BoardDetailUiState.Success(boardDetailEntity)
             }
         }
 

@@ -1,6 +1,6 @@
 package com.example.model
 
-data class LocalBoard(
+data class LocalBoardEntity(
     val items: ArrayList<Item>
 ) {
     data class Item(

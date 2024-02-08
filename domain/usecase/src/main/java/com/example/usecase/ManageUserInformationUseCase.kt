@@ -1,14 +1,14 @@
 package com.example.usecase
 
 import com.example.repository.UserRepository
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ManageUserInformationUseCase @Inject constructor(private val userRepository: UserRepository) {
     suspend fun save(accessToken: String) {
         userRepository.saveUserAccessToken(accessToken)
     }
-    suspend fun get(): String? {
-        return userRepository.getUserAccessToken().firstOrNull()
+    fun get(): Flow<String?> {
+        return userRepository.getUserAccessToken()
     }
 }

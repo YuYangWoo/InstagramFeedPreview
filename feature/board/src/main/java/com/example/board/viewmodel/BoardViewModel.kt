@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,7 +65,7 @@ class BoardViewModel @Inject constructor(
     fun requestBoardDetailItem(id: String, mediaUrl: String?) = viewModelScope.launch {
         _boardDetailEntityUiState.value = BoardDetailUiState.Loading
 
-        manageUserInformationUseCase.get().also { accessToken ->
+        manageUserInformationUseCase.get().map { accessToken ->
             if (!accessToken.isNullOrBlank()) {
                 fetchBoardChildItemUseCase(id, accessToken).catch {
                     _boardDetailEntityUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")

@@ -10,7 +10,7 @@
 #### Login & Board
 |Login|Board|
 |-----|-----|
-|![login-ezgif com-video-to-gif-converter](https://github.com/YuYangWoo/InstagramFeedPreview/assets/59405161/33069785-b3ce-4f39-a8e5-64f51bde7ab9)|![board-ezgif com-video-to-gif-converter](https://github.com/YuYangWoo/InstagramFeedPreview/assets/59405161/1ff8ebcf-f949-4f0a-ab50-efa6a5fac2e0)|
+|![Screen_Recording_20240325_233325_InstagramFeedPreview-ezgif com-video-to-gif-converter (1)](https://github.com/YuYangWoo/InstagramFeedPreview/assets/59405161/14c1efb6-851b-4f03-9830-0b506a784187)|![board-ezgif com-video-to-gif-converter](https://github.com/YuYangWoo/InstagramFeedPreview/assets/59405161/1ff8ebcf-f949-4f0a-ab50-efa6a5fac2e0)|
 #### Edit 
 |CREATE|READ|
 |------|----|
@@ -34,6 +34,12 @@
 |Asynchronous|Coroutine, Flow|
 |Gradle|KTS|
 |Version|Version Catalog|
+
+
+
+
+
+
 
 
 

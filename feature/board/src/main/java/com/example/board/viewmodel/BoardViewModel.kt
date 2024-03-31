@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,10 +45,8 @@ class BoardViewModel @Inject constructor(
     private val token = savedStateHandle.getStateFlow("token", "")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val pagingData = token.mapLatest {
+    val pagingData = token.flatMapLatest {
         fetchInstagramBoardUseCase(it)
-    }.flatMapLatest {
-        it
     }.cachedIn(viewModelScope)
 
     fun requestBoardLocalItem() = viewModelScope.launch {

@@ -15,5 +15,5 @@ dependencies {
     implementation(libs.androidx.activity)
 
     implementation(project(":domain:usecase"))
-    implementation(project(":domain:entity"))
+    implementation(project(":domain:model"))
 }

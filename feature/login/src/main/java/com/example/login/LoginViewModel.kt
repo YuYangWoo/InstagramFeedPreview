@@ -2,8 +2,8 @@ package com.example.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.model.Login
-import com.example.model.LongToken
+import com.example.model.LoginEntity
+import com.example.model.LongTokenEntity
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,15 +20,15 @@ class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
     private val manageUserInformationUseCase: ManageUserInformationUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<LongToken>>(UiState.Empty)
-    val uiState: StateFlow<UiState<LongToken>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<LongTokenEntity>>(UiState.Empty)
+    val uiState: StateFlow<UiState<LongTokenEntity>> = _uiState.asStateFlow()
 
     fun requestAccessToken(
-        login: Login
+        loginEntity: LoginEntity
     ) = viewModelScope.launch {
         _uiState.value = UiState.Loading
 
-        fetchInstagramTokenUseCase(login).catch {
+        fetchInstagramTokenUseCase(loginEntity).catch {
             _uiState.value = UiState.Error("token fetch Error!!${it.message.toString()}")
         }.collectLatest { longTokenEntity ->
             _uiState.value = longTokenEntity.let {

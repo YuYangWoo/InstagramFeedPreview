@@ -1,17 +1,17 @@
 package com.example.datasource
 
-import com.example.model.LocalBoard
+import com.example.model.LocalBoardEntity
 import kotlinx.coroutines.flow.Flow
 
 interface BoardLocalDataSource {
 
-    suspend fun insert(localBoard: LocalBoard)
+    suspend fun insert(localBoardEntity: LocalBoardEntity)
 
-    suspend fun insertAdditional(localBoard: LocalBoard)
+    suspend fun insertAdditional(localBoardEntity: LocalBoardEntity)
 
-    fun select(): Flow<List<LocalBoard.Item>>
+    fun select(): Flow<List<LocalBoardEntity.Item>>
 
-    suspend fun update(localBoard: LocalBoard)
+    suspend fun update(localBoardEntity: LocalBoardEntity)
 
-    suspend fun delete(localBoardItem: LocalBoard.Item)
+    suspend fun delete(localBoardEntityItem: LocalBoardEntity.Item)
 }

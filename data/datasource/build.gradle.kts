@@ -7,7 +7,7 @@ dependencies {
     implementation(libs.java.inject)
     implementation(libs.paging.common)
     implementation(libs.retrofit.core)
-    implementation(project(":domain:entity"))
 
+    implementation(project(":domain:model"))
     implementation(project(":data:models"))
 }

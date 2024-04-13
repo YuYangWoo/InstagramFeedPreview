@@ -1,6 +1,6 @@
 package com.example.models.response
 
-import com.example.model.ShortToken
+import com.example.model.ShortTokenEntity
 import com.google.gson.annotations.SerializedName
 
 data class ShortTokenResponse(
@@ -10,6 +10,6 @@ data class ShortTokenResponse(
     val userId: String
 )
 
-fun ShortTokenResponse.toDomain(): ShortToken {
-    return ShortToken(accessToken, userId)
+fun ShortTokenResponse.toDomain(): ShortTokenEntity {
+    return ShortTokenEntity(accessToken, userId)
 }

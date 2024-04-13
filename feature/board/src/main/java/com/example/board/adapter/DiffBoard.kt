@@ -1,14 +1,14 @@
 package com.example.board.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.model.Board
+import com.example.model.BoardEntity
 
-object DiffBoard : DiffUtil.ItemCallback<Board.Item>() {
-    override fun areItemsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
+object DiffBoard : DiffUtil.ItemCallback<BoardEntity.Item>() {
+    override fun areItemsTheSame(oldItem: BoardEntity.Item, newItem: BoardEntity.Item): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Board.Item, newItem: Board.Item): Boolean {
+    override fun areContentsTheSame(oldItem: BoardEntity.Item, newItem: BoardEntity.Item): Boolean {
         return oldItem == newItem
     }
 

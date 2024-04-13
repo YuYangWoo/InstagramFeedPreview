@@ -3,11 +3,11 @@ package com.example.board
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.board.adapter.BoardEditAdapter
-import com.example.model.LocalBoard
+import com.example.model.LocalBoardEntity
 
 class ItemMoveCallback(
     private val boardEditAdapter: BoardEditAdapter,
-    private val onCompleteListener:(ArrayList<LocalBoard.Item>) -> Unit,
+    private val onCompleteListener:(ArrayList<LocalBoardEntity.Item>) -> Unit,
 ) : ItemTouchHelper.Callback() {
 
     override fun getMovementFlags(

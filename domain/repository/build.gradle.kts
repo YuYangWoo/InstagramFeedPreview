@@ -6,5 +6,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.java.inject)
     implementation(libs.paging.common)
-    implementation(project(":domain:entity"))
+
+    implementation(project(":domain:model"))
 }

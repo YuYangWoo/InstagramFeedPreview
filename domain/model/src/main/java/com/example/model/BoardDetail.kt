@@ -3,7 +3,7 @@ package com.example.model
 import com.google.gson.annotations.SerializedName
 
 data class BoardDetail(
-    val items: ArrayList<Item>
+    val items: MutableList<Item>
 ) {
     data class Item(
         val id: String,

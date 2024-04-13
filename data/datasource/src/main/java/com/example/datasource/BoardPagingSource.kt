@@ -2,8 +2,9 @@ package com.example.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.models.response.toLocalBoard
 import com.example.model.Board
+import com.example.models.response.toDomain
+import com.example.models.response.toLocalBoard
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,14 +23,14 @@ class BoardPagingSource @Inject constructor(
         val page = params.key
 
         return try {
-            val boardDTO = token.let { graphInstagramApiServiceSource.getBoardInformation(it, page) }
-
-            boardLocalDataSource.insert(boardDTO.toLocalBoard())
+            val networkBoard = token.let { graphInstagramApiServiceSource.getBoardInformation(it, page) }
+            val domainBoard = networkBoard.toDomain()
+            boardLocalDataSource.insert(networkBoard.toLocalBoard())
 
             LoadResult.Page(
-                data = boardDTO.items,
+                data = domainBoard.items,
                 prevKey = null,
-                nextKey =  boardDTO.paging?.cursors?.after
+                nextKey =  networkBoard.paging?.cursors?.after
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)

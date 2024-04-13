@@ -67,7 +67,7 @@ class BoardViewModel @Inject constructor(
                     _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")
                 }.collectLatest { boardDetail ->
                     _boardDetailUiState.value = boardDetail.let {
-                        if (it.items.size == 0 && !id.isNullOrEmpty() && !mediaUrl.isNullOrEmpty()) {
+                        if (it.items.size == 0 && id.isNotEmpty() && !mediaUrl.isNullOrEmpty()) {
                             it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
                         }
                         BoardDetailUiState.Success(it)

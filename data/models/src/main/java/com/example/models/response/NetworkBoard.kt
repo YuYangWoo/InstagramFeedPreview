@@ -4,17 +4,17 @@ import com.example.model.Board
 import com.example.model.LocalBoard
 import com.google.gson.annotations.SerializedName
 
-data class BoardResponse(
+data class NetworkBoard(
     @SerializedName("data")
     val items: List<Board.Item>,
     val paging: Board.Paging?
 )
 
-fun BoardResponse.toDomain(): Board {
+fun NetworkBoard.toDomain(): Board {
     return Board(items, paging)
 }
 
-fun BoardResponse.toLocalBoard(): LocalBoard {
+fun NetworkBoard.toLocalBoard(): LocalBoard {
     val list = this.items.map { item ->
         LocalBoard.Item(item.id.toLong(), item.mediaUrl, item.order)
     }

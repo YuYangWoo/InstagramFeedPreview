@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -25,11 +26,13 @@ class NetworkModule {
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build();
 
     @Provides
+    @Singleton
     fun provideApiService(): InstagramLoginDataSourceImpl =
         Retrofit.Builder().baseUrl(instagramBaseUrl).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(
             InstagramLoginDataSourceImpl::class.java)
 
     @Provides
+    @Singleton
     fun provideGraphApiService(): GraphInstagramApiServiceSourceImpl {
         return Retrofit.Builder().baseUrl(graphInstagramBaseUrl).client(client).addConverterFactory(GsonConverterFactory.create()).build().create(
             GraphInstagramApiServiceSourceImpl::class.java)

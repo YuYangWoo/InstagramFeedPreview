@@ -2,8 +2,8 @@ package com.example.model
 
 import com.google.gson.annotations.SerializedName
 
-data class BoardDetailEntity(
-    val items: ArrayList<Item>
+data class BoardDetail(
+    val items: MutableList<Item>
 ) {
     data class Item(
         val id: String,

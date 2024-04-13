@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.example.model.BoardDetailEntity
-import com.example.model.LocalBoardEntity
+import com.example.model.BoardDetail
+import com.example.model.LocalBoard
 import com.example.usecase.DeleteBoardUseCase
 import com.example.usecase.FetchBoardChildItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
@@ -20,8 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,19 +35,17 @@ class BoardViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
 
-    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoardEntity.Item>>>(BoardLocalUiState.Loading)
+    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
     val boardLocalUiState = _boardLocalUiState.asStateFlow()
 
-    private val _boardDetailEntityUiState = MutableStateFlow<BoardDetailUiState<BoardDetailEntity>>(BoardDetailUiState.Loading)
-    val boardDetailUiState = _boardDetailEntityUiState.asStateFlow()
+    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
+    val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     private val token = savedStateHandle.getStateFlow("token", "")
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val pagingData = token.mapLatest {
+    val pagingData = token.flatMapLatest {
         fetchInstagramBoardUseCase(it)
-    }.flatMapLatest {
-        it
     }.cachedIn(viewModelScope)
 
     fun requestBoardLocalItem() = viewModelScope.launch {
@@ -63,40 +59,40 @@ class BoardViewModel @Inject constructor(
     }
 
     fun requestBoardDetailItem(id: String, mediaUrl: String?) = viewModelScope.launch {
-        _boardDetailEntityUiState.value = BoardDetailUiState.Loading
+        _boardDetailUiState.value = BoardDetailUiState.Loading
 
-        manageUserInformationUseCase.get().map { accessToken ->
+        manageUserInformationUseCase.get().collectLatest { accessToken ->
             if (!accessToken.isNullOrBlank()) {
                 fetchBoardChildItemUseCase(id, accessToken).catch {
-                    _boardDetailEntityUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")
+                    _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")
                 }.collectLatest { boardDetail ->
-                    _boardDetailEntityUiState.value = boardDetail.let {
-                        if (it.items.size == 0 && !id.isNullOrEmpty() && !mediaUrl.isNullOrEmpty()) {
-                            it.items.add(BoardDetailEntity.Item(id = id, mediaUrl = mediaUrl))
+                    _boardDetailUiState.value = boardDetail.let {
+                        if (it.items.size == 0 && id.isNotEmpty() && !mediaUrl.isNullOrEmpty()) {
+                            it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
                         }
                         BoardDetailUiState.Success(it)
                     }
                 }
             } else {
-                _boardDetailEntityUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
+                _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
             }
         }
     }
 
-    fun insertBoardItem(localBoardEntity: LocalBoardEntity) = viewModelScope.launch {
-        insertBoardUseCase(localBoardEntity)
+    fun insertBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        insertBoardUseCase(localBoard)
     }
 
-    fun insertAdditionalBoardItem(localBoardEntity: LocalBoardEntity) = viewModelScope.launch {
-        insertBoardUseCase.invokeAdditional(localBoardEntity)
+    fun insertAdditionalBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        insertBoardUseCase.invokeAdditional(localBoard)
     }
 
-    fun updateBoardItem(localBoardEntity: LocalBoardEntity) = viewModelScope.launch {
-        updateBoardUseCase(localBoardEntity)
+    fun updateBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
+        updateBoardUseCase(localBoard)
     }
 
-    fun deleteBoardItem(localBoardEntityItem: LocalBoardEntity.Item) = viewModelScope.launch {
-        deleteBoardUseCase(localBoardEntityItem)
+    fun deleteBoardItem(localBoardItem: LocalBoard.Item) = viewModelScope.launch {
+        deleteBoardUseCase(localBoardItem)
     }
 
     fun setToken(token: String) {

@@ -1,6 +1,6 @@
 package com.example.datasource
 
-import com.example.models.response.ShortTokenResponse
+import com.example.models.response.NetworkShortToken
 
 interface InstagramLoginDataSource {
     suspend fun getAccessToken(
@@ -9,6 +9,6 @@ interface InstagramLoginDataSource {
         grantType: String,
         redirectUri: String,
         code: String
-    ): ShortTokenResponse
+    ): NetworkShortToken
 
 }

@@ -2,7 +2,7 @@ package com.example.model
 
 import com.google.gson.annotations.SerializedName
 
-data class BoardEntity(
+data class Board(
     val items: List<Item>,
     val paging: Paging?
 ) {

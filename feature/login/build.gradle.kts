@@ -19,7 +19,7 @@ dependencies {
     testImplementation(libs.mockk)
 
     implementation(project(":domain:usecase"))
-    implementation(project(":domain:model"))
+    implementation(project(":domain:entity"))
 }
 
 fun getApiKey(propertyKey: String): String {

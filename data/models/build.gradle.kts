@@ -4,6 +4,5 @@ plugins {
 
 dependencies {
     implementation(libs.retrofit.gson)
-
-    implementation(project(":domain:model"))
+    implementation(project(":domain:entity"))
 }

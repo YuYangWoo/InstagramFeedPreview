@@ -8,5 +8,5 @@ dependencies {
     implementation(libs.paging.common)
 
     implementation(project(":domain:repository"))
-    implementation(project(":domain:model"))
+    implementation(project(":domain:entity"))
 }

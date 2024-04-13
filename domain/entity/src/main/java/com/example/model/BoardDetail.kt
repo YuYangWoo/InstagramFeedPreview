@@ -2,7 +2,7 @@ package com.example.model
 
 import com.google.gson.annotations.SerializedName
 
-data class BoardDetailEntity(
+data class BoardDetail(
     val items: ArrayList<Item>
 ) {
     data class Item(

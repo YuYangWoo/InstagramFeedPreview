@@ -29,5 +29,5 @@ dependencies {
     implementation(libs.paging.common)
 
     implementation(project(":data:datasource"))
-    implementation(project(":domain:model"))
+    implementation(project(":domain:entity"))
 }

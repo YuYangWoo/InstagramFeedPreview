@@ -1,8 +1,8 @@
 package com.example.models.response
 
-import com.example.model.BoardDetailEntity
+import com.example.model.BoardDetail
 
 data class BoardDetailResponse(
-    val data: ArrayList<BoardDetailEntity.Item>
+    val data: ArrayList<BoardDetail.Item>
 )
-fun BoardDetailResponse.toDomain(): BoardDetailEntity = BoardDetailEntity(data)
+fun BoardDetailResponse.toDomain(): BoardDetail = BoardDetail(data)

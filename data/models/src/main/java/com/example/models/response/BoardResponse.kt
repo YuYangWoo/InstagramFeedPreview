@@ -1,22 +1,22 @@
 package com.example.models.response
 
-import com.example.model.BoardEntity
-import com.example.model.LocalBoardEntity
+import com.example.model.Board
+import com.example.model.LocalBoard
 import com.google.gson.annotations.SerializedName
 
 data class BoardResponse(
     @SerializedName("data")
-    val items: List<BoardEntity.Item>,
-    val paging: BoardEntity.Paging?
+    val items: List<Board.Item>,
+    val paging: Board.Paging?
 )
 
-fun BoardResponse.toDomain(): BoardEntity {
-    return BoardEntity(items, paging)
+fun BoardResponse.toDomain(): Board {
+    return Board(items, paging)
 }
 
-fun BoardResponse.toLocalBoard(): LocalBoardEntity {
+fun BoardResponse.toLocalBoard(): LocalBoard {
     val list = this.items.map { item ->
-        LocalBoardEntity.Item(item.id.toLong(), item.mediaUrl, item.order)
+        LocalBoard.Item(item.id.toLong(), item.mediaUrl, item.order)
     }
-    return LocalBoardEntity(ArrayList(list))
+    return LocalBoard(ArrayList(list))
 }

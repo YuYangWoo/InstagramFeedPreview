@@ -63,7 +63,10 @@ class BoardViewModel @Inject constructor(
         fetchBoardDetailItemUseCase(id)
             .onStart {
                 _boardDetailUiState.update {
-                    it.copy(isLoading = true)
+                    it.copy(
+                        isLoading = true,
+                        items = listOf()
+                    )
                 }
             }.catch {
                 _boardDetailUiState.update {

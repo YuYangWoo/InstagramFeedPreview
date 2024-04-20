@@ -4,14 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.example.board.state.BoardDetailUiState
 import com.example.model.BoardDetail
 import com.example.model.LocalBoard
 import com.example.usecase.DeleteBoardUseCase
-import com.example.usecase.FetchBoardChildItemUseCase
+import com.example.usecase.FetchBoardDetailItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.FindBoardUseCase
 import com.example.usecase.InsertBoardUseCase
-import com.example.usecase.ManageUserInformationUseCase
 import com.example.usecase.UpdateBoardUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,14 +20,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BoardViewModel @Inject constructor(
-    private val manageUserInformationUseCase: ManageUserInformationUseCase,
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
-    private val fetchBoardChildItemUseCase: FetchBoardChildItemUseCase,
+    private val fetchBoardDetailItemUseCase: FetchBoardDetailItemUseCase,
     private val insertBoardUseCase: InsertBoardUseCase,
     private val findBoardUseCase: FindBoardUseCase,
     private val updateBoardUseCase: UpdateBoardUseCase,
@@ -38,7 +39,7 @@ class BoardViewModel @Inject constructor(
     private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
     val boardLocalUiState = _boardLocalUiState.asStateFlow()
 
-    private val _boardDetailUiState = MutableStateFlow<BoardDetailUiState<BoardDetail>>(BoardDetailUiState.Loading)
+    private val _boardDetailUiState = MutableStateFlow(BoardDetailUiState())
     val boardDetailUiState = _boardDetailUiState.asStateFlow()
 
     private val token = savedStateHandle.getStateFlow("token", "")
@@ -59,24 +60,27 @@ class BoardViewModel @Inject constructor(
     }
 
     fun requestBoardDetailItem(id: String, mediaUrl: String?) = viewModelScope.launch {
-        _boardDetailUiState.value = BoardDetailUiState.Loading
-
-        manageUserInformationUseCase.get().collectLatest { accessToken ->
-            if (!accessToken.isNullOrBlank()) {
-                fetchBoardChildItemUseCase(id, accessToken).catch {
-                    _boardDetailUiState.value = BoardDetailUiState.Error("boardDetail is Null!!")
-                }.collectLatest { boardDetail ->
-                    _boardDetailUiState.value = boardDetail.let {
-                        if (it.items.size == 0 && id.isNotEmpty() && !mediaUrl.isNullOrEmpty()) {
-                            it.items.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
-                        }
-                        BoardDetailUiState.Success(it)
-                    }
+        fetchBoardDetailItemUseCase(id)
+            .onStart {
+                _boardDetailUiState.update {
+                    it.copy(isLoading = true)
                 }
-            } else {
-                _boardDetailUiState.value = BoardDetailUiState.Error("accessToken is Error!!")
+            }.catch {
+                _boardDetailUiState.update {
+                    it.copy(errorMessage = "boardDetail is Error!!")
+                }
+            }.collectLatest { boardDetail ->
+                _boardDetailUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        items = boardDetail.items.apply {
+                            if (this.size == 0 && id.isNotEmpty() && !mediaUrl.isNullOrEmpty())
+                                this.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
+                        }.map { item ->
+                            BoardDetailUiState.Item(item.id, item.mediaUrl)
+                        })
+                }
             }
-        }
     }
 
     fun insertBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
@@ -116,8 +120,3 @@ sealed class BoardLocalUiState<out T> {
     data class Error(val message: String) : BoardLocalUiState<Nothing>()
 }
 
-sealed class BoardDetailUiState<out T> {
-    object Loading : BoardDetailUiState<Nothing>()
-    data class Success<T>(val data: T) : BoardDetailUiState<T>()
-    data class Error(val message: String) : BoardDetailUiState<Nothing>()
-}

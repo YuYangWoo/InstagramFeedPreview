@@ -1,11 +1,12 @@
 package com.example.board
 
+import com.example.board.state.BoardDetailUiState
 import com.example.board.viewmodel.BoardDetailUiState
 import com.example.board.viewmodel.BoardUiState
 import com.example.board.viewmodel.BoardViewModel
 import com.example.model.Board
 import com.example.model.BoardDetail
-import com.example.usecase.FetchBoardChildItemUseCase
+import com.example.usecase.FetchBoardDetailItemUseCase
 import com.example.usecase.FetchInstagramBoardUseCase
 import com.example.usecase.ManageUserInformationUseCase
 import io.kotest.core.spec.style.BehaviorSpec
@@ -20,8 +21,8 @@ class BoardViewModelTest : BehaviorSpec({
     Given("BoardViewModel 이 주어졌을 때") {
         val manageUserInformationUseCase = mockk<ManageUserInformationUseCase>()
         val fetchInstagramBoardUseCase = mockk<FetchInstagramBoardUseCase>()
-        val fetchBoardChildItemUseCase = mockk<FetchBoardChildItemUseCase>()
-        val boardViewModel = BoardViewModel(manageUserInformationUseCase, fetchInstagramBoardUseCase, fetchBoardChildItemUseCase)
+        val fetchBoardDetailItemUseCase = mockk<FetchBoardDetailItemUseCase>()
+        val boardViewModel = BoardViewModel(manageUserInformationUseCase, fetchInstagramBoardUseCase, fetchBoardDetailItemUseCase)
 
         val fakeAccessToken = "fakeAccessToken"
         val board = Board(arrayListOf(Board.Item("id","caption", "mediaUrl")))
@@ -73,8 +74,8 @@ class BoardViewModelTest : BehaviorSpec({
     Given("BoardViewModel이 주어졌을 때") {
         val manageUserInformationUseCase = mockk<ManageUserInformationUseCase>()
         val fetchInstagramBoardUseCase = mockk<FetchInstagramBoardUseCase>()
-        val fetchBoardChildItemUseCase = mockk<FetchBoardChildItemUseCase>()
-        val boardViewModel = BoardViewModel(manageUserInformationUseCase, fetchInstagramBoardUseCase, fetchBoardChildItemUseCase)
+        val fetchBoardDetailItemUseCase = mockk<FetchBoardDetailItemUseCase>()
+        val boardViewModel = BoardViewModel(manageUserInformationUseCase, fetchInstagramBoardUseCase, fetchBoardDetailItemUseCase)
 
         val fakeAccessToken = "fakeAccessToken"
         val fakeMediaId = "fakeMediaId"
@@ -89,7 +90,7 @@ class BoardViewModelTest : BehaviorSpec({
 
         When("requestBoardChildItems를 호출하고 성공할 때") {
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
-            coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns boardDetail
+            coEvery { fetchBoardDetailItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns boardDetail
 
             boardViewModel.requestBoardDetailItem(fakeMediaId)
 
@@ -101,7 +102,7 @@ class BoardViewModelTest : BehaviorSpec({
 
         When("requestBoardChildItems를 호출하고 실패할 때") {
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
-            coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } throws Exception("boardDetail fetch Error!!")
+            coEvery { fetchBoardDetailItemUseCase.invoke(fakeMediaId, fakeAccessToken) } throws Exception("boardDetail fetch Error!!")
 
             boardViewModel.requestBoardDetailItem(fakeMediaId)
 
@@ -113,7 +114,7 @@ class BoardViewModelTest : BehaviorSpec({
 
         When("requestBoardChildItems를 호출하고 null을 반환할 ") {
             coEvery { manageUserInformationUseCase.get() } returns fakeAccessToken
-            coEvery { fetchBoardChildItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns null
+            coEvery { fetchBoardDetailItemUseCase.invoke(fakeMediaId, fakeAccessToken) } returns null
 
             boardViewModel.requestBoardDetailItem(fakeMediaId)
 

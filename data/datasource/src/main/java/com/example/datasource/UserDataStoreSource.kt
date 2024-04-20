@@ -6,5 +6,5 @@ interface UserDataStoreSource {
 
     suspend fun saveUserAccessToken(accessToken: String)
 
-    fun getUserAccessToken(): Flow<String?>
+    fun getUserAccessToken(): Flow<String>
 }

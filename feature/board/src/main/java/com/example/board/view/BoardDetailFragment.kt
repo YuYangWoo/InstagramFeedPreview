@@ -15,7 +15,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.board.R
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
-import com.example.board.viewmodel.BoardDetailUiState
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -61,20 +60,9 @@ class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 boardViewModel.boardDetailUiState.collectLatest { state ->
-                    when (state) {
-                        is BoardDetailUiState.Success -> {
-                            binding.progressBar.isVisible = false
-                            boardDetailAdapter.submitList(state.data.items)
-                            Log.d(TAG, state.data.toString())
-                        }
-                        is BoardDetailUiState.Loading -> {
-                            binding.progressBar.isVisible = true
-                        }
-                        is BoardDetailUiState.Error -> {
-                            binding.progressBar.isVisible = false
-                            Log.d(TAG, state.message)
-                        }
-                    }
+                    Log.d("111111", state.items.toString())
+                    binding.progressBar.isVisible = state.isLoading
+                    boardDetailAdapter.submitList(state.items)
                 }
             }
         }

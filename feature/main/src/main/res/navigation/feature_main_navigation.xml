@@ -29,12 +29,24 @@
             android:defaultValue=""
             app:argType="string" />
         <deepLink app:uri="app://example.app/boardFragment/{accessToken}" />
+
     </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"
         android:name="com.example.board.view.BoardDetailFragment"
         android:label="상세보기">
-        <deepLink app:uri="app://example.app/boardDetailFragment" />
+
+        <argument
+            android:name="id"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="mediaUrl"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <deepLink app:uri="app://example.app/boardDetailFragment/?id={id}&amp;mediaUrl={mediaUrl}" />
 
     </fragment>
 </navigation>

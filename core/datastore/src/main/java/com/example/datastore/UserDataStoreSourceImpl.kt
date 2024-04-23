@@ -24,7 +24,7 @@ class UserDataStoreSourceImpl @Inject constructor() : UserDataStoreSource {
 
     override fun getUserAccessToken(): Flow<String> {
         return dataStore.data.map { preferences ->
-            preferences[ACCESS_TOKEN] ?: ""
+            preferences[ACCESS_TOKEN].orEmpty()
         }
     }
     companion object {

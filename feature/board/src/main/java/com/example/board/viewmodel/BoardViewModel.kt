@@ -76,12 +76,14 @@ class BoardViewModel @Inject constructor(
                 _boardDetailUiState.update {
                     it.copy(
                         isLoading = false,
-                        items = boardDetail.items.apply {
-                            if (this.size == 0 && id.isNotEmpty() && !mediaUrl.isNullOrEmpty())
-                                this.add(BoardDetail.Item(id = id, mediaUrl = mediaUrl))
-                        }.map { item ->
-                            BoardDetailUiState.Item(item.id, item.mediaUrl)
-                        })
+                        items = if (boardDetail.items.isEmpty() && id.isNotEmpty() && !mediaUrl.isNullOrEmpty()) {
+                            listOf(BoardDetailUiState.Item(id = id, mediaUrl = mediaUrl))
+                        } else {
+                            boardDetail.items.map { item ->
+                                BoardDetailUiState.Item(item.id, item.mediaUrl)
+                            }
+                        }
+                    )
                 }
             }
     }

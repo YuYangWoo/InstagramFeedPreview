@@ -6,7 +6,7 @@ import com.example.models.response.NetworkLongToken
 
 interface GraphInstagramApiServiceSource  {
     suspend fun getBoardInformation(accessToken: String, after: String?): NetworkBoard
-    suspend fun getBoardDetailInformation(mediaId: String, accessToken: String): NetworkBoardDetail
+    suspend fun getBoardDetailInformation(id: String, accessToken: String): NetworkBoardDetail
     suspend fun getAccessLongToken(
         grantType: String,
         clientSecret: String,

@@ -15,9 +15,9 @@ class FetchBoardDetailItemUseCase @Inject constructor(
     private val userRepository: UserRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(mediaId: String): Flow<BoardDetail> {
+    operator fun invoke(id: String): Flow<BoardDetail> {
         return userRepository.getUserAccessToken().flatMapLatest { accessToken ->
-            boardRepository.fetchBoardDetailItems(mediaId, accessToken)
+            boardRepository.fetchBoardDetailItems(id, accessToken)
         }
     }
 }

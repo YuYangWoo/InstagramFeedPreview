@@ -4,5 +4,5 @@ import com.example.model.BoardDetail
 import kotlinx.coroutines.flow.Flow
 
 interface BoardRepository {
-    fun fetchBoardDetailItems(accessToken: String, mediaId: String): Flow<BoardDetail>
+    fun fetchBoardDetailItems(accessToken: String, id: String): Flow<BoardDetail>
 }

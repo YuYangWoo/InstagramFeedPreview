@@ -2,7 +2,9 @@ package com.example.board.view
 
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -87,9 +89,9 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         with(binding.feedRecyclerView) {
             adapter = boardAdapter.apply {
                 setOnItemClickListener { board, position ->
-                    boardViewModel.requestBoardDetailItem(board.id, board.mediaUrl)
+                    val encodedMediaUrl = Uri.encode(board.mediaUrl.toString())
                     val request =
-                        NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment".toUri())
+                        NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment/?id=${board.id}&mediaUrl=${encodedMediaUrl.orEmpty()}".toUri())
                             .build()
                     findNavController().navigate(request)
                 }

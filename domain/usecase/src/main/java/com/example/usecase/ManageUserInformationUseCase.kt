@@ -8,7 +8,7 @@ class ManageUserInformationUseCase @Inject constructor(private val userRepositor
     suspend fun save(accessToken: String) {
         userRepository.saveUserAccessToken(accessToken)
     }
-    fun get(): Flow<String?> {
+    fun get(): Flow<String> {
         return userRepository.getUserAccessToken()
     }
 }

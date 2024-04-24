@@ -1,13 +1,12 @@
 package com.example.board.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,7 +14,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.board.R
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
-import com.example.board.viewmodel.BoardDetailUiState
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +22,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
-    private val boardViewModel: BoardViewModel by activityViewModels()
+    private val boardViewModel: BoardViewModel by viewModels()
     @Inject
     lateinit var boardDetailAdapter: BoardDetailAdapter
     private var _binding: FragmentBoardDetailBinding? = null
@@ -61,20 +59,8 @@ class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 boardViewModel.boardDetailUiState.collectLatest { state ->
-                    when (state) {
-                        is BoardDetailUiState.Success -> {
-                            binding.progressBar.isVisible = false
-                            boardDetailAdapter.submitList(state.data.items)
-                            Log.d(TAG, state.data.toString())
-                        }
-                        is BoardDetailUiState.Loading -> {
-                            binding.progressBar.isVisible = true
-                        }
-                        is BoardDetailUiState.Error -> {
-                            binding.progressBar.isVisible = false
-                            Log.d(TAG, state.message)
-                        }
-                    }
+                    binding.progressBar.isVisible = state.isLoading
+                    boardDetailAdapter.submitList(state.items)
                 }
             }
         }

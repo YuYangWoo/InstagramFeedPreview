@@ -14,7 +14,7 @@ class UserRepositoryImpl @Inject constructor(
         userDataStoreSource.saveUserAccessToken(accessToken)
     }
 
-    override fun getUserAccessToken(): Flow<String?> {
+    override fun getUserAccessToken(): Flow<String> {
         return userDataStoreSource.getUserAccessToken()
     }
 

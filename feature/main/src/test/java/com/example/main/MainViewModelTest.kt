@@ -28,7 +28,7 @@ class MainViewModelTest : BehaviorSpec({
             coEvery { manageUserInformationUseCase.get() } returns fakeToken
             viewModel.getUserAccessToken()
             Then("결과는 UiState.Success 이여야 한다") {
-                val uiState = viewModel.uiState.value
+                val uiState = viewModel.mainUiState.value
                 uiState shouldBe UiState.Success(fakeToken)
             }
         }
@@ -38,7 +38,7 @@ class MainViewModelTest : BehaviorSpec({
             viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
-                val uiState = viewModel.uiState.value
+                val uiState = viewModel.mainUiState.value
                 uiState shouldBe UiState.Error("getUserAccessToken method is Fail!!")
             }
         }
@@ -48,7 +48,7 @@ class MainViewModelTest : BehaviorSpec({
             viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
-                val uiState = viewModel.uiState.value
+                val uiState = viewModel.mainUiState.value
                 uiState shouldBe UiState.Error("userToken is nullOrBlank!!")
             }
         }
@@ -58,7 +58,7 @@ class MainViewModelTest : BehaviorSpec({
             viewModel.getUserAccessToken()
 
             Then("결과는 UiState.Error 이여야 한다") {
-                val uiState = viewModel.uiState.value
+                val uiState = viewModel.mainUiState.value
                 uiState shouldBe UiState.Error("userToken is nullOrBlank!!")
             }
         }

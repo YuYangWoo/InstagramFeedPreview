@@ -11,13 +11,14 @@ import android.webkit.WebViewClient
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.example.login.databinding.FragmentLoginBinding
+import com.example.login.event.Contract
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -26,7 +27,8 @@ import java.net.URLDecoder
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
-    private val loginViewModel by activityViewModels<LoginViewModel>()
+    private val loginViewModel: LoginViewModel by viewModels()
+
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
@@ -41,11 +43,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setLogin()
-        initObserver()
+        initLogin()
+        initCollect()
     }
 
-    private fun setLogin() {
+    private fun initLogin() {
         binding.webView.apply {
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -65,7 +67,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                loginViewModel.requestAccessToken(login)
+                                loginViewModel.event(Contract.Event.RequestAccessToken(login))
                                 return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
@@ -80,27 +82,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    private fun initObserver() {
+    private fun initCollect() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                loginViewModel.uiState.collectLatest { state ->
-                    when (state) {
-                        is UiState.Loading -> {
-                            binding.progressBar.isVisible = true
-                        }
-                        is UiState.Success -> {
-                            binding.progressBar.isVisible = false
-                            val request = NavDeepLinkRequest.Builder
-                                .fromUri("app://example.app/boardFragment/${state.data.accessToken}".toUri())
-                                .build()
-                            findNavController().navigate(request)
-                            Log.d(TAG, state.data.toString())
-                        }
-                        is UiState.Error -> {
-                            binding.progressBar.isVisible = false
-                            Log.d(TAG, state.message)
-                        }
-                        is UiState.Empty -> {}
+                loginViewModel.loginUiState.collectLatest { loginUiState ->
+                    binding.progressBar.isVisible = loginUiState.isLoading
+
+                    if (loginUiState.isShowBoardFragment) {
+                        loginViewModel.event(Contract.Event.SaveUserAccessToken(loginUiState.accessToken))
+
+                        val request = NavDeepLinkRequest.Builder
+                            .fromUri("app://example.app/boardFragment/${loginUiState.accessToken}".toUri())
+                            .build()
+                        findNavController().navigate(request)
                     }
                 }
             }

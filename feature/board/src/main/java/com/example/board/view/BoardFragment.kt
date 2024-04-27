@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -16,31 +15,31 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.board.GridDividerItemDecoration
 import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
+import com.example.board.event.Contract
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoardFragment : Fragment(R.layout.fragment_board) {
-    private val boardViewModel: BoardViewModel by activityViewModels()
+    private val boardViewModel: BoardViewModel by viewModels()
     private var backKeyPressedTime: Long = 0
 
-    @Inject
-    lateinit var boardAdapter: BoardAdapter
+    private val boardAdapter = BoardAdapter()
+
     private var _binding: FragmentBoardBinding? = null
     private val binding get() = _binding!!
 
@@ -78,24 +77,14 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val token = arguments?.getString("accessToken")
-        boardViewModel.setToken(token ?: "")
 
         initRecyclerView()
-        initObserver()
+        initCollect()
     }
 
     private fun initRecyclerView() {
         with(binding.feedRecyclerView) {
-            adapter = boardAdapter.apply {
-                setOnItemClickListener { board, position ->
-                    val encodedMediaUrl = Uri.encode(board.mediaUrl.toString())
-                    val request =
-                        NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment/?id=${board.id}&mediaUrl=${encodedMediaUrl.orEmpty()}".toUri())
-                            .build()
-                    findNavController().navigate(request)
-                }
-            }
+            adapter = boardAdapter
             adapter = boardAdapter.withLoadStateFooter(BoardLoadStateAdapter(boardAdapter::retry))
 
             layoutManager = GridLayoutManager(context, 3)
@@ -104,12 +93,25 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
         }
     }
 
-    private fun initObserver() {
+    private fun initCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.pagingData.collectLatest {
-                    boardAdapter.submitData(it)
+                boardViewModel.effect.collectLatest { effect ->
+                    when (effect) {
+                        is Contract.Effect.NavigateBoardDetailFragment -> {
+                            val encodedMediaUrl = Uri.encode(effect.mediaUrl)
+                            val request =
+                                NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment/?id=${effect.id}&mediaUrl=${encodedMediaUrl.orEmpty()}".toUri()).build()
+                            findNavController().navigate(request)
+                        }
+                    }
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                boardViewModel.pagingData.collectLatest(boardAdapter::submitData)
             }
         }
     }

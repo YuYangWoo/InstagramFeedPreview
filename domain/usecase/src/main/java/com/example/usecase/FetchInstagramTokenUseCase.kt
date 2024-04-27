@@ -23,6 +23,5 @@ class FetchInstagramTokenUseCase @Inject constructor(
                     shortToken.accessToken,
                 )
             }
-
     }
 }

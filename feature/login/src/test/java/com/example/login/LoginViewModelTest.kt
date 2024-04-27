@@ -38,7 +38,7 @@ class LoginViewModelTest : BehaviorSpec({
             loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 Success로 되어야 한다") {
-                val uiState = loginViewModel.uiState.value
+                val uiState = loginViewModel.loginUiState.value
                 uiState shouldBe UiState.Success(shortToken)
             }
         }
@@ -48,7 +48,7 @@ class LoginViewModelTest : BehaviorSpec({
             loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
-                val uiState = loginViewModel.uiState.value
+                val uiState = loginViewModel.loginUiState.value
                 uiState shouldBe UiState.Error("token fetch Error!!")
             }
         }
@@ -58,7 +58,7 @@ class LoginViewModelTest : BehaviorSpec({
             loginViewModel.requestAccessToken(login)
 
             Then("UiState 가 UiState.Error 이여야 한다") {
-                val uiState = loginViewModel.uiState.value
+                val uiState = loginViewModel.loginUiState.value
                 uiState shouldBe UiState.Error("token is Null!!")
             }
         }

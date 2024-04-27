@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.model.Login
 import com.example.model.LongToken
 import com.example.usecase.FetchInstagramTokenUseCase
-import com.example.usecase.ManageUserInformationUseCase
+import com.example.usecase.SaveUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val manageUserInformationUseCase: ManageUserInformationUseCase
+    private val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<LongToken>>(UiState.Empty)
     val uiState: StateFlow<UiState<LongToken>> = _uiState.asStateFlow()
@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
-        manageUserInformationUseCase.save(accessToken)
+        saveUserAccessTokenUseCase(accessToken)
     }
 
     companion object {

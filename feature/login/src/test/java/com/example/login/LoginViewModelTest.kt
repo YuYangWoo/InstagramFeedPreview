@@ -4,6 +4,7 @@ import com.example.model.Login
 import com.example.model.ShortToken
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.ManageUserInformationUseCase
+import com.example.usecase.SaveUserAccessTokenUseCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
@@ -18,8 +19,8 @@ class LoginViewModelTest : BehaviorSpec({
 
     Given("InstagramViewModel 이 주어졌을 때") {
         val fetchInstagramTokenUseCase = mockk<FetchInstagramTokenUseCase>()
-        val manageUserInformationUseCase = mockk<ManageUserInformationUseCase>()
-        val loginViewModel = LoginViewModel(fetchInstagramTokenUseCase, manageUserInformationUseCase)
+        val saveUserAccessTokenUseCase = mockk<SaveUserAccessTokenUseCase>()
+        val loginViewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase)
 
         val login = Login("username", "password", "grantType", "redirectUri", "code")
         val shortToken = ShortToken("fakeAccessToken", "fakeUserId")
@@ -31,7 +32,7 @@ class LoginViewModelTest : BehaviorSpec({
             Dispatchers.resetMain()
         }
 
-        coEvery { manageUserInformationUseCase.save(any()) } just Runs
+        coEvery { saveUserAccessTokenUseCase(shortToken.accessToken) } just Runs
 
         When("requestAccessToken 호출 후 결과가 성공적일 때") {
             coEvery { fetchInstagramTokenUseCase.invoke(login) } returns shortToken

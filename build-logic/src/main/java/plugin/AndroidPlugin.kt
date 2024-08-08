@@ -23,6 +23,7 @@ internal class AndroidPlugin : Plugin<Project> {
         apply("com.android.library")
         apply("org.jetbrains.kotlin.android")
         apply("androidx.navigation.safeargs.kotlin")
+        apply("kotlin-parcelize")
     }
 
     private fun applyAndroidExtensions(extensions: CommonExtension<*, *, *, *, *>)

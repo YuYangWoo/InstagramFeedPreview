@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.example.login.databinding.FragmentLoginBinding
 import com.example.login.event.Contract
+import com.example.login.state.LoginUiState
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -59,7 +61,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         if (decodedUrl.contains("code=")) {
                             try {
                                 val accessToken = decodedUrl.split("code=").getOrNull(1)?.split("#_")?.getOrNull(0) ?: ""
-                                val login = Login(
+                                val uiLogin = UiLogin(
                                     BuildConfig.CLIENT_ID,
                                     BuildConfig.CLIENT_SECRET,
                                     "authorization_code",
@@ -67,7 +69,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                loginViewModel.event(Contract.Event.RequestAccessToken(login))
+                                loginViewModel.event(Contract.Event.OnUpdateLoginInfo(uiLogin))
                                 return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())
@@ -83,22 +85,52 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun initCollect() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 loginViewModel.loginUiState.collectLatest { loginUiState ->
-                    binding.progressBar.isVisible = loginUiState.isLoading
+                    when (loginUiState) {
+                        is LoginUiState.Error -> {
+                            binding.progressBar.isVisible = false
 
-                    if (loginUiState.isShowBoardFragment) {
-                        loginViewModel.event(Contract.Event.SaveUserAccessToken(loginUiState.accessToken))
+                            when (loginUiState.errorState) {
+                                is LoginUiState.Error.ErrorState.NetworkError -> {
+                                    handleError(loginUiState.errorState.message)
+                                }
+                                is LoginUiState.Error.ErrorState.DefaultError -> {
+                                    handleError(loginUiState.errorState.message)
+                                }
+                            }
+                        }
+                        LoginUiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is LoginUiState.Success -> {
+                            binding.progressBar.isVisible = false
 
-                        val request = NavDeepLinkRequest.Builder
-                            .fromUri("app://example.app/boardFragment/${loginUiState.accessToken}".toUri())
-                            .build()
-                        findNavController().navigate(request)
+                            if (loginUiState.loginState.isShowBoardFragment) {
+                                loginViewModel.event(Contract.Event.SaveUserAccessToken(loginUiState.loginState.accessToken))
+
+                                val request =
+                                    NavDeepLinkRequest.Builder.fromUri("app://example.app/boardFragment/${loginUiState.loginState.accessToken}".toUri())
+                                        .build()
+                                findNavController().navigate(request)
+                            }
+
+                        }
+
+                        LoginUiState.Idle -> {
+                            // Nothing
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun handleError(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+
+        Log.d(TAG, message)
     }
 
     override fun onDestroyView() {

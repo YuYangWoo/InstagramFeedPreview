@@ -1,56 +1,76 @@
 package com.example.login
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.login.event.Contract
 import com.example.login.state.LoginUiState
-import com.example.model.Login
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.SaveUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase
+    private val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _loginUiState: MutableStateFlow<LoginUiState> = MutableStateFlow(LoginUiState())
-    val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
-
-    private fun requestAccessToken(login: Login) = viewModelScope.launch {
-        fetchInstagramTokenUseCase(login)
-            .onStart {
-                _loginUiState.update { loginUiState ->
-                    loginUiState.copy(
-                        isLoading = true,
-                    )
-                }
-            }.collectLatest { longToken ->
-                _loginUiState.update { loginUiState ->
-                    loginUiState.copy(
-                        isLoading = false,
-                        isShowBoardFragment = longToken.accessToken.isNotEmpty(),
-                        accessToken = longToken.accessToken
-                    )
-                }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val loginUiState = savedStateHandle.getStateFlow("login", UiLogin("", "", "", "", ""))
+        .flatMapLatest { uiLogin ->
+            if (uiLogin.code.isEmpty()) {
+                flowOf(LoginUiState.Idle)
+            } else {
+                loginUiState(uiLogin)
             }
-    }
+        }.stateIn(
+        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = LoginUiState.Idle
+    )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loginUiState(uiLogin: UiLogin) =
+        fetchInstagramTokenUseCase(uiLogin.toLogin()).onStart {
+            LoginUiState.Loading
+        }.mapLatest {
+            LoginUiState.Success(
+                LoginUiState.Success.LoginState(
+                    isShowBoardFragment = it.accessToken.isNotEmpty(), accessToken = it.accessToken
+                )
+            )
+        }.catch {
+            onException(it)
+        }
 
     fun event(event: Contract.Event) {
         when (event) {
-            is Contract.Event.RequestAccessToken -> {
-                requestAccessToken(event.login)
-            }
             is Contract.Event.SaveUserAccessToken -> saveUserAccessToken(event.accessToken)
+            is Contract.Event.OnUpdateLoginInfo -> {
+                savedStateHandle["login"] = event.login
+            }
+        }
+    }
+
+    private fun onException(throwable: Throwable): LoginUiState.Error.ErrorState {
+        return if (throwable is IOException) {
+            LoginUiState.Error.ErrorState.NetworkError(
+                "네트워크에 접속할 수 없습니다. 네트워크 연결상태 확인 후 다시 시도해 주세요.", throwable
+            )
+        } else {
+            LoginUiState.Error.ErrorState.DefaultError(
+                "알 수 없는 오류입니다. 잠시 후 다시 시도해 주세요.", throwable
+            )
         }
     }
 

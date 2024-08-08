@@ -1,7 +1,21 @@
 package com.example.login.state
 
-data class LoginUiState(
-    val isLoading: Boolean = false,
-    val isShowBoardFragment: Boolean = false,
-    val accessToken: String = ""
-)
+sealed interface LoginUiState {
+    object Idle : LoginUiState
+
+    object Loading : LoginUiState
+
+    data class Success(val loginState: LoginState): LoginUiState {
+        data class LoginState(
+            val isShowBoardFragment: Boolean = false,
+            val accessToken: String = "",
+        )
+    }
+
+    data class Error(val errorState: ErrorState): LoginUiState {
+        sealed interface ErrorState {
+            data class NetworkError(override val message: String, override val cause: Throwable) : ErrorState, Exception()
+            data class DefaultError(override val message: String, override val cause: Throwable) : ErrorState, Exception()
+        }
+    }
+}

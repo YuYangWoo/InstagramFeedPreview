@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.login.event.Contract
 import com.example.login.state.LoginUiState
+import com.example.model.Login
 import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.SaveUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,25 +29,26 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val loginUiState = savedStateHandle.getStateFlow("login", UiLogin("", "", "", "", ""))
+    val loginUiState = savedStateHandle.getStateFlow(ARGS_LOGIN_KEY, UiLogin("", "", "", "", ""))
         .flatMapLatest { uiLogin ->
             if (uiLogin.code.isEmpty()) {
                 flowOf(LoginUiState.Idle)
             } else {
-                loginUiState(uiLogin)
+                loginUiState(uiLogin.toLogin())
             }
         }.stateIn(
         scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = LoginUiState.Idle
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun loginUiState(uiLogin: UiLogin) =
-        fetchInstagramTokenUseCase(uiLogin.toLogin()).onStart {
+    private fun loginUiState(login: Login) =
+        fetchInstagramTokenUseCase(login).onStart {
             LoginUiState.Loading
         }.mapLatest {
             LoginUiState.Success(
                 LoginUiState.Success.LoginState(
-                    isShowBoardFragment = it.accessToken.isNotEmpty(), accessToken = it.accessToken
+                    isShowBoardFragment = it.accessToken.isNotEmpty(),
+                    accessToken = it.accessToken
                 )
             )
         }.catch {
@@ -80,5 +82,6 @@ class LoginViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "LoginViewModel"
+        private const val ARGS_LOGIN_KEY = "login"
     }
 }

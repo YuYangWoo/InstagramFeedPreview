@@ -2,6 +2,7 @@ package plugin
 
 import com.android.build.api.dsl.CommonExtension
 import ext.getVersionCatalog
+import ext.implementation
 import ext.testImplementation
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,8 +26,10 @@ internal class TestPlugin : Plugin<Project> {
     }
 
     private fun applyDependency(dependencyHandler: DependencyHandler, libs: VersionCatalog) = dependencyHandler.apply {
+        implementation(libs.findLibrary("kotlin-reflect").get())
         testImplementation(libs.findBundle("kotest").get())
         testImplementation(libs.findLibrary("mockk").get())
+        testImplementation(libs.findLibrary("kotlinx-coroutines-test").get())
     }
 
 }

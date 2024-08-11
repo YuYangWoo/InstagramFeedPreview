@@ -75,7 +75,7 @@ class BoardEditFragment : BottomSheetDialogFragment() {
 
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 boardViewModel.boardLocalUiState.collectLatest { state ->
                     when (state) {
                         is BoardLocalUiState.Success -> {

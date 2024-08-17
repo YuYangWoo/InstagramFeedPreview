@@ -10,11 +10,12 @@ import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.SaveUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,25 +36,31 @@ class LoginViewModel @Inject constructor(
                 flowOf(LoginUiState.Idle)
             } else {
                 loginUiState(uiLogin.toLogin())
+                    .onStart {
+                        emit(LoginUiState.Loading)
+                    }.catch {
+                        emit(LoginUiState.Error(onException(it)))
+                    }
             }
         }.stateIn(
-        scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = LoginUiState.Idle
-    )
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = LoginUiState.Idle
+        )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun loginUiState(login: Login) =
-        fetchInstagramTokenUseCase(login).onStart {
-            LoginUiState.Loading
-        }.mapLatest {
-            LoginUiState.Success(
-                LoginUiState.Success.LoginState(
-                    isShowBoardFragment = it.accessToken.isNotEmpty(),
-                    accessToken = it.accessToken
+    private fun loginUiState(login: Login): Flow<LoginUiState> {
+        return flow {
+            val longToken = fetchInstagramTokenUseCase(login)
+            emit(
+                LoginUiState.Success(
+                    LoginUiState.Success.LoginState(
+                        isShowBoardFragment = longToken.accessToken.isNotEmpty(),
+                        accessToken = longToken.accessToken
+                    )
                 )
             )
-        }.catch {
-            onException(it)
         }
+    }
 
     fun event(event: Contract.Event) {
         when (event) {

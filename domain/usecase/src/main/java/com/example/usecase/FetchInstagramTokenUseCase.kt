@@ -4,7 +4,7 @@ import com.example.model.Login
 import com.example.model.LongToken
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,7 +14,7 @@ class FetchInstagramTokenUseCase @Inject constructor(
     private val instagramRepository: InstagramRepository
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(login: Login): Flow<LongToken> {
+    suspend operator fun invoke(login: Login): LongToken {
         return instagramRepository.fetchShortToken(login)
             .flatMapLatest { shortToken ->
                 instagramRepository.fetchLongToken(
@@ -22,6 +22,6 @@ class FetchInstagramTokenUseCase @Inject constructor(
                     login.clientSecret,
                     shortToken.accessToken,
                 )
-            }
+            }.first()
     }
 }

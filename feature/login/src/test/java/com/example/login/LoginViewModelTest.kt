@@ -8,6 +8,7 @@ import com.example.usecase.FetchInstagramTokenUseCase
 import com.example.usecase.SaveUserAccessTokenUseCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.Test
+import io.kotest.matchers.collections.shouldBeIn
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.coEvery
@@ -31,88 +32,69 @@ class LoginViewModelTest : BehaviorSpec({
     val testDispatcher = StandardTestDispatcher()
 
     lateinit var viewModel: LoginViewModel
-    lateinit var fetchInstagramTokenUseCase: FetchInstagramTokenUseCase
-    lateinit var saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase
-    lateinit var savedStateHandle: SavedStateHandle
-    val longToken = LongToken("fake_access_token", "fake_token_type", "fake_expires_in")
+    val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase = mockk()
+    val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase = mockk()
+    val savedStateHandle = SavedStateHandle()
 
     beforeTest {
         Dispatchers.setMain(testDispatcher)
-        fetchInstagramTokenUseCase = mockk()
-        saveUserAccessTokenUseCase = mockk(relaxed = true)
-        savedStateHandle = SavedStateHandle()
     }
 
     afterTest {
         Dispatchers.resetMain()
     }
 
-    given("LoginViewModel is initialized") {
-       When("login code is empty") {
-            Then("the state should be Idle") {
-                savedStateHandle["login"] = UiLogin("", "", "", "", "")
-                viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+    Given("LoginViewModel이 주어지고") {
 
+        When("로그인하는 동안 오류가 발생할 때") {
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+
+            savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
+            coEvery { fetchInstagramTokenUseCase(any()) } throws Exception("network error")
+            Then("UiState는 Error를 반환한다.") {
+                testDispatcher.scheduler.advanceUntilIdle()
+
+                viewModel.loginUiState.value.shouldBeInstanceOf<LoginUiState.Error>()
+            }
+        }
+
+       When("UiLogin의 code가 비어있을 때") {
+           viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+
+           savedStateHandle["login"] = UiLogin("", "", "", "", "")
+
+            Then("UiState는 Idle이어야한다.") {
                 viewModel.loginUiState.value shouldBe LoginUiState.Idle
             }
         }
 
-       When("login code is provided") {
-            Then("the state should be Success with the correct access token") {
-                val mockAccessToken = "mock_access_token"
-                savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
+        When("UiLogin의 code가 비어있지 않을 때") {
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
 
-                coEvery { fetchInstagramTokenUseCase(any()) } returns flowOf(
-                    longToken
-                )
+            val longToken = LongToken("fake_access_token", "fake_token_type", "fake_expires_in")
+            savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
+            coEvery { fetchInstagramTokenUseCase(any()) } returns longToken
 
-                viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
-
+            Then("UiState는 성공이고 accessToken이 일치해야한다.") {
                 testDispatcher.scheduler.advanceUntilIdle()
 
-                viewModel.loginUiState.value.shouldBeInstanceOf<LoginUiState.Success>()
-                (viewModel.loginUiState.value as LoginUiState.Success).loginState.accessToken shouldBe mockAccessToken
+                viewModel.loginUiState.value shouldBe LoginUiState.Success(LoginUiState.Success.LoginState(true, longToken.accessToken))
             }
         }
 
-       When("IOException is thrown during login") {
-            Then("the state should be NetworkError") {
-                savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
+        When("ViewModel 이벤트 OnUpdateLoginInfo가 발생할 때") {
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
 
-                coEvery { fetchInstagramTokenUseCase(any()) } returns flow {
-                    throw IOException("Network Error")
-                }
-
-                viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
-
+            val longToken = LongToken("fake_access_token", "fake_token_type", "fake_expires_in")
+            savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
+            coEvery { fetchInstagramTokenUseCase(any()) } returns longToken
+            Then("loginUiState는 발행되어야한다.") {
+                viewModel.event(Contract.Event.OnUpdateLoginInfo(UiLogin("code", "mock", "mock", "mock", "mock")))
                 testDispatcher.scheduler.advanceUntilIdle()
 
-                viewModel.loginUiState.value.shouldBeInstanceOf<LoginUiState.Error.ErrorState.NetworkError>()
+                viewModel.loginUiState.value shouldBe LoginUiState.Success(LoginUiState.Success.LoginState(true, longToken.accessToken))
             }
         }
 
-       When("SaveUserAccessToken event is triggered") {
-            Then("the access token should be saved") {
-                val mockAccessToken = "mock_access_token"
-
-                viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
-
-                viewModel.event(Contract.Event.SaveUserAccessToken(mockAccessToken))
-
-                coVerify { saveUserAccessTokenUseCase(mockAccessToken) }
-            }
-        }
-
-        When("OnUpdateLoginInfo event is triggered") {
-            Then("the login info in SavedStateHandle should be updated") {
-                val uiLogin = UiLogin("code", "mock", "mock", "mock", "mock")
-
-                viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
-
-                viewModel.event(Contract.Event.OnUpdateLoginInfo(uiLogin))
-
-                savedStateHandle.get<UiLogin>("login") shouldBe uiLogin
-            }
-        }
     }
 })

@@ -13,15 +13,13 @@ import javax.inject.Singleton
 class FetchInstagramTokenUseCase @Inject constructor(
     private val instagramRepository: InstagramRepository
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
     suspend operator fun invoke(login: Login): LongToken {
-        return instagramRepository.fetchShortToken(login)
-            .flatMapLatest { shortToken ->
-                instagramRepository.fetchLongToken(
-                    "ig_exchange_token",
-                    login.clientSecret,
-                    shortToken.accessToken,
-                )
-            }.first()
+        val shortToken = instagramRepository.fetchShortToken(login)
+        val longToken = instagramRepository.fetchLongToken(
+            "ig_exchange_token",
+            login.clientSecret,
+            shortToken.accessToken,
+        )
+        return longToken
     }
 }

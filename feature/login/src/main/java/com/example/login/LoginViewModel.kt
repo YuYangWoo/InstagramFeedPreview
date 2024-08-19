@@ -7,7 +7,6 @@ import com.example.login.event.Contract
 import com.example.login.state.LoginUiState
 import com.example.model.Login
 import com.example.usecase.FetchInstagramTokenUseCase
-import com.example.usecase.SaveUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -18,20 +17,20 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase,
-    private val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val loginUiState = savedStateHandle.getStateFlow(ARGS_LOGIN_KEY, UiLogin("", "", "", "", ""))
-        .flatMapLatest { uiLogin ->
+    val loginUiState = savedStateHandle.getStateFlow(
+        ARGS_LOGIN_KEY,
+        UiLogin("", "", "", "", "")
+    ).flatMapLatest { uiLogin ->
             if (uiLogin.code.isEmpty()) {
                 flowOf(LoginUiState.Idle)
             } else {
@@ -44,7 +43,7 @@ class LoginViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = LoginUiState.Idle
         )
 
@@ -64,7 +63,6 @@ class LoginViewModel @Inject constructor(
 
     fun event(event: Contract.Event) {
         when (event) {
-            is Contract.Event.SaveUserAccessToken -> saveUserAccessToken(event.accessToken)
             is Contract.Event.OnUpdateLoginInfo -> {
                 savedStateHandle["login"] = event.login
             }
@@ -81,10 +79,6 @@ class LoginViewModel @Inject constructor(
                 "알 수 없는 오류입니다. 잠시 후 다시 시도해 주세요.", throwable
             )
         }
-    }
-
-    private fun saveUserAccessToken(accessToken: String) = viewModelScope.launch {
-        saveUserAccessTokenUseCase(accessToken)
     }
 
     companion object {

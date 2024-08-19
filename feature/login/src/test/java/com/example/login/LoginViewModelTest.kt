@@ -5,7 +5,6 @@ import com.example.login.event.Contract
 import com.example.login.state.LoginUiState
 import com.example.model.LongToken
 import com.example.usecase.FetchInstagramTokenUseCase
-import com.example.usecase.SaveUserAccessTokenUseCase
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.Test
 import io.kotest.matchers.collections.shouldBeIn
@@ -33,7 +32,6 @@ class LoginViewModelTest : BehaviorSpec({
 
     lateinit var viewModel: LoginViewModel
     val fetchInstagramTokenUseCase: FetchInstagramTokenUseCase = mockk()
-    val saveUserAccessTokenUseCase: SaveUserAccessTokenUseCase = mockk()
     val savedStateHandle = SavedStateHandle()
 
     beforeTest {
@@ -47,7 +45,7 @@ class LoginViewModelTest : BehaviorSpec({
     Given("LoginViewModel이 주어지고") {
 
         When("로그인하는 동안 오류가 발생할 때") {
-            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, savedStateHandle)
 
             savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
             coEvery { fetchInstagramTokenUseCase(any()) } throws Exception("network error")
@@ -59,7 +57,7 @@ class LoginViewModelTest : BehaviorSpec({
         }
 
        When("UiLogin의 code가 비어있을 때") {
-           viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+           viewModel = LoginViewModel(fetchInstagramTokenUseCase, savedStateHandle)
 
            savedStateHandle["login"] = UiLogin("", "", "", "", "")
 
@@ -69,7 +67,7 @@ class LoginViewModelTest : BehaviorSpec({
         }
 
         When("UiLogin의 code가 비어있지 않을 때") {
-            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, savedStateHandle)
 
             val longToken = LongToken("fake_access_token", "fake_token_type", "fake_expires_in")
             savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")
@@ -83,7 +81,7 @@ class LoginViewModelTest : BehaviorSpec({
         }
 
         When("ViewModel 이벤트 OnUpdateLoginInfo가 발생할 때") {
-            viewModel = LoginViewModel(fetchInstagramTokenUseCase, saveUserAccessTokenUseCase, savedStateHandle)
+            viewModel = LoginViewModel(fetchInstagramTokenUseCase, savedStateHandle)
 
             val longToken = LongToken("fake_access_token", "fake_token_type", "fake_expires_in")
             savedStateHandle["login"] = UiLogin("code", "mock", "mock", "mock", "mock")

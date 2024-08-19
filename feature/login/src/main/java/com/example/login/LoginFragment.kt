@@ -108,8 +108,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             binding.progressBar.isVisible = false
 
                             if (loginUiState.loginState.isShowBoardFragment) {
-                                loginViewModel.event(Contract.Event.SaveUserAccessToken(loginUiState.loginState.accessToken))
-
                                 val request =
                                     NavDeepLinkRequest.Builder.fromUri("app://example.app/boardFragment/${loginUiState.loginState.accessToken}".toUri())
                                         .build()

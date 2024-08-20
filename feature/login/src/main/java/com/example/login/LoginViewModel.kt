@@ -26,12 +26,9 @@ class LoginViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val loginUiState = savedStateHandle.getStateFlow(
-        ARGS_LOGIN_KEY,
-        UiLogin("", "", "", "", "")
-    ).flatMapLatest { uiLogin ->
-            if (uiLogin.code.isEmpty()) {
+    val loginUiState = savedStateHandle.getStateFlow<UiLogin?>(key = "login", null)
+        .flatMapLatest { uiLogin ->
+            if (uiLogin == null) {
                 flowOf(LoginUiState.Idle)
             } else {
                 loginUiState(uiLogin.toLogin())
@@ -43,7 +40,7 @@ class LoginViewModel @Inject constructor(
             }
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000L),
+            started = SharingStarted.WhileSubscribed(5000L),
             initialValue = LoginUiState.Idle
         )
 
@@ -64,7 +61,7 @@ class LoginViewModel @Inject constructor(
     fun event(event: Contract.Event) {
         when (event) {
             is Contract.Event.OnUpdateLoginInfo -> {
-                savedStateHandle[ARGS_LOGIN_KEY] = event.login
+                savedStateHandle["login"] = event.login
             }
         }
     }
@@ -83,6 +80,6 @@ class LoginViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "LoginViewModel"
-        private const val ARGS_LOGIN_KEY = "login"
+        const val ARGS_LOGIN_KEY = "login"
     }
 }

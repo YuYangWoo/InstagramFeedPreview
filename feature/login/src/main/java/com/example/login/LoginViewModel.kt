@@ -64,7 +64,7 @@ class LoginViewModel @Inject constructor(
     fun event(event: Contract.Event) {
         when (event) {
             is Contract.Event.OnUpdateLoginInfo -> {
-                savedStateHandle["login"] = event.login
+                savedStateHandle[ARGS_LOGIN_KEY] = event.login
             }
         }
     }

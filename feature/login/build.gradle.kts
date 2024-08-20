@@ -20,6 +20,7 @@ dependencies {
 
     implementation(project(":domain:usecase"))
     implementation(project(":domain:model"))
+    implementation(project(":core:testing"))
 }
 
 fun getApiKey(propertyKey: String): String {

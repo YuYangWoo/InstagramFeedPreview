@@ -8,28 +8,24 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.plugins.PluginManager
 import org.gradle.kotlin.dsl.getByType
 
 internal class TestPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        applyAndroidExtensions(target.extensions.getByType(CommonExtension::class))
-        applyDependency(target.dependencies, target.getVersionCatalog())
-    }
+    private val androidPlugin = AndroidPlugin()
 
-    private fun applyAndroidExtensions(extension: CommonExtension<*, *, *, *, *>)
-    = extension.apply {
-        testOptions {
-            unitTests.all {
-                it.useJUnitPlatform()
-            }
-        }
+    override fun apply(target: Project) {
+        androidPlugin.apply(target)
+
+        applyDependency(target.dependencies, target.getVersionCatalog())
     }
 
     private fun applyDependency(dependencyHandler: DependencyHandler, libs: VersionCatalog) = dependencyHandler.apply {
         implementation(libs.findLibrary("kotlin-reflect").get())
         testImplementation(libs.findBundle("kotest").get())
         testImplementation(libs.findLibrary("mockk").get())
-        testImplementation(libs.findLibrary("kotlinx-coroutines-test").get())
+        implementation(libs.findLibrary("kotlinx-coroutines-test").get())
+        implementation(libs.findLibrary("androidx-test-rules").get())
     }
 
 }

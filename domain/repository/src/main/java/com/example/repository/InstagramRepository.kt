@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface InstagramRepository {
 
-    fun fetchShortToken(login: Login): Flow<ShortToken>
+    suspend fun fetchShortToken(login: Login): ShortToken
 
-    fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): Flow<LongToken>
+    suspend fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): LongToken
 
     fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>>
 

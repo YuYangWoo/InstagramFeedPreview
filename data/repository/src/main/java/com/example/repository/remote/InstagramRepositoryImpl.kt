@@ -29,26 +29,24 @@ class InstagramRepositoryImpl @Inject constructor(
     private val userDataStoreSource: UserDataStoreSource
 ) : InstagramRepository {
 
-    override fun fetchShortToken(login: Login): Flow<ShortToken> = flow {
-        emit(
-            instagramLoginDataSource.getAccessToken(
-                login.clientId,
-                login.clientSecret,
-                login.grantType,
-                login.redirectUri,
-                login.code
-            ).toDomain()
-        )
-    }.flowOn(Dispatchers.IO)
+    override suspend fun fetchShortToken(login: Login): ShortToken {
+        return instagramLoginDataSource.getAccessToken(
+            login.clientId,
+            login.clientSecret,
+            login.grantType,
+            login.redirectUri,
+            login.code
+        ).toDomain()
+    }
 
-    override fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): Flow<LongToken> = flow {
-        emit(
-            graphInstagramApiServiceSource.getAccessLongToken(
-                grantType,
-                clientSecret,
-                accessToken,
-            ).toDomain()
-        )
+    override suspend fun fetchLongToken(grantType: String, clientSecret: String, accessToken: String): LongToken {
+        return graphInstagramApiServiceSource.getAccessLongToken(
+            grantType,
+            clientSecret,
+            accessToken,
+        ).toDomain().also {
+            userDataStoreSource.saveUserAccessToken(it.accessToken)
+        }
     }
 
     override fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>> {

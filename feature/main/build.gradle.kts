@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(project(":domain:usecase"))
+    implementation(project(":core:testing"))
 
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.mockk)

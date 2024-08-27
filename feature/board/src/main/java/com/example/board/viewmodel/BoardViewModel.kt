@@ -34,34 +34,11 @@ import javax.inject.Inject
 import com.example.board.state.BoardUiState
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class BoardViewModel @Inject constructor(
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
-    private val fetchBoardDetailItemUseCase: FetchBoardDetailItemUseCase,
     savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-
-    val boardDetailUiState = combine(
-        savedStateHandle.getStateFlow("id", ""),
-        savedStateHandle.getStateFlow("mediaUrl", "")
-    ) { id, mediaUrl ->
-        id to mediaUrl
-    }.flatMapLatest { (id, mediaUrl) ->
-        fetchBoardDetailItemUseCase(id).map { boardDetail ->
-            val items =
-                if (boardDetail.items.isEmpty() && id.isNotEmpty() && mediaUrl.isNotEmpty()) {
-                    listOf(BoardDetailUiState.Item(id = id, mediaUrl = mediaUrl))
-                } else {
-                    boardDetail.items.map { item ->
-                        BoardDetailUiState.Item(item.id, item.mediaUrl)
-                    }
-                }
-            BoardDetailUiState(isLoading = false, items = items)
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = BoardDetailUiState(isLoading = true, items = emptyList())
-    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val pagingData = savedStateHandle.getStateFlow("accessToken", "").flatMapLatest {

@@ -64,7 +64,7 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.editButton -> {
-                        BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
+//                        BoardEditFragment().show(childFragmentManager, "BoardEditFragment")
                         true
                     }
                     else -> {

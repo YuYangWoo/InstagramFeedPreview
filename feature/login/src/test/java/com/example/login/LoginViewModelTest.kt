@@ -1,7 +1,7 @@
 package com.example.login
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.login.event.Contract
+import com.example.login.state.LoginUiEvent
 import com.example.login.state.LoginUiState
 import com.example.model.LongToken
 import com.example.testing.MainDispatcherRule
@@ -48,7 +48,7 @@ class LoginViewModelTest {
             "mockRedirectUri",
             "mockGrantType"
         )
-        loginViewModel.event(Contract.Event.OnUpdateLoginInfo(uiLogin))
+        loginViewModel.event(LoginUiEvent.OnUpdateLoginInfo(uiLogin))
 
         val job = launch(UnconfinedTestDispatcher()) {
             loginViewModel.loginUiState.collect()

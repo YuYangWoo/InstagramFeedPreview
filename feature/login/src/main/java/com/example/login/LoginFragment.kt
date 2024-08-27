@@ -19,12 +19,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.example.login.databinding.FragmentLoginBinding
-import com.example.login.event.Contract
+import com.example.login.state.LoginUiEvent
 import com.example.login.state.LoginUiState
 import com.example.model.Login
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Contract
 import java.net.URLDecoder
 
 @AndroidEntryPoint
@@ -69,7 +70,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                     accessToken
                                 )
                                 Log.d(TAG, "accessToken is $accessToken")
-                                loginViewModel.event(Contract.Event.OnUpdateLoginInfo(uiLogin))
+                                loginViewModel.event(LoginUiEvent.OnUpdateLoginInfo(uiLogin))
                                 return true
                             } catch (e: Exception) {
                                 Log.d(TAG, e.message.toString())

@@ -1,5 +1,7 @@
 package com.example.login.state
 
+import com.example.login.UiLogin
+
 sealed interface LoginUiState {
     object Idle : LoginUiState
 
@@ -18,4 +20,8 @@ sealed interface LoginUiState {
             data class DefaultError(override val message: String, override val cause: Throwable) : ErrorState, Exception()
         }
     }
+}
+
+sealed interface LoginUiEvent {
+    data class OnUpdateLoginInfo(val login: UiLogin) : LoginUiEvent
 }

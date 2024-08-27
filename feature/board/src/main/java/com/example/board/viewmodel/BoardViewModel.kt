@@ -37,15 +37,8 @@ import com.example.board.state.BoardUiState
 class BoardViewModel @Inject constructor(
     private val fetchInstagramBoardUseCase: FetchInstagramBoardUseCase,
     private val fetchBoardDetailItemUseCase: FetchBoardDetailItemUseCase,
-    private val insertBoardUseCase: InsertBoardUseCase,
-    private val findBoardUseCase: FindBoardUseCase,
-    private val updateBoardUseCase: UpdateBoardUseCase,
-    private val deleteBoardUseCase: DeleteBoardUseCase,
     savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-
-    private val _boardLocalUiState = MutableStateFlow<BoardLocalUiState<List<LocalBoard.Item>>>(BoardLocalUiState.Loading)
-    val boardLocalUiState = _boardLocalUiState.asStateFlow()
 
     val boardDetailUiState = combine(
         savedStateHandle.getStateFlow("id", ""),
@@ -98,37 +91,8 @@ class BoardViewModel @Inject constructor(
         _effect.tryEmit(Contract.Effect.NavigateBoardDetailFragment(id, mediaUrl))
     }
 
-    fun requestBoardLocalItem() = viewModelScope.launch {
-        _boardLocalUiState.value = BoardLocalUiState.Loading
-
-        findBoardUseCase().catch {
-            _boardLocalUiState.value = BoardLocalUiState.Error("requestBoardItemsFind Fail")
-        }.collectLatest { items ->
-            _boardLocalUiState.value = BoardLocalUiState.Success(items)
-        }
-    }
-
-    fun insertAdditionalBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
-        insertBoardUseCase.invoke(localBoard)
-    }
-
-    fun updateBoardItem(localBoard: LocalBoard) = viewModelScope.launch {
-        updateBoardUseCase(localBoard)
-    }
-
-    fun deleteBoardItem(localBoardItem: LocalBoard.Item) = viewModelScope.launch {
-        deleteBoardUseCase(localBoardItem)
-    }
-
     companion object {
         private const val TAG = "BoardViewModel"
     }
 
 }
-
-sealed class BoardLocalUiState<out T> {
-    object Loading : BoardLocalUiState<Nothing>()
-    data class Success<T>(val data: T) : BoardLocalUiState<T>()
-    data class Error(val message: String) : BoardLocalUiState<Nothing>()
-}
-

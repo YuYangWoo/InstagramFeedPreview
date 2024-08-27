@@ -1,8 +1,10 @@
 package com.example.instagramfeedpreview.di
 
 import com.example.datasource.BoardLocalDataSource
+import com.example.datasource.BoardPagingDataSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
+import com.example.network.service.BoardPagingSourceImpl
 import com.example.network.service.GraphInstagramApiServiceSourceImpl
 import com.example.network.service.InstagramLoginDataSourceImpl
 import com.example.room.BoardLocalDataSourceImpl
@@ -18,13 +20,17 @@ interface DataSourceModule {
 
     @Binds
     @Singleton
-    fun provideInstagramLoginModule(instagramLoginDataSourceImpl: InstagramLoginDataSourceImpl): InstagramLoginDataSource
+    fun bindInstagramLoginModule(instagramLoginDataSourceImpl: InstagramLoginDataSourceImpl): InstagramLoginDataSource
 
     @Binds
     @Singleton
-    fun provideInstagramGraphModule(graphInstagramApiServiceSourceImpl: GraphInstagramApiServiceSourceImpl): GraphInstagramApiServiceSource
+    fun bindInstagramGraphModule(graphInstagramApiServiceSourceImpl: GraphInstagramApiServiceSourceImpl): GraphInstagramApiServiceSource
 
     @Binds
     @Singleton
-    fun provideBoardModule(boardLocalDataSourceImpl: BoardLocalDataSourceImpl): BoardLocalDataSource
+    fun bindBoardModule(boardLocalDataSourceImpl: BoardLocalDataSourceImpl): BoardLocalDataSource
+
+    @Binds
+    @Singleton
+    fun bindBoardPagingModule(boardPagingSourceImpl: BoardPagingSourceImpl): BoardPagingDataSource
 }

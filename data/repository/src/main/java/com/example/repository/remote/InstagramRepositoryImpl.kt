@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.datasource.BoardLocalDataSource
-import com.example.datasource.BoardPagingSource
+import com.example.datasource.BoardPagingDataSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
 import com.example.datasource.UserDataStoreSource
@@ -14,10 +14,7 @@ import com.example.model.LongToken
 import com.example.model.ShortToken
 import com.example.models.response.toDomain
 import com.example.repository.InstagramRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,8 +22,8 @@ import javax.inject.Singleton
 class InstagramRepositoryImpl @Inject constructor(
     private val instagramLoginDataSource: InstagramLoginDataSource,
     private val graphInstagramApiServiceSource: GraphInstagramApiServiceSource,
-    private val boardLocalDataSource: BoardLocalDataSource,
-    private val userDataStoreSource: UserDataStoreSource
+    private val userDataStoreSource: UserDataStoreSource,
+    private val boardPagingDataSource: BoardPagingDataSource,
 ) : InstagramRepository {
 
     override suspend fun fetchShortToken(login: Login): ShortToken {
@@ -52,7 +49,7 @@ class InstagramRepositoryImpl @Inject constructor(
     override fun fetchBoardInformation(token: String): Flow<PagingData<Board.Item>> {
         return Pager(
             config = PagingConfig(pageSize = 25),
-            pagingSourceFactory = { BoardPagingSource(graphInstagramApiServiceSource, boardLocalDataSource, token) }
+            pagingSourceFactory = { boardPagingDataSource.getPagingData(token) }
         ).flow
     }
 

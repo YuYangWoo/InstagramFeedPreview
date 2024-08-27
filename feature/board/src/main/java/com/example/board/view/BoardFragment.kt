@@ -27,7 +27,7 @@ import com.example.board.R
 import com.example.board.adapter.BoardAdapter
 import com.example.board.adapter.BoardLoadStateAdapter
 import com.example.board.databinding.FragmentBoardBinding
-import com.example.board.event.Contract
+import com.example.board.state.BoardUiEvent
 import com.example.board.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -96,22 +96,27 @@ class BoardFragment : Fragment(R.layout.fragment_board) {
     private fun initCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.effect.collectLatest { effect ->
-                    when (effect) {
-                        is Contract.Effect.NavigateBoardDetailFragment -> {
-                            val encodedMediaUrl = Uri.encode(effect.mediaUrl)
+                launch {
+                    boardViewModel.navigateBoardDetailUiState.collectLatest { navigateBoardDetailUiState ->
+                        if (navigateBoardDetailUiState.shouldNavigateBoardDetail) {
+                            val encodedMediaUrl = Uri.encode(navigateBoardDetailUiState.mediaUrl)
                             val request =
-                                NavDeepLinkRequest.Builder.fromUri("app://example.app/boardDetailFragment/?id=${effect.id}&mediaUrl=${encodedMediaUrl.orEmpty()}".toUri()).build()
+                                NavDeepLinkRequest
+                                    .Builder
+                                    .fromUri(("app://example.app/boardDetailFragment/" +
+                                            "?id=${navigateBoardDetailUiState.id}&" +
+                                            "mediaUrl=${encodedMediaUrl.orEmpty()}").toUri())
+                                    .build()
                             findNavController().navigate(request)
                         }
+
+                        boardViewModel.event(BoardUiEvent.OnClearNavigateBoardDetail)
                     }
                 }
-            }
-        }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.pagingData.collectLatest(boardAdapter::submitData)
+                launch {
+                    boardViewModel.boardPagingData.collectLatest(boardAdapter::submitData)
+                }
             }
         }
     }

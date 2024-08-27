@@ -1,8 +1,8 @@
 package com.example.datasource
 
 import androidx.paging.PagingSource
-import com.example.model.Board
+import com.example.models.response.NetworkBoard
 
 interface BoardPagingDataSource {
-    fun getPagingData(token: String): PagingSource<String, Board.Item>
+    fun getPagingData(token: String): PagingSource<String, NetworkBoard.Item>
 }

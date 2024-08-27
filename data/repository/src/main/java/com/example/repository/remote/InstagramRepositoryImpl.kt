@@ -3,7 +3,7 @@ package com.example.repository.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.datasource.BoardLocalDataSource
+import androidx.paging.map
 import com.example.datasource.BoardPagingDataSource
 import com.example.datasource.GraphInstagramApiServiceSource
 import com.example.datasource.InstagramLoginDataSource
@@ -15,6 +15,7 @@ import com.example.model.ShortToken
 import com.example.models.response.toDomain
 import com.example.repository.InstagramRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,7 +51,11 @@ class InstagramRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(pageSize = 25),
             pagingSourceFactory = { boardPagingDataSource.getPagingData(token) }
-        ).flow
+        ).flow.map { pagingData ->
+            pagingData.map { networkBoardItem ->
+                networkBoardItem.toDomain()
+            }
+        }
     }
 
 }

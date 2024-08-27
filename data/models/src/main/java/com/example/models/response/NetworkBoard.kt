@@ -36,6 +36,10 @@ fun NetworkBoard.toDomain(): Board {
     return Board(items, paging)
 }
 
+fun NetworkBoard.Item.toDomain(): Board.Item {
+    return Board.Item(id, caption, mediaUrl, order)
+}
+
 fun NetworkBoard.toLocalBoard(): LocalBoard {
     val list = this.items.map { item ->
         LocalBoard.Item(item.id.toLong(), item.mediaUrl, item.order)

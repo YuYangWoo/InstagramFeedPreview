@@ -6,6 +6,7 @@ import com.example.usecase.FetchUserAccessTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -18,21 +19,26 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val mainUiState = fetchUserAccessTokenUseCase()
-        .onStart {
-            MainUiState.Loading
-        }.map { accessToken ->
-            if (accessToken.isEmpty()) {
-                MainUiState.Success(isShowBoardFragment = false, accessToken = accessToken)
-            } else {
-                MainUiState.Success(isShowBoardFragment = true, accessToken = accessToken)
-            }
+        .map { accessToken ->
+            mainUiState(accessToken)
+        }.onStart {
+            emit(MainUiState.Loading)
         }.catch { throwable ->
-            onException(throwable)
+            emit(MainUiState.Error(onException(throwable)))
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MainUiState.Loading
         )
+
+    private fun mainUiState(accessToken: String): MainUiState {
+        val mainUiState: MainUiState = if (accessToken.isEmpty()) {
+            MainUiState.Success(isShowBoardFragment = false, accessToken = accessToken)
+        } else {
+            MainUiState.Success(isShowBoardFragment = true, accessToken = accessToken)
+        }
+        return mainUiState
+    }
 
     private fun onException(throwable: Throwable): MainUiState.Error.ErrorState {
         return if (throwable is IOException) {

@@ -20,17 +20,17 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun provideInstagramRepository(instagramRepositoryImpl: InstagramRepositoryImpl): InstagramRepository
+    fun bindInstagramRepository(instagramRepositoryImpl: InstagramRepositoryImpl): InstagramRepository
 
     @Binds
     @Singleton
-    fun provideUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+    fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
     @Binds
     @Singleton
-    fun provideBoardRepository(boardRepositoryImpl: BoardRepositoryImpl): BoardRepository
+    fun bindBoardRepository(boardRepositoryImpl: BoardRepositoryImpl): BoardRepository
 
     @Binds
     @Singleton
-    fun provideBoardLocalRepository(boardLocalRepositoryImpl: BoardLocalRepositoryImpl): BoardLocalRepository
+    fun bindBoardLocalRepository(boardLocalRepositoryImpl: BoardLocalRepositoryImpl): BoardLocalRepository
 }

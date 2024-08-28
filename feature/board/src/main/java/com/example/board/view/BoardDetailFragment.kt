@@ -14,7 +14,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.board.R
 import com.example.board.adapter.BoardDetailAdapter
 import com.example.board.databinding.FragmentBoardDetailBinding
-import com.example.board.viewmodel.BoardViewModel
+import com.example.board.state.BoardDetailUiState
+import com.example.board.viewmodel.BoardDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
-    private val boardViewModel: BoardViewModel by viewModels()
+    private val boardDetailViewModel: BoardDetailViewModel by viewModels()
     @Inject
     lateinit var boardDetailAdapter: BoardDetailAdapter
     private var _binding: FragmentBoardDetailBinding? = null
@@ -39,11 +40,11 @@ class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initObserver()
-        initAdapter()
+        init()
+        collect()
     }
 
-    private fun initAdapter() {
+    private fun init() {
         binding.viewPager.adapter = boardDetailAdapter
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -55,12 +56,23 @@ class BoardDetailFragment : Fragment(R.layout.fragment_board_detail) {
         })
     }
 
-    private fun initObserver() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                boardViewModel.boardDetailUiState.collectLatest { state ->
-                    binding.progressBar.isVisible = state.isLoading
-                    boardDetailAdapter.submitList(state.items)
+    private fun collect() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                boardDetailViewModel.boardDetailUiState.collectLatest { boardDetailUiState->
+                    when (boardDetailUiState) {
+                        is BoardDetailUiState.Error -> {
+                            binding.progressBar.isVisible = false
+                        }
+                        BoardDetailUiState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is BoardDetailUiState.Success -> {
+                            binding.progressBar.isVisible = false
+
+                            boardDetailAdapter.submitList(boardDetailUiState.items)
+                        }
+                    }
                 }
             }
         }

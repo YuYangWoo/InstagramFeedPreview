@@ -3,12 +3,11 @@ package com.example.login
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.login.event.Contract
+import com.example.login.state.LoginUiEvent
 import com.example.login.state.LoginUiState
 import com.example.model.Login
 import com.example.usecase.FetchInstagramTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -58,10 +57,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun event(event: Contract.Event) {
-        when (event) {
-            is Contract.Event.OnUpdateLoginInfo -> {
-                savedStateHandle["login"] = event.login
+    fun event(loginUiEvent: LoginUiEvent) {
+        when (loginUiEvent) {
+            is LoginUiEvent.OnUpdateLoginInfo -> {
+                savedStateHandle["login"] = loginUiEvent.login
             }
         }
     }

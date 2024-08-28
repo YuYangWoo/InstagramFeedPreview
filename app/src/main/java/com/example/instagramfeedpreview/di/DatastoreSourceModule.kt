@@ -13,5 +13,5 @@ import javax.inject.Singleton
 interface DatastoreSourceModule {
     @Binds
     @Singleton
-    fun provideDataStoreModule(userDataStoreSourceImpl: UserDataStoreSourceImpl): UserDataStoreSource
+    fun bindUserDataStoreSource(userDataStoreSourceImpl: UserDataStoreSourceImpl): UserDataStoreSource
 }
